@@ -1,3 +1,4 @@
+
 export interface NavItem {
   label: string;
   href?: string;
@@ -21,4 +22,11 @@ export interface ProductCardProps {
   size?: 'normal' | 'wide';
   isExternal?: boolean;
   onToast?: () => void;
+}
+
+export type VisualEffect = 'liquid' | 'blur';
+
+export interface ThemeContextType {
+  visualEffect: VisualEffect;
+  setVisualEffect: (effect: VisualEffect) => void;
 }

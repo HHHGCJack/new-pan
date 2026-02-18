@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Settings, Zap, Droplets } from 'lucide-react';
+import { useTheme } from '../App';
 
 const navData = [
   { 
@@ -11,7 +12,7 @@ const navData = [
   { 
     name: '娱乐', 
     items: [
-      { title: '网盘资源搜', desc: '全网影视资源聚合', href: 'https://pansou.app' },
+      { title: '网盘资源搜', desc: '全网影视资源聚合', href: 'http://gongcheng.yyboxdns.com:12309' },
       { title: '极简小说', desc: '沉浸式阅读体验', href: '#' }
     ] 
   },
@@ -19,15 +20,17 @@ const navData = [
     name: '科技', 
     items: [
       { title: 'AI 智能体', desc: '私人数字助手', href: '#' },
-      { title: '实验室', desc: 'Beta 功能测试', href: '#' }
+      { title: '实验室', desc: 'UI 视觉风格设置', href: '#settings' }
     ] 
   }
 ];
 
 export const Navbar: React.FC = () => {
+  const { visualEffect, setVisualEffect } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null);
 
@@ -41,17 +44,12 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // FIXED: Re-introduced overflow locking to prevent background scrolling when menu/modal is open.
-  // Since scrollbars are hidden globally via CSS, this won't cause layout shifts/twitching,
-  // but it ensures the background doesn't move when interacting with the menu.
+  // Lock body scroll
   useEffect(() => {
-    if (mobileMenuOpen || showSupportModal) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    const shouldLock = mobileMenuOpen || showSupportModal || showSettingsModal;
+    document.body.style.overflow = shouldLock ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [mobileMenuOpen, showSupportModal]);
+  }, [mobileMenuOpen, showSupportModal, showSettingsModal]);
 
   const toggleMobileItem = (index: number) => {
     setMobileExpandedIndex(mobileExpandedIndex === index ? null : index);
@@ -59,33 +57,83 @@ export const Navbar: React.FC = () => {
 
   const handleSupportClick = () => {
     setShowSupportModal(true);
-    // Smooth transition: Close menu shortly after modal starts opening
-    setTimeout(() => {
-        setMobileMenuOpen(false);
-    }, 100);
+    setMobileMenuOpen(false);
   };
+
+  const handleItemClick = (e: React.MouseEvent, title: string) => {
+    if (title === '实验室') {
+      e.preventDefault();
+      setShowSettingsModal(true);
+      setMobileMenuOpen(false);
+    }
+  };
+
+  const getGlassStyle = (type: 'nav' | 'dropdown' | 'mobile') => {
+    // Increased base opacity to ensure color is visible before blur calculation
+    const liquidDesktop = 'bg-white/80 backdrop-blur-[40px] backdrop-saturate-[180%]';
+    const liquidMobile = 'bg-[#f5f5f7]/95 backdrop-blur-[20px] backdrop-saturate-[180%]'; 
+    const blurConfig = 'bg-white/95 backdrop-blur-xl';
+
+    if (visualEffect === 'liquid') {
+      const borderColor = 'border-white/40';
+      if (type === 'nav') {
+        if (isDropdownOpen) return `${liquidDesktop} border-b border-transparent shadow-none`;
+        if (isScrolled) return `${liquidDesktop} border-b ${borderColor} shadow-sm`;
+        return `bg-transparent border-b border-transparent`;
+      }
+      if (type === 'dropdown') return `${liquidDesktop} border-b ${borderColor} shadow-[0_20px_50px_rgba(0,0,0,0.1)]`;
+      if (type === 'mobile') return `${liquidMobile} border-b ${borderColor}`;
+    } else {
+      const borderColor = 'border-gray-200';
+      if (type === 'nav') {
+        if (isDropdownOpen) return `${blurConfig} border-b border-transparent shadow-none`;
+        if (isScrolled) return `${blurConfig} border-b ${borderColor} shadow-sm`;
+        return `bg-white/60 backdrop-blur-md border-b border-transparent`;
+      }
+      if (type === 'dropdown') return `${blurConfig} border-b ${borderColor} shadow-lg`;
+      if (type === 'mobile') return `${blurConfig} border-b ${borderColor}`;
+    }
+    return '';
+  };
+
+  // Styles for the "Pill" hover effect in navbar
+  const getNavPillStyle = (isActive: boolean) => {
+    if (!isActive) return 'text-gray-600 hover:text-black'; // Basic state
+    
+    if (visualEffect === 'liquid') {
+      // Liquid Pill: Glassy, inner shadow, border
+      return 'text-black bg-white/40 backdrop-blur-md border border-white/40 shadow-[inset_0_1px_4px_rgba(255,255,255,0.8),0_4px_10px_rgba(0,0,0,0.05)]';
+    }
+    // Standard Pill
+    return 'text-black bg-black/5';
+  };
+
+  // Text effect for Liquid mode
+  const getTextEffect = () => {
+    if (visualEffect === 'liquid') {
+      return 'drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] text-shadow-sm';
+    }
+    return '';
+  };
+
+  // Modal Style - Optimized for instant visibility
+  const modalStyle = visualEffect === 'liquid'
+    ? 'bg-white/60 backdrop-blur-[40px] backdrop-saturate-[220%] shadow-[0_40px_80px_rgba(0,0,0,0.15),_inset_0_0_0_1px_rgba(255,255,255,0.6)]'
+    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100';
 
   return (
     <>
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-          mobileMenuOpen
-            ? 'bg-transparent border-transparent' // Force transparent when mobile menu is open to avoid double-glass layering/flicker
-            : isDropdownOpen 
-              ? 'bg-white/90 backdrop-blur-[100px] backdrop-saturate-[250%] border-b border-transparent shadow-sm' 
-              : isScrolled 
-                ? 'bg-white/60 backdrop-blur-[80px] backdrop-saturate-[250%] border-b border-white/50 shadow-sm' 
-                : 'bg-white/10 backdrop-blur-[20px] border-b border-transparent'
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+          mobileMenuOpen ? 'bg-transparent' : getGlassStyle('nav')
         }`}
         onMouseLeave={() => setActiveDropdown(null)}
       >
         <div className="max-w-7xl mx-auto px-6 h-14 md:h-16 flex items-center justify-between relative z-50">
-          {/* Logo */}
-          <a href="#" className="text-xl font-bold tracking-tight text-gray-900 relative mix-blend-overlay-dark">
+          <a href="#" className={`text-xl font-bold tracking-tight text-gray-900 relative ${getTextEffect()}`}>
             G胖儿GongPan
           </a>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-2 h-full">
             {navData.map((item, idx) => (
               <div 
@@ -94,69 +142,64 @@ export const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown(idx)}
               >
                 <button 
-                  className={`px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full ${
-                    activeDropdown === idx 
-                      ? 'text-black bg-black/5' // Active state
-                      : 'text-gray-600 hover:text-black hover:bg-black/5' // Inactive state
-                  }`}
+                  className={`px-5 py-2 text-sm font-semibold transition-all duration-300 rounded-full ${getNavPillStyle(activeDropdown === idx)} ${getTextEffect()}`}
                 >
                   {item.name}
                 </button>
               </div>
             ))}
             
-            {/* Support Button */}
             <div className="h-full flex items-center ml-2">
               <button 
                 onClick={handleSupportClick}
-                className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-white hover:bg-black transition-all duration-300 rounded-full"
+                className={`px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full ${visualEffect === 'liquid' ? 'text-gray-900 bg-white/30 border border-white/50 hover:bg-white/50 shadow-[inset_0_0_10px_rgba(255,255,255,0.5)]' : 'text-white bg-black hover:bg-gray-800'}`}
               >
                 支持我
               </button>
             </div>
           </div>
 
-          {/* Mobile Menu Button - Fixed dimensions to prevent layout shift */}
-          <div className="md:hidden flex items-center justify-center w-10 h-10 -mr-2">
+          <div className="md:hidden flex items-center justify-center -mr-2">
             <button 
-              className="p-2 text-gray-800 rounded-full transition-colors active:bg-black/5"
+              className="p-2 text-gray-800 rounded-full active:bg-black/5"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* Desktop Dropdown Panel */}
+        {/* Desktop Dropdown */}
         <div 
-          className={`absolute top-full left-0 w-full overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] bg-white/90 backdrop-blur-[100px] backdrop-saturate-[250%] shadow-[0_40px_80px_rgba(0,0,0,0.1)] border-b border-white/50 ${
-            activeDropdown !== null 
-              ? 'opacity-100 visible translate-y-0 max-h-[400px]' 
-              : 'opacity-0 invisible -translate-y-2 max-h-0'
+          className={`absolute top-full left-0 w-full overflow-hidden transition-all duration-300 ${getGlassStyle('dropdown')} ${
+            activeDropdown !== null ? 'opacity-100 visible h-auto border-t border-white/20' : 'opacity-0 invisible h-0 border-none'
           }`}
         >
-          <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="max-w-7xl mx-auto px-6 py-10">
             {activeDropdown !== null && (
-              <div className="animate-fade-in grid grid-cols-3 gap-12">
-                  <div className="col-span-1 border-r border-gray-200/30 pr-8">
-                    <h3 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">{navData[activeDropdown].name}</h3>
-                    <p className="text-base text-gray-500 font-medium leading-relaxed">探索精心挑选的优质资源，<br/>为您打造极致体验。</p>
+              <div className="grid grid-cols-3 gap-12 animate-fade-in">
+                  <div className="col-span-1 border-r border-gray-200/20 pr-8">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{navData[activeDropdown].name}</h3>
+                    <p className="text-sm text-gray-500">精选优质资源</p>
                   </div>
-                  <div className="col-span-2 grid grid-cols-2 gap-x-8 gap-y-6">
+                  <div className="col-span-2 grid grid-cols-2 gap-6">
                     {navData[activeDropdown].items.map((subItem) => (
                       <a 
                         key={subItem.title} 
                         href={subItem.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group block p-4 rounded-3xl hover:bg-white/40 transition-all duration-300 border border-transparent hover:border-white/40"
+                        target={subItem.href === '#settings' ? undefined : "_blank"}
+                        onClick={(e) => handleItemClick(e, subItem.title)}
+                        className={`group block p-4 rounded-2xl transition-all duration-200 ${
+                            visualEffect === 'liquid' 
+                            ? 'hover:bg-white/30 hover:shadow-[inset_0_0_10px_rgba(255,255,255,0.2)]' 
+                            : 'hover:bg-gray-50'
+                        }`}
                       >
-                        <div className="flex items-center mb-1.5">
-                          <span className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{subItem.title}</span>
-                          <ExternalLink className="w-3.5 h-3.5 ml-2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity translate-x-[-4px] group-hover:translate-x-0" />
+                        <div className="flex items-center mb-1">
+                          <span className="font-semibold text-gray-900">{subItem.title}</span>
+                          {subItem.title === '实验室' ? <Settings size={14} className="ml-2" /> : <ExternalLink size={14} className="ml-2 opacity-50" />}
                         </div>
-                        <p className="text-sm text-gray-500 group-hover:text-gray-700 font-medium">{subItem.desc}</p>
+                        <p className="text-xs text-gray-500">{subItem.desc}</p>
                       </a>
                     ))}
                   </div>
@@ -166,122 +209,105 @@ export const Navbar: React.FC = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay - Ultra Liquid Glass with Enhanced Animations */}
+      {/* Mobile Menu */}
       <div 
-        className={`fixed inset-0 z-40 flex flex-col pt-24 px-6 transform-gpu will-change-[transform,opacity] transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] bg-white/40 backdrop-blur-[80px] backdrop-saturate-[250%] ${
-          mobileMenuOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'
+        className={`fixed inset-0 z-40 pt-20 px-6 transition-all duration-300 ${getGlassStyle('mobile')} ${
+          mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
-        style={{ overscrollBehavior: 'contain' }} 
       >
-        <div className={`flex flex-col space-y-2 transition-transform duration-500 ease-out delay-75 ${
-           mobileMenuOpen ? 'translate-y-0' : '-translate-y-4'
-        }`}>
+        <div className={`flex flex-col space-y-1 transition-all duration-300 ${mobileMenuOpen ? 'translate-y-0' : '-translate-y-4'}`}>
           {navData.map((link, idx) => (
             <div key={link.name} className="overflow-hidden">
               <button 
                 onClick={() => toggleMobileItem(idx)}
-                className="w-full flex items-center justify-between py-5 border-b border-gray-900/10 active:bg-white/20 transition-colors"
+                className="w-full flex items-center justify-between py-4 border-b border-gray-500/10"
               >
-                <span className="text-xl font-bold text-gray-900 tracking-tight">{link.name}</span>
-                <ChevronDown 
-                  className={`text-gray-500 transition-transform duration-300 ${mobileExpandedIndex === idx ? 'rotate-180 text-black' : ''}`} 
-                  size={20} 
-                />
+                <span className="text-lg font-bold text-gray-900">{link.name}</span>
+                <ChevronDown className={`transition-transform ${mobileExpandedIndex === idx ? 'rotate-180' : ''}`} size={18} />
               </button>
               
-              {/* Liquid Jelly Container Animation */}
-              <div 
-                className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-top ${
-                  mobileExpandedIndex === idx ? 'max-h-[500px] opacity-100 py-4 scale-100' : 'max-h-0 opacity-0 py-0 scale-95'
-                }`}
-              >
-                <div className="space-y-3 pl-2">
-                  {link.items.map((sub, i) => (
-                    /* Mobile Submenu Item - Agile Liquid/Jelly Effect */
+              <div className={`transition-all duration-300 ease-out overflow-hidden ${mobileExpandedIndex === idx ? 'max-h-[300px] opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
+                <div className="space-y-2 pl-2">
+                  {link.items.map((sub) => (
                     <a 
                       key={sub.title} 
                       href={sub.href}
-                      target={sub.href.startsWith('http') ? '_blank' : undefined}
-                      rel="noopener noreferrer"
-                      onClick={() => setMobileMenuOpen(false)}
-                      style={{ transitionDelay: `${i * 50}ms` }}
-                      className={`
-                        block p-4 rounded-2xl border transition-all duration-300 transform
-                        bg-white/30 backdrop-blur-md border-white/20 shadow-[0_4px_12px_rgba(0,0,0,0.05)]
-                        active:scale-95 active:bg-white/50 active:shadow-inner active:border-white/40
-                        hover:scale-[1.02] hover:bg-white/40
-                        ${mobileExpandedIndex === idx ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
-                      `}
+                      onClick={(e) => handleItemClick(e, sub.title)}
+                      className="block p-3 rounded-xl bg-white/20 active:bg-white/40"
                     >
-                      <div className="font-semibold text-base text-gray-900 flex items-center">
+                      <div className="font-medium text-sm text-gray-900 flex items-center justify-between">
                         {sub.title}
-                        <ChevronRight size={16} className="ml-auto text-gray-400" />
+                        <ChevronRight size={14} className="text-gray-400" />
                       </div>
-                      <div className="text-xs text-gray-500 mt-1 font-medium">{sub.desc}</div>
                     </a>
                   ))}
                 </div>
               </div>
             </div>
           ))}
-          {/* Mobile Support Button */}
           <button 
             onClick={handleSupportClick}
-            className="w-full flex items-center justify-between py-5 border-b border-gray-900/10 active:bg-white/20 transition-colors text-left"
+            className="w-full flex items-center justify-between py-4 border-b border-gray-500/10 text-left"
           >
-             <span className="text-xl font-bold text-gray-900 tracking-tight">支持我</span>
-             <ChevronRight className="text-gray-500" size={20} />
+             <span className="text-lg font-bold text-gray-900">支持我</span>
+             <ChevronRight className="text-gray-500" size={18} />
           </button>
-        </div>
-        
-        <div className={`mt-auto mb-10 text-center transition-opacity duration-700 delay-200 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}>
-           <p className="text-[10px] text-gray-500 tracking-widest uppercase font-semibold">Pan Studio © 2026</p>
         </div>
       </div>
 
-      {/* Support Modal - Enhanced Liquid Glass Card, Simple Overlay */}
+      {/* Support Modal */}
       <div 
-        className={`fixed inset-0 z-[100] flex items-center justify-center px-4 md:px-6 transition-all duration-500 ${
+        className={`fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all duration-300 ${
           showSupportModal ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
       >
-        {/* Overlay - Darkened for focus, NO blur as requested */}
-        <div 
-          className="absolute inset-0 bg-black/40 transition-opacity duration-500" 
-          onClick={() => setShowSupportModal(false)}
-        />
-        
-        {/* Card - Premium Liquid Glass Style */}
-        <div 
-          className={`relative z-10 w-full max-w-[500px] 
-            bg-white/60 backdrop-blur-[50px] backdrop-saturate-[250%] 
-            border border-white/60 shadow-[0_40px_100px_rgba(0,0,0,0.2)] 
-            rounded-[2.5rem] p-8 md:p-10 text-center transform 
-            transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] 
-            ${showSupportModal ? 'scale-100 translate-y-0' : 'scale-90 translate-y-8'}
-          `}
-        >
-           <button 
-             onClick={() => setShowSupportModal(false)} 
-             className="absolute top-6 right-6 p-2 bg-black/5 rounded-full hover:bg-black/10 transition-colors"
-           >
-             <X size={20} className="text-gray-600" />
+        <div className="absolute inset-0 bg-black/10" onClick={() => setShowSupportModal(false)} />
+        <div className={`relative w-full max-w-sm rounded-[2rem] p-8 text-center transition-all duration-300 transform ${modalStyle} ${showSupportModal ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+           <button onClick={() => setShowSupportModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-black/5 hover:bg-black/10">
+             <X size={18} />
            </button>
-
-           <div className="mb-8 mt-2">
-              <h3 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">感谢支持</h3>
-              <p className="text-gray-600 text-sm font-medium">您的每一份支持，都是我前进的动力。</p>
+           <h3 className="text-2xl font-bold text-gray-900 mb-2">感谢支持</h3>
+           <div className="bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-48 h-48">
+              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" className="w-full h-full object-cover rounded-lg" alt="QR" />
            </div>
+           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">WeChat Pay</p>
+        </div>
+      </div>
 
-           <div className="p-4 bg-white/50 backdrop-blur-md rounded-[2rem] shadow-inner border border-white/40 mb-8 mx-auto w-full max-w-[280px]">
-              <img 
-                src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" 
-                alt="QR Code" 
-                className="w-full h-auto object-cover rounded-xl"
-              />
+      {/* Settings Modal */}
+      <div 
+        className={`fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all duration-300 ${
+          showSettingsModal ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+      >
+        <div className="absolute inset-0 bg-black/10" onClick={() => setShowSettingsModal(false)} />
+        <div className={`relative w-full max-w-sm rounded-[2rem] p-8 text-center transition-all duration-300 transform ${modalStyle} ${showSettingsModal ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+           <button onClick={() => setShowSettingsModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-black/5 hover:bg-black/10">
+             <X size={18} />
+           </button>
+           <h3 className="text-2xl font-bold text-gray-900 mb-6">实验室设置</h3>
+           
+           <div className="bg-gray-100/50 p-1 rounded-xl flex relative mb-4">
+              <button onClick={() => setVisualEffect('liquid')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'liquid' ? 'text-black' : 'text-gray-500'}`}>
+                液态玻璃
+              </button>
+              <button onClick={() => setVisualEffect('blur')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'blur' ? 'text-black' : 'text-gray-500'}`}>
+                高斯模糊
+              </button>
+              <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-transform duration-300 ${visualEffect === 'blur' ? 'translate-x-[100%] translate-x-2' : 'translate-x-0'}`} />
            </div>
            
-           <p className="text-xs text-gray-500 font-medium tracking-wide">微信扫一扫 (WeChat Pay)</p>
+           {/* Added Explanation Text */}
+           <div className={`text-left p-4 rounded-xl border transition-colors duration-300 ${visualEffect === 'liquid' ? 'bg-blue-50/50 border-blue-100/50 text-blue-900' : 'bg-gray-50 border-gray-100 text-gray-600'}`}>
+              <div className="flex items-start">
+                 {visualEffect === 'liquid' ? <Droplets size={16} className="mt-0.5 mr-2 text-blue-500 shrink-0" /> : <Zap size={16} className="mt-0.5 mr-2 text-gray-400 shrink-0" />}
+                 <p className="text-xs leading-relaxed font-medium">
+                   {visualEffect === 'liquid' 
+                     ? '液态玻璃：模拟高透光介质，具有强烈的高光折射、低模糊度和鲜明的色彩通透感。'
+                     : '高斯模糊：经典的磨砂玻璃质感，高不透明度，光影柔和，减少视觉干扰。'}
+                 </p>
+              </div>
+           </div>
         </div>
       </div>
     </>

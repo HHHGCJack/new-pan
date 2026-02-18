@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 const words = [
-  { text: 'Hello', lang: 'en', font: 'font-cursive-en' },
-  { text: '你好', lang: 'cn', font: 'font-cursive-cn' },
-  { text: 'Hola', lang: 'es', font: 'font-cursive-en' },
-  { text: 'Bonjour', lang: 'fr', font: 'font-cursive-en' },
+  { text: 'Hello', lang: 'en' },
+  { text: '你好', lang: 'cn' },
+  { text: 'Hola', lang: 'es' },
+  { text: 'Bonjour', lang: 'fr' },
 ];
 
 export const Hero: React.FC = () => {
@@ -23,17 +23,21 @@ export const Hero: React.FC = () => {
         {words.map((word, index) => (
           <span
             key={index}
-            className={`absolute transition-all duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${word.font} ${
+            className={`absolute transition-all duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
               index === activeIndex
                 ? 'opacity-100 transform translate-y-0 scale-100 blur-0'
                 : 'opacity-0 transform translate-y-8 scale-90 blur-sm'
             }`}
             style={{
+              // Use a robust stack for rounded fonts: SF Pro Rounded (Apple), Arial Rounded MT Bold (Win), or general rounded
+              fontFamily: '"SF Pro Rounded", "Arial Rounded MT Bold", "Nunito", "Varela Round", sans-serif',
+              fontWeight: 900, // Heavy weight for that "Hello" look
               fontSize: word.lang === 'cn' ? 'clamp(4rem, 15vw, 8rem)' : 'clamp(5rem, 18vw, 10rem)',
               background: 'linear-gradient(180deg, #1a1a1a 0%, #4a4a4a 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              lineHeight: 1.2
+              lineHeight: 1.2,
+              letterSpacing: '-0.02em'
             }}
           >
             {word.text}
