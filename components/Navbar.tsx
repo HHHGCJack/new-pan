@@ -26,7 +26,7 @@ const navData = [
 ];
 
 export const Navbar: React.FC = () => {
-  const { visualEffect, setVisualEffect } = useTheme();
+  const { visualEffect, setVisualEffect, showToast } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
@@ -60,29 +60,49 @@ export const Navbar: React.FC = () => {
     setMobileMenuOpen(false);
   };
 
-  const handleItemClick = (e: React.MouseEvent, title: string) => {
+  const handleItemClick = (e: React.MouseEvent, title: string, href: string) => {
     if (title === '实验室') {
       e.preventDefault();
       setShowSettingsModal(true);
       setMobileMenuOpen(false);
+      return;
+    }
+
+    if (href === '#' || title === 'AI 智能体' || title === '极简小说') {
+        e.preventDefault();
+        showToast('敬请期待 Coming Soon');
+        setMobileMenuOpen(false);
+        setActiveDropdown(null);
+        return;
     }
   };
 
   const getGlassStyle = (type: 'nav' | 'dropdown' | 'mobile') => {
-    // Increased base opacity to ensure color is visible before blur calculation
-    const liquidDesktop = 'bg-white/80 backdrop-blur-[40px] backdrop-saturate-[180%]';
-    const liquidMobile = 'bg-[#f5f5f7]/95 backdrop-blur-[20px] backdrop-saturate-[180%]'; 
-    const blurConfig = 'bg-white/95 backdrop-blur-xl';
+    // Base GPU acceleration to prevent flickering
+    const gpuFix = 'transform-gpu backface-hidden';
+
+    // Desktop Nav - Enhanced Liquid: Higher saturation, clear highlights
+    const liquidDesktop = `bg-white/10 backdrop-blur-[20px] backdrop-saturate-[200%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] ${gpuFix}`;
+    
+    // Mobile Menu - ENHANCED Liquid Effect:
+    // 1. Lower opacity (white/10) for more transparency
+    // 2. Moderate Blur (30px) for clarity
+    // 3. High Saturation (250%)
+    // 4. Glossy highlights
+    const liquidMobile = `bg-white/10 backdrop-blur-[30px] backdrop-saturate-[250%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1),0_20px_60px_rgba(0,0,0,0.1)] border-b border-white/40 ${gpuFix}`; 
+    
+    // Standard Blur Fallback
+    const blurConfig = `bg-white/95 backdrop-blur-xl ${gpuFix}`;
 
     if (visualEffect === 'liquid') {
-      const borderColor = 'border-white/40';
+      const borderColor = 'border-white/30';
       if (type === 'nav') {
         if (isDropdownOpen) return `${liquidDesktop} border-b border-transparent shadow-none`;
         if (isScrolled) return `${liquidDesktop} border-b ${borderColor} shadow-sm`;
         return `bg-transparent border-b border-transparent`;
       }
-      if (type === 'dropdown') return `${liquidDesktop} border-b ${borderColor} shadow-[0_20px_50px_rgba(0,0,0,0.1)]`;
-      if (type === 'mobile') return `${liquidMobile} border-b ${borderColor}`;
+      if (type === 'dropdown') return `${liquidDesktop} border-b ${borderColor} shadow-[0_30px_60px_rgba(0,0,0,0.12)]`;
+      if (type === 'mobile') return `${liquidMobile}`;
     } else {
       const borderColor = 'border-gray-200';
       if (type === 'nav') {
@@ -101,8 +121,8 @@ export const Navbar: React.FC = () => {
     if (!isActive) return 'text-gray-600 hover:text-black'; // Basic state
     
     if (visualEffect === 'liquid') {
-      // Liquid Pill: Glassy, inner shadow, border
-      return 'text-black bg-white/40 backdrop-blur-md border border-white/40 shadow-[inset_0_1px_4px_rgba(255,255,255,0.8),0_4px_10px_rgba(0,0,0,0.05)]';
+      // Liquid Pill: Glossy, inner shadow, border
+      return 'text-black bg-white/20 backdrop-blur-md border border-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.08)]';
     }
     // Standard Pill
     return 'text-black bg-black/5';
@@ -116,10 +136,10 @@ export const Navbar: React.FC = () => {
     return '';
   };
 
-  // Modal Style - Optimized for instant visibility
+  // Modal Style
   const modalStyle = visualEffect === 'liquid'
-    ? 'bg-white/60 backdrop-blur-[40px] backdrop-saturate-[220%] shadow-[0_40px_80px_rgba(0,0,0,0.15),_inset_0_0_0_1px_rgba(255,255,255,0.6)]'
-    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100';
+    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] transform-gpu border border-white/30'
+    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100 transform-gpu';
 
   return (
     <>
@@ -188,7 +208,7 @@ export const Navbar: React.FC = () => {
                         key={subItem.title} 
                         href={subItem.href}
                         target={subItem.href === '#settings' ? undefined : "_blank"}
-                        onClick={(e) => handleItemClick(e, subItem.title)}
+                        onClick={(e) => handleItemClick(e, subItem.title, subItem.href)}
                         className={`group block p-4 rounded-2xl transition-all duration-200 ${
                             visualEffect === 'liquid' 
                             ? 'hover:bg-white/30 hover:shadow-[inset_0_0_10px_rgba(255,255,255,0.2)]' 
@@ -223,24 +243,35 @@ export const Navbar: React.FC = () => {
                 className="w-full flex items-center justify-between py-4 border-b border-gray-500/10"
               >
                 <span className="text-lg font-bold text-gray-900">{link.name}</span>
-                <ChevronDown className={`transition-transform ${mobileExpandedIndex === idx ? 'rotate-180' : ''}`} size={18} />
+                <ChevronDown className={`transition-transform duration-300 ${mobileExpandedIndex === idx ? 'rotate-180' : ''}`} size={18} />
               </button>
               
-              <div className={`transition-all duration-300 ease-out overflow-hidden ${mobileExpandedIndex === idx ? 'max-h-[300px] opacity-100 py-2' : 'max-h-0 opacity-0'}`}>
-                <div className="space-y-2 pl-2">
-                  {link.items.map((sub) => (
-                    <a 
-                      key={sub.title} 
-                      href={sub.href}
-                      onClick={(e) => handleItemClick(e, sub.title)}
-                      className="block p-3 rounded-xl bg-white/20 active:bg-white/40"
-                    >
-                      <div className="font-medium text-sm text-gray-900 flex items-center justify-between">
-                        {sub.title}
-                        <ChevronRight size={14} className="text-gray-400" />
-                      </div>
-                    </a>
-                  ))}
+              {/* Animated Sub-menu using Grid for smooth height transition */}
+              <div 
+                className={`grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] ${
+                   mobileExpandedIndex === idx ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                }`}
+              >
+                <div className="overflow-hidden">
+                   <div className={`space-y-3 pt-2 pb-4 pl-2 transition-all duration-500 ${mobileExpandedIndex === idx ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+                    {link.items.map((sub) => (
+                      <a 
+                        key={sub.title} 
+                        href={sub.href}
+                        onClick={(e) => handleItemClick(e, sub.title, sub.href)}
+                        className={`block p-3 rounded-xl transition-all ${
+                          visualEffect === 'liquid'
+                            ? 'bg-white/40 border border-white/60 shadow-[inset_0_1px_10px_rgba(255,255,255,0.8)] active:bg-white/60 active:scale-[0.98]'
+                            : 'bg-white/20 active:bg-white/40'
+                        }`}
+                      >
+                        <div className="font-medium text-sm text-gray-900 flex items-center justify-between">
+                          {sub.title}
+                          <ChevronRight size={14} className="text-gray-400" />
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

@@ -29,4 +29,5 @@ export type VisualEffect = 'liquid' | 'blur';
 export interface ThemeContextType {
   visualEffect: VisualEffect;
   setVisualEffect: (effect: VisualEffect) => void;
+  showToast: (message: string) => void;
 }

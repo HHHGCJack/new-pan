@@ -12,7 +12,7 @@ export const Footer: React.FC = () => {
 
   // Reusing the robust modal style from Navbar for consistency
   const modalStyle = visualEffect === 'liquid'
-    ? 'bg-white/70 backdrop-blur-[40px] backdrop-saturate-[220%] shadow-[0_40px_80px_rgba(0,0,0,0.15),_inset_0_0_0_1px_rgba(255,255,255,0.6)]'
+    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30'
     : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100';
 
   return (
