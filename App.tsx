@@ -75,7 +75,7 @@ function App() {
               <Card
                 title="网盘影视资源搜"
                 description="聚合全网资源，打破信息孤岛。一次搜索，极速直达云端内容。"
-                imageUrl="https://images.weserv.nl/?url=images.unsplash.com/photo-1618005182384-a83a8bd57fbe&w=800&q=80"
+                imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1618005182384-a83a8bd57fbe&w=800&q=80&output=webp"
                 href="http://gongcheng.yyboxdns.com:12309"
                 tag="HOT TOOL"
                 size="wide"
@@ -86,7 +86,7 @@ function App() {
               <Card
                 title="外刊精读 Pro"
                 description="深度解析《经济学人》、《纽约客》等顶级刊物，打破语言围墙，拓展国际视野。"
-                imageUrl="https://images.weserv.nl/?url=images.unsplash.com/photo-1550592704-6c76defa9985&w=600&q=80"
+                imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1550592704-6c76defa9985&w=600&q=80&output=webp"
                 href="http://gongcheng.yyboxdns.com:25045/"
                 tag="PREMIUM"
                 size="normal"
@@ -97,7 +97,7 @@ function App() {
               <Card
                 title="AI 智能体"
                 description="您的私人数字助手。具备深度推理与上下文理解能力，即刻开启未来对话。"
-                imageUrl="https://images.weserv.nl/?url=images.unsplash.com/photo-1677442136019-21780ecad995&w=600&q=80"
+                imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1677442136019-21780ecad995&w=600&q=80&output=webp"
                 href="#"
                 tag="COMING SOON"
                 size="normal"
@@ -109,7 +109,7 @@ function App() {
                <Card
                 title="极简小说"
                 description="回归阅读本质。无广告、无干扰的沉浸式阅读体验，支持多种格式解析。"
-                imageUrl="https://images.weserv.nl/?url=images.unsplash.com/photo-1476275466078-4007374efbbe&w=800&q=80"
+                imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1476275466078-4007374efbbe&w=800&q=80&output=webp"
                 href="#"
                 tag="BETA"
                 size="wide"
