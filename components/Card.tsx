@@ -75,7 +75,8 @@ export const Card: React.FC<ProductCardProps> = ({
       onContextMenu={(e) => e.preventDefault()}
       className={`group relative isolate overflow-hidden rounded-[2.5rem] transform-gpu will-change-transform 
         transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] 
-        hover:-translate-y-2 active:-translate-y-1 active:scale-[0.98]
+        hover:-translate-y-3 hover:scale-[1.02] hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)]
+        active:-translate-y-2 active:scale-[1.01] active:shadow-2xl active:duration-150
         ${size === 'wide' ? 'md:col-span-2' : 'col-span-1'}
         ${getGlassClasses()}
         h-[420px] md:h-[500px] flex flex-col cursor-pointer

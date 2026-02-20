@@ -92,10 +92,10 @@ export const Navbar: React.FC = () => {
     // 2. Moderate Blur (30px) for clarity
     // 3. High Saturation (250%)
     // 4. Glossy highlights
-    const liquidMobile = `bg-white/10 backdrop-blur-[30px] backdrop-saturate-[250%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1),0_20px_60px_rgba(0,0,0,0.1)] border-b border-white/40 ${gpuFix}`; 
+    const liquidMobile = `bg-white/20 backdrop-blur-[40px] backdrop-saturate-[250%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1),0_30px_100px_rgba(0,0,0,0.3)] border-b border-white/40 ${gpuFix}`; 
     
     // Standard Blur Fallback
-    const blurConfig = `bg-white/95 backdrop-blur-xl ${gpuFix}`;
+    const blurConfig = `bg-white/98 backdrop-blur-2xl ${gpuFix}`;
 
     if (visualEffect === 'liquid') {
       const borderColor = 'border-white/30';
@@ -104,7 +104,7 @@ export const Navbar: React.FC = () => {
         if (isScrolled) return `${liquidDesktop} border-b ${borderColor} shadow-sm`;
         return `bg-transparent border-b border-transparent`;
       }
-      if (type === 'dropdown') return `${liquidDropdown} border-b ${borderColor} shadow-[0_30px_60px_rgba(0,0,0,0.12)]`;
+      if (type === 'dropdown') return `${liquidDropdown} border-b ${borderColor} shadow-[0_40px_80px_rgba(0,0,0,0.2)]`;
       if (type === 'mobile') return `${liquidMobile}`;
     } else {
       const borderColor = 'border-gray-200';
@@ -113,7 +113,7 @@ export const Navbar: React.FC = () => {
         if (isScrolled) return `${blurConfig} border-b ${borderColor} shadow-sm`;
         return `bg-white/60 backdrop-blur-md border-b border-transparent`;
       }
-      if (type === 'dropdown') return `${blurConfig} border-b ${borderColor} shadow-lg`;
+      if (type === 'dropdown') return `${blurConfig} border-b ${borderColor} shadow-[0_40px_80px_rgba(0,0,0,0.15)]`;
       if (type === 'mobile') return `${blurConfig} border-b ${borderColor}`;
     }
     return '';
@@ -262,10 +262,10 @@ export const Navbar: React.FC = () => {
                         key={sub.title} 
                         href={sub.href}
                         onClick={(e) => handleItemClick(e, sub.title, sub.href)}
-                        className={`block p-3 rounded-xl transition-all ${
+                        className={`block p-4 rounded-2xl transition-all duration-300 ${
                           visualEffect === 'liquid'
-                            ? 'bg-white/40 border border-white/60 shadow-[inset_0_1px_10px_rgba(255,255,255,0.8)] active:bg-white/60 active:scale-[0.98]'
-                            : 'bg-white/20 active:bg-white/40'
+                            ? 'bg-white/40 border border-white/60 shadow-[inset_0_1px_10px_rgba(255,255,255,0.8),0_10px_20px_rgba(0,0,0,0.1)] active:bg-white/60 active:scale-[0.98] active:shadow-inner'
+                            : 'bg-white/40 border border-gray-200 shadow-sm active:bg-gray-100 active:scale-[0.98]'
                         }`}
                       >
                         <div className="font-medium text-sm text-gray-900 flex items-center justify-between">
