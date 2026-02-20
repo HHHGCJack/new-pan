@@ -66,7 +66,7 @@ function App() {
         <main className="flex-grow pt-16">
           <Hero />
 
-          <section className="max-w-7xl mx-auto px-6 pb-32 -mt-10 md:-mt-20 relative z-10">
+          <section className="max-w-7xl mx-auto px-6 pb-32 -mt-5 md:-mt-10 relative z-10">
             
             {/* Bento Grid Layout - Responsive: 1 col mobile, 2 col tablet, 3 col desktop */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

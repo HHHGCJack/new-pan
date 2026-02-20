@@ -12,8 +12,8 @@ export const Footer: React.FC = () => {
 
   // Reusing the robust modal style from Navbar for consistency
   const modalStyle = visualEffect === 'liquid'
-    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30'
-    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100';
+    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 will-change-[backdrop-filter,transform,opacity]'
+    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100 will-change-[backdrop-filter,transform,opacity]';
 
   return (
     <>
@@ -40,8 +40,8 @@ export const Footer: React.FC = () => {
         <div className="absolute inset-0 bg-black/10" onClick={closeModal} />
         
         <div 
-          className={`relative w-full max-w-md rounded-[2.5rem] p-8 md:p-10 transform transition-all duration-300 ${modalStyle} ${
-            activeModal ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'
+          className={`relative w-full max-w-md rounded-[2.5rem] p-8 md:p-10 transform transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${modalStyle} ${
+            activeModal ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'
           }`}
         >
           <button 

@@ -84,6 +84,9 @@ export const Navbar: React.FC = () => {
     // Desktop Nav - Enhanced Liquid: Higher saturation, clear highlights
     const liquidDesktop = `bg-white/10 backdrop-blur-[20px] backdrop-saturate-[200%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] ${gpuFix}`;
     
+    // Desktop Dropdown - More blur and slightly more opacity for readability
+    const liquidDropdown = `bg-white/60 backdrop-blur-[60px] backdrop-saturate-[220%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] ${gpuFix}`;
+    
     // Mobile Menu - ENHANCED Liquid Effect:
     // 1. Lower opacity (white/10) for more transparency
     // 2. Moderate Blur (30px) for clarity
@@ -101,7 +104,7 @@ export const Navbar: React.FC = () => {
         if (isScrolled) return `${liquidDesktop} border-b ${borderColor} shadow-sm`;
         return `bg-transparent border-b border-transparent`;
       }
-      if (type === 'dropdown') return `${liquidDesktop} border-b ${borderColor} shadow-[0_30px_60px_rgba(0,0,0,0.12)]`;
+      if (type === 'dropdown') return `${liquidDropdown} border-b ${borderColor} shadow-[0_30px_60px_rgba(0,0,0,0.12)]`;
       if (type === 'mobile') return `${liquidMobile}`;
     } else {
       const borderColor = 'border-gray-200';
@@ -138,8 +141,8 @@ export const Navbar: React.FC = () => {
 
   // Modal Style
   const modalStyle = visualEffect === 'liquid'
-    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] transform-gpu border border-white/30'
-    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100 transform-gpu';
+    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 will-change-[backdrop-filter,transform,opacity]'
+    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100 will-change-[backdrop-filter,transform,opacity]';
 
   return (
     <>
@@ -293,13 +296,13 @@ export const Navbar: React.FC = () => {
         }`}
       >
         <div className="absolute inset-0 bg-black/10" onClick={() => setShowSupportModal(false)} />
-        <div className={`relative w-full max-w-sm rounded-[2rem] p-8 text-center transition-all duration-300 transform ${modalStyle} ${showSupportModal ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+        <div className={`relative w-full max-w-xl rounded-[2rem] p-8 text-center transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${modalStyle} ${showSupportModal ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
            <button onClick={() => setShowSupportModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-black/5 hover:bg-black/10">
              <X size={18} />
            </button>
            <h3 className="text-2xl font-bold text-gray-900 mb-2">感谢支持</h3>
-           <div className="bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-48 h-48">
-              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" className="w-full h-full object-cover rounded-lg" alt="QR" />
+           <div className="bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full">
+              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" className="w-full h-auto rounded-lg" alt="QR" />
            </div>
            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">WeChat Pay</p>
         </div>
@@ -312,7 +315,7 @@ export const Navbar: React.FC = () => {
         }`}
       >
         <div className="absolute inset-0 bg-black/10" onClick={() => setShowSettingsModal(false)} />
-        <div className={`relative w-full max-w-sm rounded-[2rem] p-8 text-center transition-all duration-300 transform ${modalStyle} ${showSettingsModal ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+        <div className={`relative w-full max-w-sm rounded-[2rem] p-8 text-center transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${modalStyle} ${showSettingsModal ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
            <button onClick={() => setShowSettingsModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-black/5 hover:bg-black/10">
              <X size={18} />
            </button>
