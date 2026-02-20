@@ -91,6 +91,7 @@ export const Card: React.FC<ProductCardProps> = ({
           alt={title} 
           loading="lazy"
           decoding="async"
+          referrerPolicy="no-referrer"
           className="w-full h-full object-cover transform-gpu transition-transform duration-[1.5s] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-110 group-active:scale-105 will-change-transform"
         />
         <div className={`absolute inset-0 bg-gradient-to-t ${
