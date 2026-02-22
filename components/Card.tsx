@@ -73,16 +73,25 @@ export const Card: React.FC<ProductCardProps> = ({
       rel="noopener noreferrer"
       onClick={handleClick}
       onContextMenu={(e) => e.preventDefault()}
+      draggable="false"
       className={`group relative isolate overflow-hidden rounded-[2.5rem] transform-gpu will-change-transform 
-        transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] 
-        hover:-translate-y-3 hover:scale-[1.02] hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)]
-        active:-translate-y-2 active:scale-[1.01] active:shadow-2xl active:duration-150
+        transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+        
+        /* Desktop Hover - Only apply when device supports hover to prevent mobile stickiness */
+        md:hover:-translate-y-3 md:hover:scale-[1.02] md:hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)]
+        
+        /* Active effect - Subtle press down, stable for mobile */
+        active:scale-[0.98] active:translate-y-0 active:shadow-inner active:duration-75
+        
         ${size === 'wide' ? 'md:col-span-2' : 'col-span-1'}
         ${getGlassClasses()}
         h-[420px] md:h-[500px] flex flex-col cursor-pointer
-        touch-callout-none select-none
+        touch-manipulation select-none
       `}
-      style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
+      style={{ 
+        WebkitMaskImage: '-webkit-radial-gradient(white, black)',
+        WebkitTouchCallout: 'none' // Disable Safari long-press menu
+      }}
     >
       {/* Background Image Area */}
       {/* Liquid needs mix-blend to look integrated/wet. Blur needs natural colors. */}
@@ -92,6 +101,7 @@ export const Card: React.FC<ProductCardProps> = ({
           alt={title} 
           loading="lazy"
           decoding="async"
+          draggable="false"
           className="w-full h-full object-cover transform-gpu transition-transform duration-[1.5s] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-110 group-active:scale-105 will-change-transform"
         />
         <div className={`absolute inset-0 bg-gradient-to-t ${

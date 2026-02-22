@@ -77,44 +77,53 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  // Unified Glass Style Configuration
   const getGlassStyle = (type: 'nav' | 'dropdown' | 'mobile') => {
-    // Base GPU acceleration to prevent flickering
     const gpuFix = 'transform-gpu backface-hidden';
+    
+    // 1. Liquid Glass (The requested effect)
+    // High saturation, strong blur, subtle transparency, glossy highlights
+    const liquidStyle = `
+      bg-white/10 
+      backdrop-blur-[50px] 
+      backdrop-saturate-[200%] 
+      shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)]
+      ${gpuFix}
+    `;
 
-    // Desktop Nav - Enhanced Liquid: Higher saturation, clear highlights
-    const liquidDesktop = `bg-white/10 backdrop-blur-[20px] backdrop-saturate-[200%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] ${gpuFix}`;
-    
-    // Desktop Dropdown - More blur and slightly more opacity for readability
-    const liquidDropdown = `bg-white/60 backdrop-blur-[60px] backdrop-saturate-[220%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] ${gpuFix}`;
-    
-    // Mobile Menu - ENHANCED Liquid Effect:
-    // 1. Lower opacity (white/10) for more transparency
-    // 2. Moderate Blur (30px) for clarity
-    // 3. High Saturation (250%)
-    // 4. Glossy highlights
-    const liquidMobile = `bg-white/20 backdrop-blur-[40px] backdrop-saturate-[250%] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1),0_30px_100px_rgba(0,0,0,0.3)] border-b border-white/40 ${gpuFix}`; 
-    
-    // Standard Blur Fallback
-    const blurConfig = `bg-white/98 backdrop-blur-2xl ${gpuFix}`;
+    // 2. Standard Blur (Fallback)
+    const blurStyle = `
+      bg-white/80 
+      backdrop-blur-xl 
+      border-b border-gray-200 
+      ${gpuFix}
+    `;
 
     if (visualEffect === 'liquid') {
       const borderColor = 'border-white/30';
       if (type === 'nav') {
-        if (isDropdownOpen) return `${liquidDesktop} border-b border-transparent shadow-none`;
-        if (isScrolled) return `${liquidDesktop} border-b ${borderColor} shadow-sm`;
+        // Navbar specific adjustments
+        if (isDropdownOpen) return `${liquidStyle} border-b border-transparent shadow-none`;
+        if (isScrolled) return `${liquidStyle} border-b ${borderColor} shadow-sm`;
         return `bg-transparent border-b border-transparent`;
       }
-      if (type === 'dropdown') return `${liquidDropdown} border-b ${borderColor} shadow-[0_40px_80px_rgba(0,0,0,0.2)]`;
-      if (type === 'mobile') return `${liquidMobile}`;
+      if (type === 'dropdown') {
+        // Dropdown matches navbar exactly
+        return `${liquidStyle} border-t border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.1)]`;
+      }
+      if (type === 'mobile') {
+        return `${liquidStyle} border-b border-white/20`;
+      }
     } else {
+      // Blur effect fallback
       const borderColor = 'border-gray-200';
       if (type === 'nav') {
-        if (isDropdownOpen) return `${blurConfig} border-b border-transparent shadow-none`;
-        if (isScrolled) return `${blurConfig} border-b ${borderColor} shadow-sm`;
+        if (isDropdownOpen) return `${blurStyle} border-transparent shadow-none`;
+        if (isScrolled) return `${blurStyle} shadow-sm`;
         return `bg-white/60 backdrop-blur-md border-b border-transparent`;
       }
-      if (type === 'dropdown') return `${blurConfig} border-b ${borderColor} shadow-[0_40px_80px_rgba(0,0,0,0.15)]`;
-      if (type === 'mobile') return `${blurConfig} border-b ${borderColor}`;
+      if (type === 'dropdown') return `${blurStyle} border-b ${borderColor} shadow-[0_40px_80px_rgba(0,0,0,0.15)]`;
+      if (type === 'mobile') return `${blurStyle} border-b ${borderColor}`;
     }
     return '';
   };
@@ -194,10 +203,13 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Dropdown */}
         <div 
-          className={`absolute top-full left-0 w-full overflow-hidden transition-all duration-300 ${getGlassStyle('dropdown')} ${
-            activeDropdown !== null ? 'opacity-100 visible h-auto border-t border-white/20' : 'opacity-0 invisible h-0 border-none'
+          className={`absolute top-full left-0 w-full overflow-hidden transition-all duration-300 z-10 ${getGlassStyle('dropdown')} ${
+            activeDropdown !== null ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 border-none'
           }`}
         >
+          {/* Extra Blur Layer for enhanced depth */}
+          <div className="absolute inset-0 w-full h-full bg-white/10 backdrop-blur-[30px] -z-10" />
+
           <div className="max-w-7xl mx-auto px-6 py-10">
             {activeDropdown !== null && (
               <div className="grid grid-cols-3 gap-12 animate-fade-in">
