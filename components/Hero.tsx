@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
+import { useTheme } from '../App';
 
 const words = [
   { text: 'Hello', lang: 'en' },
@@ -13,6 +14,7 @@ const words = [
 
 export const Hero: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { visualEffect } = useTheme();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -26,7 +28,7 @@ export const Hero: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden bg-[#f5f5f7]"
+      className={`relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden transition-colors duration-500 ${visualEffect === 'cyberpunk' ? 'bg-[#050505]' : 'bg-[#f5f5f7]'}`}
     >
       <div className="relative h-48 w-full flex justify-center items-center">
         {words.map((word, index) => (
@@ -42,9 +44,12 @@ export const Hero: React.FC = () => {
               fontFamily: '"SF Pro Rounded", "Arial Rounded MT Bold", "Nunito", "Varela Round", sans-serif',
               fontWeight: 900, // Heavy weight for that "Hello" look
               fontSize: ['cn', 'jp', 'kr'].includes(word.lang) ? 'clamp(4rem, 15vw, 8rem)' : 'clamp(5rem, 18vw, 10rem)',
-              background: 'linear-gradient(180deg, #1a1a1a 0%, #4a4a4a 100%)',
+              background: visualEffect === 'cyberpunk' 
+                ? 'linear-gradient(180deg, #22d3ee 0%, #3b82f6 100%)' 
+                : 'linear-gradient(180deg, #1a1a1a 0%, #4a4a4a 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              textShadow: visualEffect === 'cyberpunk' ? '0 0 30px rgba(34, 211, 238, 0.5)' : 'none',
               lineHeight: 1.2,
               letterSpacing: '-0.02em'
             }}
@@ -57,7 +62,7 @@ export const Hero: React.FC = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 0.8, y: 0 }}
         transition={{ delay: 0.5, duration: 0.8 }}
-        className="mt-8 text-xs font-semibold tracking-[0.3em] text-gray-400 uppercase"
+        className={`mt-8 text-xs font-semibold tracking-[0.3em] uppercase ${visualEffect === 'cyberpunk' ? 'text-cyan-500/70 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]' : 'text-gray-400'}`}
       >
         Simple . Pure . Powerful
       </motion.p>

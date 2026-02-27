@@ -24,7 +24,7 @@ export interface ProductCardProps {
   onToast?: () => void;
 }
 
-export type VisualEffect = 'liquid' | 'blur';
+export type VisualEffect = 'liquid' | 'blur' | 'cyberpunk';
 
 export interface ThemeContextType {
   visualEffect: VisualEffect;

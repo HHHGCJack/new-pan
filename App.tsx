@@ -21,9 +21,14 @@ const Toast = ({ message, visible }: { message: string; visible: boolean }) => {
   const { visualEffect } = useTheme();
   
   // Dynamic styles based on theme - Enhanced Liquid Glass with Glossy Highlights
-  const styleClass = visualEffect === 'liquid' 
-    ? 'bg-white/15 backdrop-blur-[20px] backdrop-saturate-[200%] border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.1),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.2)]'
-    : 'bg-white/95 backdrop-blur-xl border-gray-200 shadow-xl';
+  let styleClass = '';
+  if (visualEffect === 'liquid') {
+    styleClass = 'bg-white/15 backdrop-blur-[20px] backdrop-saturate-[200%] border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.1),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.2)]';
+  } else if (visualEffect === 'cyberpunk') {
+    styleClass = 'bg-black/80 backdrop-blur-xl border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.5),_inset_0_0_10px_rgba(6,182,212,0.2)] text-cyan-400';
+  } else {
+    styleClass = 'bg-white/95 backdrop-blur-xl border-gray-200 shadow-xl';
+  }
 
   return (
     <div 
@@ -36,8 +41,8 @@ const Toast = ({ message, visible }: { message: string; visible: boolean }) => {
          {visualEffect === 'liquid' && (
            <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent h-1/2 pointer-events-none" />
          )}
-         <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)] relative z-10"></span>
-         <span className="text-sm font-semibold text-gray-900 tracking-wide relative z-10">{message}</span>
+         <span className={`w-2 h-2 rounded-full animate-pulse relative z-10 ${visualEffect === 'cyberpunk' ? 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]' : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]'}`}></span>
+         <span className={`text-sm font-semibold tracking-wide relative z-10 ${visualEffect === 'cyberpunk' ? 'text-cyan-100' : 'text-gray-900'}`}>{message}</span>
       </div>
     </div>
   );
@@ -60,7 +65,7 @@ function App() {
 
   return (
     <ThemeContext.Provider value={{ visualEffect, setVisualEffect, showToast }}>
-      <div className="min-h-screen bg-[#f5f5f7] flex flex-col font-sans selection:bg-black selection:text-white">
+      <div className={`min-h-screen flex flex-col font-sans selection:bg-black selection:text-white transition-colors duration-500 ${visualEffect === 'cyberpunk' ? 'bg-[#050505] selection:bg-cyan-500 selection:text-black' : 'bg-[#f5f5f7]'}`}>
         <Navbar />
         <Toast message={toastMessage} visible={toastVisible} />
         

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Settings, Zap, Droplets } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Settings, Zap, Droplets, Monitor } from 'lucide-react';
 import { useTheme } from '../App';
 
 const navData = [
@@ -99,6 +99,16 @@ export const Navbar: React.FC = () => {
       ${gpuFix}
     `;
 
+    // 3. Cyberpunk Style
+    const cyberpunkStyle = `
+      bg-black/80
+      backdrop-blur-xl
+      backdrop-saturate-[150%]
+      border-cyan-500/30
+      shadow-[0_0_15px_rgba(6,182,212,0.15),_inset_0_0_20px_rgba(6,182,212,0.05)]
+      ${gpuFix}
+    `;
+
     if (visualEffect === 'liquid') {
       const borderColor = 'border-white/30';
       if (type === 'nav') {
@@ -108,12 +118,21 @@ export const Navbar: React.FC = () => {
         return `bg-transparent border-b border-transparent`;
       }
       if (type === 'dropdown') {
-        // Dropdown matches navbar exactly
-        return `${liquidStyle} border-t border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.1)]`;
+        // Dropdown matches navbar exactly but with EXTRA shadow and blur as requested
+        return `${liquidStyle} border-t border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.2),_0_10px_30px_rgba(0,0,0,0.1)] backdrop-blur-[60px]`;
       }
       if (type === 'mobile') {
         return `${liquidStyle} border-b border-white/20`;
       }
+    } else if (visualEffect === 'cyberpunk') {
+      const borderColor = 'border-cyan-500/30';
+      if (type === 'nav') {
+        if (isDropdownOpen) return `${cyberpunkStyle} border-b border-transparent shadow-none`;
+        if (isScrolled) return `${cyberpunkStyle} border-b ${borderColor}`;
+        return `bg-black/60 backdrop-blur-md border-b border-transparent`;
+      }
+      if (type === 'dropdown') return `${cyberpunkStyle} border-t ${borderColor} shadow-[0_20px_50px_rgba(6,182,212,0.15)]`;
+      if (type === 'mobile') return `${cyberpunkStyle} border-b ${borderColor}`;
     } else {
       // Blur effect fallback
       const borderColor = 'border-gray-200';
@@ -130,11 +149,17 @@ export const Navbar: React.FC = () => {
 
   // Styles for the "Pill" hover effect in navbar
   const getNavPillStyle = (isActive: boolean) => {
-    if (!isActive) return 'text-gray-600 hover:text-black'; // Basic state
+    if (!isActive) {
+      if (visualEffect === 'cyberpunk') return 'text-cyan-400/70 hover:text-cyan-400 hover:drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]';
+      return 'text-gray-600 hover:text-black';
+    }
     
     if (visualEffect === 'liquid') {
       // Liquid Pill: Glossy, inner shadow, border
       return 'text-black bg-white/20 backdrop-blur-md border border-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.08)]';
+    } else if (visualEffect === 'cyberpunk') {
+      // Cyberpunk Pill: Neon glow
+      return 'text-cyan-50 bg-cyan-500/20 border border-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.3),_inset_0_0_5px_rgba(34,211,238,0.2)]';
     }
     // Standard Pill
     return 'text-black bg-black/5';
@@ -144,14 +169,21 @@ export const Navbar: React.FC = () => {
   const getTextEffect = () => {
     if (visualEffect === 'liquid') {
       return 'drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] text-shadow-sm';
+    } else if (visualEffect === 'cyberpunk') {
+      return 'text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.6)]';
     }
     return '';
   };
 
   // Modal Style
-  const modalStyle = visualEffect === 'liquid'
-    ? 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 will-change-[backdrop-filter,transform,opacity]'
-    : 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100 will-change-[backdrop-filter,transform,opacity]';
+  let modalStyle = '';
+  if (visualEffect === 'liquid') {
+    modalStyle = 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 will-change-[backdrop-filter,transform,opacity]';
+  } else if (visualEffect === 'cyberpunk') {
+    modalStyle = 'bg-black/90 backdrop-blur-xl border border-cyan-500/50 shadow-[0_0_50px_rgba(6,182,212,0.2),_inset_0_0_20px_rgba(6,182,212,0.1)] text-cyan-50 will-change-[backdrop-filter,transform,opacity]';
+  } else {
+    modalStyle = 'bg-white/95 backdrop-blur-2xl shadow-2xl border border-gray-100 will-change-[backdrop-filter,transform,opacity]';
+  }
 
   return (
     <>
@@ -162,7 +194,7 @@ export const Navbar: React.FC = () => {
         onMouseLeave={() => setActiveDropdown(null)}
       >
         <div className="max-w-7xl mx-auto px-6 h-14 md:h-16 flex items-center justify-between relative z-50">
-          <a href="#" className={`text-xl font-bold tracking-tight text-gray-900 relative ${getTextEffect()}`}>
+          <a href="#" className={`text-xl font-bold tracking-tight relative ${getTextEffect()} ${visualEffect === 'cyberpunk' ? 'text-cyan-400' : 'text-gray-900'}`}>
             G胖儿GongPan
           </a>
 
@@ -184,7 +216,13 @@ export const Navbar: React.FC = () => {
             <div className="h-full flex items-center ml-2">
               <button 
                 onClick={handleSupportClick}
-                className={`px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full ${visualEffect === 'liquid' ? 'text-gray-900 bg-white/30 border border-white/50 hover:bg-white/50 shadow-[inset_0_0_10px_rgba(255,255,255,0.5)]' : 'text-white bg-black hover:bg-gray-800'}`}
+                className={`px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full ${
+                  visualEffect === 'liquid' 
+                    ? 'text-gray-900 bg-white/30 border border-white/50 hover:bg-white/50 shadow-[inset_0_0_10px_rgba(255,255,255,0.5)]' 
+                    : visualEffect === 'cyberpunk'
+                      ? 'text-black bg-cyan-400 border border-cyan-300 hover:bg-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.6)]'
+                      : 'text-white bg-black hover:bg-gray-800'
+                }`}
               >
                 支持我
               </button>
@@ -193,7 +231,7 @@ export const Navbar: React.FC = () => {
 
           <div className="md:hidden flex items-center justify-center -mr-2">
             <button 
-              className="p-2 text-gray-800 rounded-full active:bg-black/5"
+              className={`p-2 rounded-full active:bg-black/5 ${visualEffect === 'cyberpunk' ? 'text-cyan-400' : 'text-gray-800'}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -208,14 +246,14 @@ export const Navbar: React.FC = () => {
           }`}
         >
           {/* Extra Blur Layer for enhanced depth */}
-          <div className="absolute inset-0 w-full h-full bg-white/10 backdrop-blur-[30px] -z-10" />
+          <div className={`absolute inset-0 w-full h-full -z-10 ${visualEffect === 'cyberpunk' ? 'bg-black/40 backdrop-blur-[20px]' : 'bg-white/10 backdrop-blur-[30px]'}`} />
 
           <div className="max-w-7xl mx-auto px-6 py-10">
             {activeDropdown !== null && (
               <div className="grid grid-cols-3 gap-12 animate-fade-in">
-                  <div className="col-span-1 border-r border-gray-200/20 pr-8">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{navData[activeDropdown].name}</h3>
-                    <p className="text-sm text-gray-500">精选优质资源</p>
+                  <div className={`col-span-1 border-r pr-8 ${visualEffect === 'cyberpunk' ? 'border-cyan-500/20' : 'border-gray-200/20'}`}>
+                    <h3 className={`text-2xl font-bold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-50 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]' : 'text-gray-900'}`}>{navData[activeDropdown].name}</h3>
+                    <p className={`text-sm ${visualEffect === 'cyberpunk' ? 'text-cyan-400/60' : 'text-gray-500'}`}>精选优质资源</p>
                   </div>
                   <div className="col-span-2 grid grid-cols-2 gap-6">
                     {navData[activeDropdown].items.map((subItem) => (
@@ -227,14 +265,16 @@ export const Navbar: React.FC = () => {
                         className={`group block p-4 rounded-2xl transition-all duration-200 ${
                             visualEffect === 'liquid' 
                             ? 'hover:bg-white/30 hover:shadow-[inset_0_0_10px_rgba(255,255,255,0.2)]' 
-                            : 'hover:bg-gray-50'
+                            : visualEffect === 'cyberpunk'
+                              ? 'hover:bg-cyan-900/20 hover:border-cyan-500/30 border border-transparent hover:shadow-[0_0_15px_rgba(6,182,212,0.1)]'
+                              : 'hover:bg-gray-50'
                         }`}
                       >
                         <div className="flex items-center mb-1">
-                          <span className="font-semibold text-gray-900">{subItem.title}</span>
-                          {subItem.title === '实验室' ? <Settings size={14} className="ml-2" /> : <ExternalLink size={14} className="ml-2 opacity-50" />}
+                          <span className={`font-semibold ${visualEffect === 'cyberpunk' ? 'text-cyan-100 group-hover:text-cyan-300' : 'text-gray-900'}`}>{subItem.title}</span>
+                          {subItem.title === '实验室' ? <Settings size={14} className={`ml-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-400' : ''}`} /> : <ExternalLink size={14} className={`ml-2 opacity-50 ${visualEffect === 'cyberpunk' ? 'text-cyan-400' : ''}`} />}
                         </div>
-                        <p className="text-xs text-gray-500">{subItem.desc}</p>
+                        <p className={`text-xs ${visualEffect === 'cyberpunk' ? 'text-cyan-400/60 group-hover:text-cyan-400/80' : 'text-gray-500'}`}>{subItem.desc}</p>
                       </a>
                     ))}
                   </div>
@@ -255,10 +295,10 @@ export const Navbar: React.FC = () => {
             <div key={link.name} className="overflow-hidden">
               <button 
                 onClick={() => toggleMobileItem(idx)}
-                className="w-full flex items-center justify-between py-4 border-b border-gray-500/10"
+                className={`w-full flex items-center justify-between py-4 border-b ${visualEffect === 'cyberpunk' ? 'border-cyan-500/20 text-cyan-100' : 'border-gray-500/10 text-gray-900'}`}
               >
-                <span className="text-lg font-bold text-gray-900">{link.name}</span>
-                <ChevronDown className={`transition-transform duration-300 ${mobileExpandedIndex === idx ? 'rotate-180' : ''}`} size={18} />
+                <span className="text-lg font-bold">{link.name}</span>
+                <ChevronDown className={`transition-transform duration-300 ${mobileExpandedIndex === idx ? 'rotate-180' : ''} ${visualEffect === 'cyberpunk' ? 'text-cyan-400' : ''}`} size={18} />
               </button>
               
               {/* Animated Sub-menu using Grid for smooth height transition */}
@@ -277,12 +317,14 @@ export const Navbar: React.FC = () => {
                         className={`block p-4 rounded-2xl transition-all duration-300 ${
                           visualEffect === 'liquid'
                             ? 'bg-white/40 border border-white/60 shadow-[inset_0_1px_10px_rgba(255,255,255,0.8),0_10px_20px_rgba(0,0,0,0.1)] active:bg-white/60 active:scale-[0.98] active:shadow-inner'
-                            : 'bg-white/40 border border-gray-200 shadow-sm active:bg-gray-100 active:scale-[0.98]'
+                            : visualEffect === 'cyberpunk'
+                              ? 'bg-cyan-900/20 border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.1)] active:bg-cyan-900/40 active:scale-[0.98]'
+                              : 'bg-white/40 border border-gray-200 shadow-sm active:bg-gray-100 active:scale-[0.98]'
                         }`}
                       >
-                        <div className="font-medium text-sm text-gray-900 flex items-center justify-between">
+                        <div className={`font-medium text-sm flex items-center justify-between ${visualEffect === 'cyberpunk' ? 'text-cyan-100' : 'text-gray-900'}`}>
                           {sub.title}
-                          <ChevronRight size={14} className="text-gray-400" />
+                          <ChevronRight size={14} className={visualEffect === 'cyberpunk' ? 'text-cyan-500' : 'text-gray-400'} />
                         </div>
                       </a>
                     ))}
@@ -293,10 +335,10 @@ export const Navbar: React.FC = () => {
           ))}
           <button 
             onClick={handleSupportClick}
-            className="w-full flex items-center justify-between py-4 border-b border-gray-500/10 text-left"
+            className={`w-full flex items-center justify-between py-4 border-b text-left ${visualEffect === 'cyberpunk' ? 'border-cyan-500/20 text-cyan-100' : 'border-gray-500/10 text-gray-900'}`}
           >
-             <span className="text-lg font-bold text-gray-900">支持我</span>
-             <ChevronRight className="text-gray-500" size={18} />
+             <span className="text-lg font-bold">支持我</span>
+             <ChevronRight className={visualEffect === 'cyberpunk' ? 'text-cyan-500' : 'text-gray-500'} size={18} />
           </button>
         </div>
       </div>
@@ -309,10 +351,10 @@ export const Navbar: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black/10" onClick={() => setShowSupportModal(false)} />
         <div className={`relative w-full max-w-xl rounded-[2rem] p-8 text-center transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${modalStyle} ${showSupportModal ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
-           <button onClick={() => setShowSupportModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-black/5 hover:bg-black/10">
+           <button onClick={() => setShowSupportModal(false)} className={`absolute top-4 right-4 p-2 rounded-full ${visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400' : 'bg-black/5 hover:bg-black/10'}`}>
              <X size={18} />
            </button>
-           <h3 className="text-2xl font-bold text-gray-900 mb-2">感谢支持</h3>
+           <h3 className={`text-2xl font-bold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-50' : 'text-gray-900'}`}>感谢支持</h3>
            <div className="bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full">
               <img src="https://images.weserv.nl/?url=img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" className="w-full h-auto rounded-lg" alt="QR" />
            </div>
@@ -328,29 +370,51 @@ export const Navbar: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black/10" onClick={() => setShowSettingsModal(false)} />
         <div className={`relative w-full max-w-sm rounded-[2rem] p-8 text-center transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${modalStyle} ${showSettingsModal ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
-           <button onClick={() => setShowSettingsModal(false)} className="absolute top-4 right-4 p-2 rounded-full bg-black/5 hover:bg-black/10">
+           <button onClick={() => setShowSettingsModal(false)} className={`absolute top-4 right-4 p-2 rounded-full ${visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 hover:bg-cyan-900/50 text-cyan-400' : 'bg-black/5 hover:bg-black/10'}`}>
              <X size={18} />
            </button>
-           <h3 className="text-2xl font-bold text-gray-900 mb-6">实验室设置</h3>
+           <h3 className={`text-2xl font-bold mb-6 ${visualEffect === 'cyberpunk' ? 'text-cyan-50' : 'text-gray-900'}`}>实验室设置</h3>
            
-           <div className="bg-gray-100/50 p-1 rounded-xl flex relative mb-4">
-              <button onClick={() => setVisualEffect('liquid')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'liquid' ? 'text-black' : 'text-gray-500'}`}>
-                液态玻璃
+           <div className={`p-1 rounded-xl flex relative mb-4 ${visualEffect === 'cyberpunk' ? 'bg-black/50 border border-cyan-500/30' : 'bg-gray-100/50'}`}>
+              <button onClick={() => setVisualEffect('liquid')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'liquid' ? 'text-black' : visualEffect === 'cyberpunk' ? 'text-cyan-500/50 hover:text-cyan-400' : 'text-gray-500'}`}>
+                液态
               </button>
-              <button onClick={() => setVisualEffect('blur')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'blur' ? 'text-black' : 'text-gray-500'}`}>
-                高斯模糊
+              <button onClick={() => setVisualEffect('blur')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'blur' ? 'text-black' : visualEffect === 'cyberpunk' ? 'text-cyan-500/50 hover:text-cyan-400' : 'text-gray-500'}`}>
+                模糊
               </button>
-              <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-transform duration-300 ${visualEffect === 'blur' ? 'translate-x-[100%] translate-x-2' : 'translate-x-0'}`} />
+              <button onClick={() => setVisualEffect('cyberpunk')} className={`flex-1 py-3 rounded-lg text-sm font-bold relative z-10 transition-colors ${visualEffect === 'cyberpunk' ? 'text-cyan-50 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]' : 'text-gray-500'}`}>
+                赛博
+              </button>
+              
+              {/* Sliding Indicator */}
+              <div className={`absolute top-1 bottom-1 w-[calc(33.33%-4px)] rounded-lg shadow-sm transition-transform duration-300 ${
+                visualEffect === 'liquid' 
+                  ? 'bg-white translate-x-0' 
+                  : visualEffect === 'blur' 
+                    ? 'bg-white translate-x-[100%] translate-x-1' 
+                    : 'bg-cyan-600 translate-x-[200%] translate-x-2 shadow-[0_0_10px_#0891b2]'
+              }`} />
            </div>
            
            {/* Added Explanation Text */}
-           <div className={`text-left p-4 rounded-xl border transition-colors duration-300 ${visualEffect === 'liquid' ? 'bg-blue-50/50 border-blue-100/50 text-blue-900' : 'bg-gray-50 border-gray-100 text-gray-600'}`}>
+           <div className={`text-left p-4 rounded-xl border transition-colors duration-300 ${
+             visualEffect === 'liquid' 
+               ? 'bg-blue-50/50 border-blue-100/50 text-blue-900' 
+               : visualEffect === 'cyberpunk'
+                 ? 'bg-cyan-950/30 border-cyan-500/30 text-cyan-100'
+                 : 'bg-gray-50 border-gray-100 text-gray-600'
+           }`}>
               <div className="flex items-start">
-                 {visualEffect === 'liquid' ? <Droplets size={16} className="mt-0.5 mr-2 text-blue-500 shrink-0" /> : <Zap size={16} className="mt-0.5 mr-2 text-gray-400 shrink-0" />}
+                 {visualEffect === 'liquid' && <Droplets size={16} className="mt-0.5 mr-2 text-blue-500 shrink-0" />}
+                 {visualEffect === 'blur' && <Zap size={16} className="mt-0.5 mr-2 text-gray-400 shrink-0" />}
+                 {visualEffect === 'cyberpunk' && <Monitor size={16} className="mt-0.5 mr-2 text-cyan-400 shrink-0" />}
+                 
                  <p className="text-xs leading-relaxed font-medium">
                    {visualEffect === 'liquid' 
                      ? '液态玻璃：模拟高透光介质，具有强烈的高光折射、低模糊度和鲜明的色彩通透感。'
-                     : '高斯模糊：经典的磨砂玻璃质感，高不透明度，光影柔和，减少视觉干扰。'}
+                     : visualEffect === 'cyberpunk'
+                       ? '赛博朋克：高对比度霓虹风格，深色背景搭配发光边缘，营造未来科技感。'
+                       : '高斯模糊：经典的磨砂玻璃质感，高不透明度，光影柔和，减少视觉干扰。'}
                  </p>
               </div>
            </div>
