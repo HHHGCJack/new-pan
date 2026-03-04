@@ -56,6 +56,7 @@ export const ReadingPro: React.FC = () => {
                 <img 
                   src={book.coverUrl} 
                   alt={book.title} 
+                  referrerPolicy="no-referrer"
                   className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${visualEffect === 'cyberpunk' ? 'grayscale contrast-125' : ''}`}
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t ${visualEffect === 'cyberpunk' ? 'from-black via-black/40 to-transparent' : 'from-black/60 via-black/10 to-transparent'}`}></div>

@@ -89,12 +89,18 @@ async function startServer() {
       appType: "spa",
     });
     app.use(vite.middlewares);
-    
+
     // Fallback for SPA routing in development
     app.use('*', async (req, res, next) => {
       if (req.originalUrl.startsWith('/api')) {
         return next();
       }
+      
+      // Only handle GET requests that accept HTML
+      if (req.method !== 'GET' || !req.headers.accept?.includes('text/html')) {
+        return next();
+      }
+
       try {
         const url = req.originalUrl;
         let template = fs.readFileSync(path.resolve('index.html'), 'utf-8');

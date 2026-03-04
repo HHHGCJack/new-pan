@@ -370,7 +370,7 @@ export const Navbar: React.FC = () => {
            </button>
            <h3 className={`text-2xl font-bold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-50' : 'text-gray-900'}`}>感谢支持</h3>
            <div className="bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full">
-              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" className="w-full h-auto rounded-lg" alt="QR" />
+              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-auto rounded-lg" alt="QR" />
            </div>
            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">WeChat Pay</p>
         </div>
