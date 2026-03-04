@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../App';
 import { Upload, FileText, Image as ImageIcon, Loader2, Lock } from 'lucide-react';
+import { supabase } from '../src/lib/supabase';
 
 export const Admin: React.FC = () => {
   const { visualEffect } = useTheme();
@@ -30,38 +31,67 @@ export const Admin: React.FC = () => {
       return;
     }
 
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      setMessage('系统未配置 Supabase 环境变量，无法上传。请参考提示配置。');
+      return;
+    }
+
     setIsUploading(true);
     setMessage('');
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('cover', cover);
-    formData.append('pdf', pdf);
-    formData.append('password', password);
-
     try {
-      const res = await fetch('/api/books', {
-        method: 'POST',
-        body: formData,
-      });
+      // 1. Upload Cover Image
+      const coverExt = cover.name.split('.').pop();
+      const coverName = `${Date.now()}-cover.${coverExt}`;
+      const { error: coverError } = await supabase.storage
+        .from('books-media')
+        .upload(coverName, cover);
+      
+      if (coverError) throw new Error(`封面上传失败: ${coverError.message}`);
+      
+      const { data: coverUrlData } = supabase.storage
+        .from('books-media')
+        .getPublicUrl(coverName);
 
-      if (res.ok) {
-        setMessage('图书上传成功！');
-        setTitle('');
-        setDescription('');
-        setCover(null);
-        setPdf(null);
-        // Reset file inputs
-        (document.getElementById('cover-upload') as HTMLInputElement).value = '';
-        (document.getElementById('pdf-upload') as HTMLInputElement).value = '';
-      } else {
-        const error = await res.json();
-        setMessage(`上传失败: ${error.error || '未知错误'}`);
-      }
-    } catch (err) {
+      // 2. Upload PDF File
+      const pdfExt = pdf.name.split('.').pop();
+      const pdfName = `${Date.now()}-pdf.${pdfExt}`;
+      const { error: pdfError } = await supabase.storage
+        .from('books-media')
+        .upload(pdfName, pdf);
+      
+      if (pdfError) throw new Error(`PDF上传失败: ${pdfError.message}`);
+
+      const { data: pdfUrlData } = supabase.storage
+        .from('books-media')
+        .getPublicUrl(pdfName);
+
+      // 3. Insert into Database
+      const { error: dbError } = await supabase
+        .from('books')
+        .insert([
+          { 
+            title, 
+            description, 
+            coverUrl: coverUrlData.publicUrl, 
+            pdfUrl: pdfUrlData.publicUrl 
+          }
+        ]);
+
+      if (dbError) throw new Error(`数据库保存失败: ${dbError.message}`);
+
+      setMessage('图书上传成功！');
+      setTitle('');
+      setDescription('');
+      setCover(null);
+      setPdf(null);
+      // Reset file inputs
+      (document.getElementById('cover-upload') as HTMLInputElement).value = '';
+      (document.getElementById('pdf-upload') as HTMLInputElement).value = '';
+      
+    } catch (err: any) {
       console.error(err);
-      setMessage('网络错误，上传失败。');
+      setMessage(err.message || '网络错误，上传失败。');
     } finally {
       setIsUploading(false);
     }

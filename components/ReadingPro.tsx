@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../App';
 import { BookOpen, X } from 'lucide-react';
+import { supabase } from '../src/lib/supabase';
 
 interface Book {
   id: string;
@@ -14,12 +15,32 @@ export const ReadingPro: React.FC = () => {
   const { visualEffect } = useTheme();
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/books')
-      .then(res => res.json())
-      .then(data => setBooks(data))
-      .catch(err => console.error("Error fetching books:", err));
+    const fetchBooks = async () => {
+      try {
+        if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+          console.warn('Supabase credentials missing. Showing empty state.');
+          setLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('books')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        if (data) setBooks(data);
+      } catch (err) {
+        console.error("Error fetching books:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
   }, []);
 
   const getGlassClasses = () => {
@@ -39,10 +60,15 @@ export const ReadingPro: React.FC = () => {
         <p className={`text-lg ${visualEffect === 'cyberpunk' ? 'text-cyan-100/70' : 'text-gray-600'}`}>深度解析国际顶级刊物，在线沉浸式阅读。</p>
       </div>
 
-      {books.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p className={`text-xl ${visualEffect === 'cyberpunk' ? 'text-cyan-100/50' : 'text-gray-500'}`}>加载中...</p>
+        </div>
+      ) : books.length === 0 ? (
         <div className="text-center py-20">
           <BookOpen className={`mx-auto w-16 h-16 mb-4 ${visualEffect === 'cyberpunk' ? 'text-cyan-500/50' : 'text-gray-300'}`} />
-          <p className={`text-xl ${visualEffect === 'cyberpunk' ? 'text-cyan-100/50' : 'text-gray-500'}`}>暂无图书，请前往后台上传。</p>
+          <p className={`text-xl ${visualEffect === 'cyberpunk' ? 'text-cyan-100/50' : 'text-gray-500'}`}>暂无图书，或未配置数据库连接。</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
