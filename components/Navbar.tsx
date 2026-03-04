@@ -82,12 +82,15 @@ export const Navbar: React.FC = () => {
     const gpuFix = 'transform-gpu backface-hidden';
     
     // 1. Liquid Glass (The requested effect)
-    // High saturation, strong blur, subtle transparency, glossy highlights
+    // High saturation, strong blur, subtle transparency, glossy highlights, slight distortion
     const liquidStyle = `
       bg-white/10 
-      backdrop-blur-[50px] 
+      bg-gradient-to-br from-white/40 via-white/5 to-white/20
+      backdrop-blur-[25px] 
       backdrop-saturate-[200%] 
-      shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)]
+      backdrop-contrast-[110%]
+      backdrop-brightness-[110%]
+      shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]
       ${gpuFix}
     `;
 
@@ -118,8 +121,8 @@ export const Navbar: React.FC = () => {
         return `bg-transparent border-b border-transparent`;
       }
       if (type === 'dropdown') {
-        // Dropdown matches navbar exactly but with EXTRA shadow and blur as requested
-        return `bg-white/50 backdrop-blur-[100px] backdrop-saturate-[250%] border-t border-white/60 shadow-[0_60px_120px_rgba(0,0,0,0.3),_0_20px_40px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,1)] ${gpuFix}`;
+        // Dropdown matches navbar exactly
+        return `${liquidStyle} border-t border-white/30 shadow-[0_50px_100px_rgba(0,0,0,0.2)]`;
       }
       if (type === 'mobile') {
         return `${liquidStyle} border-b border-white/20`;
@@ -246,7 +249,7 @@ export const Navbar: React.FC = () => {
           }`}
         >
           {/* Extra Blur Layer for enhanced depth */}
-          <div className={`absolute inset-0 w-full h-full -z-10 ${visualEffect === 'cyberpunk' ? 'bg-black/40 backdrop-blur-[20px]' : visualEffect === 'liquid' ? 'bg-gradient-to-b from-white/70 to-white/30 backdrop-blur-[120px] shadow-[inset_0_-20px_40px_rgba(255,255,255,0.5)]' : 'bg-white/10 backdrop-blur-[30px]'}`} />
+          <div className={`absolute inset-0 w-full h-full -z-10 ${visualEffect === 'cyberpunk' ? 'bg-black/40 backdrop-blur-[20px]' : 'bg-white/10 backdrop-blur-[30px]'}`} />
 
           <div className="max-w-7xl mx-auto px-6 py-10">
             {activeDropdown !== null && (

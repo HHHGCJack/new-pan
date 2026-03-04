@@ -26,13 +26,18 @@ export const Card: React.FC<ProductCardProps> = ({
   // 1. 卡片主体样式 (Main Card Container)
   const getGlassClasses = () => {
     if (isDark) {
+      if (visualEffect === 'liquid') {
+        return 'bg-black/40 bg-gradient-to-br from-white/10 via-transparent to-white/5 backdrop-blur-[20px] backdrop-saturate-[150%] backdrop-contrast-[110%] border border-white/20 text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_inset_0_1px_2px_rgba(255,255,255,0.3),_inset_0_-1px_2px_rgba(255,255,255,0.1)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)] hover:bg-black/50 hover:border-white/30 active:bg-black/60';
+      } else if (visualEffect === 'cyberpunk') {
+        return 'bg-black/80 backdrop-blur-xl border border-cyan-500/50 text-cyan-50 shadow-[0_0_20px_rgba(6,182,212,0.15),_inset_0_0_20px_rgba(6,182,212,0.05)] hover:shadow-[0_0_30px_rgba(6,182,212,0.3),_inset_0_0_30px_rgba(6,182,212,0.1)] hover:border-cyan-400 hover:bg-black/90 active:shadow-[0_0_15px_rgba(6,182,212,0.2)] active:border-cyan-500';
+      }
       return 'bg-black text-white shadow-2xl shadow-black/20';
     }
 
     if (visualEffect === 'liquid') {
-      // Liquid Glass: High transparency, Clearer Blur, Specular Highlights
+      // Liquid Glass: High transparency, Clearer Blur, Specular Highlights, Slight Distortion
       // "Wet" look: bg-white/10, backdrop-saturate-200, shiny border, inner specular highlights
-      return 'bg-white/10 backdrop-blur-[15px] backdrop-saturate-[200%] border border-white/40 text-gray-900 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] hover:shadow-[0_40px_80px_-20px_rgba(50,50,93,0.2)] hover:bg-white/15 hover:border-white/60 active:shadow-[0_20px_40px_-10px_rgba(50,50,93,0.15)] active:bg-white/20 active:border-white/80';
+      return 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[20px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border border-white/40 text-gray-900 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1),_inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)] hover:shadow-[0_40px_80px_-20px_rgba(50,50,93,0.2)] hover:bg-white/15 hover:border-white/60 active:shadow-[0_20px_40px_-10px_rgba(50,50,93,0.15)] active:bg-white/20 active:border-white/80';
     } else if (visualEffect === 'cyberpunk') {
       // Cyberpunk: Neon, Dark, High Contrast
       return 'bg-black/80 backdrop-blur-xl border border-cyan-500/50 text-cyan-50 shadow-[0_0_20px_rgba(6,182,212,0.15),_inset_0_0_20px_rgba(6,182,212,0.05)] hover:shadow-[0_0_30px_rgba(6,182,212,0.3),_inset_0_0_30px_rgba(6,182,212,0.1)] hover:border-cyan-400 hover:bg-black/90 active:shadow-[0_0_15px_rgba(6,182,212,0.2)] active:border-cyan-500';
@@ -45,14 +50,15 @@ export const Card: React.FC<ProductCardProps> = ({
 
   // 2. 标签样式 (Tag Styles)
   const getTagStyle = () => {
-    if (isDark) return 'bg-white/10 text-white border-white/20 group-hover:bg-white/20 group-active:bg-white/30';
-    
-    if (visualEffect === 'liquid') {
-      // Liquid Tag: Shiny, transparent, inset glow
-      return 'bg-white/20 text-gray-900 border-white/40 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] group-hover:bg-white/40 group-hover:border-white/60 group-active:bg-white/50 group-active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.8)]';
-    } else if (visualEffect === 'cyberpunk') {
+    if (visualEffect === 'cyberpunk') {
       // Cyberpunk Tag: Neon border, glow
       return 'bg-cyan-900/30 text-cyan-300 border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.2)] group-hover:bg-cyan-900/50 group-hover:border-cyan-400 group-hover:text-cyan-200 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]';
+    } else if (visualEffect === 'liquid') {
+      // Liquid Tag: Shiny, transparent, inset glow
+      if (isDark) {
+        return 'bg-white/10 text-white border-white/30 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] group-hover:bg-white/20 group-hover:border-white/50 group-active:bg-white/30 group-active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.6)]';
+      }
+      return 'bg-white/20 text-gray-900 border-white/40 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] group-hover:bg-white/40 group-hover:border-white/60 group-active:bg-white/50 group-active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.8)]';
     } else {
       // Blur Tag: Matte, solid feel, no shine
       return 'bg-gray-100/80 text-gray-600 border-transparent group-hover:bg-gray-200 group-active:bg-gray-300';
@@ -61,14 +67,15 @@ export const Card: React.FC<ProductCardProps> = ({
 
   // 3. 按钮样式 (Arrow/Lock Button Styles)
   const getButtonStyle = () => {
-    if (isDark) return 'bg-white/20 text-white hover:bg-white hover:text-black';
-
-    if (visualEffect === 'liquid') {
-      // Liquid Button: Shiny bubble look
-      return 'bg-white/20 text-black border border-white/40 backdrop-blur-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] hover:bg-white/40 hover:scale-110 active:scale-95 active:bg-white/60';
-    } else if (visualEffect === 'cyberpunk') {
+    if (visualEffect === 'cyberpunk') {
       // Cyberpunk Button: Neon circle
       return 'bg-cyan-900/30 text-cyan-400 border border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.2)] hover:bg-cyan-400 hover:text-black hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:scale-110 active:scale-95';
+    } else if (visualEffect === 'liquid') {
+      // Liquid Button: Shiny bubble look
+      if (isDark) {
+        return 'bg-white/10 text-white border border-white/30 backdrop-blur-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] hover:bg-white/30 hover:scale-110 active:scale-95 active:bg-white/40';
+      }
+      return 'bg-white/20 text-black border border-white/40 backdrop-blur-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] hover:bg-white/40 hover:scale-110 active:scale-95 active:bg-white/60';
     } else {
       // Blur Button: Matte gray circle
       return 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-black hover:scale-105 active:scale-95 active:bg-gray-300';
