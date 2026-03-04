@@ -32,6 +32,7 @@ export const Footer: React.FC = () => {
             <button onClick={() => setActiveModal('privacy')} className={`text-xs font-medium transition-colors ${visualEffect === 'cyberpunk' ? 'text-cyan-400/60 hover:text-cyan-400' : 'text-gray-500 hover:text-black'}`}>Privacy</button>
             <button onClick={() => setActiveModal('terms')} className={`text-xs font-medium transition-colors ${visualEffect === 'cyberpunk' ? 'text-cyan-400/60 hover:text-cyan-400' : 'text-gray-500 hover:text-black'}`}>Terms</button>
             <button onClick={() => setActiveModal('contact')} className={`text-xs font-medium transition-colors ${visualEffect === 'cyberpunk' ? 'text-cyan-400/60 hover:text-cyan-400' : 'text-gray-500 hover:text-black'}`}>Contact</button>
+            <a href="/admin" className={`text-xs font-medium transition-colors ${visualEffect === 'cyberpunk' ? 'text-cyan-400/60 hover:text-cyan-400' : 'text-gray-500 hover:text-black'}`}>Admin</a>
           </div>
         </div>
       </footer>

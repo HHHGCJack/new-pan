@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Lock } from 'lucide-react';
 import { ProductCardProps } from '../types';
 import { useTheme } from '../App';
@@ -7,6 +8,7 @@ export const Card: React.FC<ProductCardProps> = ({
   title, 
   description, 
   imageUrl, 
+  gradient,
   href, 
   tag, 
   theme = 'light', 
@@ -15,11 +17,15 @@ export const Card: React.FC<ProductCardProps> = ({
 }) => {
   const { visualEffect } = useTheme();
   const isDark = theme === 'dark';
+  const navigate = useNavigate();
 
   const handleClick = (e: React.MouseEvent) => {
     if (href === '#') {
       e.preventDefault();
       if (onToast) onToast();
+    } else if (href.startsWith('/')) {
+      e.preventDefault();
+      navigate(href);
     }
   };
 
@@ -112,14 +118,18 @@ export const Card: React.FC<ProductCardProps> = ({
       {/* Background Image Area */}
       {/* Liquid needs mix-blend to look integrated/wet. Blur needs natural colors. */}
       <div className={`absolute inset-0 z-0 overflow-hidden ${isDark ? 'opacity-60' : visualEffect === 'liquid' ? 'opacity-90 mix-blend-overlay' : visualEffect === 'cyberpunk' ? 'opacity-80 mix-blend-luminosity' : 'opacity-100'}`}>
-        <img 
-          src={imageUrl} 
-          alt={title} 
-          loading="lazy"
-          decoding="async"
-          draggable="false"
-          className={`w-full h-full object-cover transform-gpu transition-transform duration-[1.5s] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-110 group-active:scale-105 will-change-transform ${visualEffect === 'cyberpunk' ? 'grayscale contrast-125' : ''}`}
-        />
+        {gradient ? (
+          <div className={`w-full h-full ${gradient} transform-gpu transition-transform duration-[1.5s] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-110 group-active:scale-105 will-change-transform ${visualEffect === 'cyberpunk' ? 'grayscale contrast-125' : ''}`} />
+        ) : (
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+            className={`w-full h-full object-cover transform-gpu transition-transform duration-[1.5s] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-110 group-active:scale-105 will-change-transform ${visualEffect === 'cyberpunk' ? 'grayscale contrast-125' : ''}`}
+          />
+        )}
         <div className={`absolute inset-0 bg-gradient-to-t ${
           isDark 
             ? 'from-black via-black/40 to-transparent' 

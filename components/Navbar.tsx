@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Settings, Zap, Droplets, Monitor } from 'lucide-react';
 import { useTheme } from '../App';
 
@@ -6,7 +7,7 @@ const navData = [
   { 
     name: '学习', 
     items: [
-      { title: '外刊精读 Pro', desc: '深度解析国际刊物', href: 'http://gongcheng.yyboxdns.com:25045/' }
+      { title: '外刊精读 Pro', desc: '深度解析国际刊物', href: '/reading-pro' }
     ] 
   },
   { 
@@ -60,6 +61,8 @@ export const Navbar: React.FC = () => {
     setMobileMenuOpen(false);
   };
 
+  const navigate = useNavigate();
+
   const handleItemClick = (e: React.MouseEvent, title: string, href: string) => {
     if (title === '实验室') {
       e.preventDefault();
@@ -74,6 +77,14 @@ export const Navbar: React.FC = () => {
         setMobileMenuOpen(false);
         setActiveDropdown(null);
         return;
+    }
+
+    if (href.startsWith('/')) {
+      e.preventDefault();
+      navigate(href);
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+      return;
     }
   };
 
@@ -359,7 +370,7 @@ export const Navbar: React.FC = () => {
            </button>
            <h3 className={`text-2xl font-bold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-50' : 'text-gray-900'}`}>感谢支持</h3>
            <div className="bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full">
-              <img src="https://images.weserv.nl/?url=img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" className="w-full h-auto rounded-lg" alt="QR" />
+              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" className="w-full h-auto rounded-lg" alt="QR" />
            </div>
            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">WeChat Pay</p>
         </div>
