@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../App';
-import { BookOpen, X } from 'lucide-react';
+import { BookOpen, X, ArrowLeft } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
 import { PdfViewer } from './PdfViewer';
 
@@ -14,6 +15,7 @@ interface Book {
 
 export const ReadingPro: React.FC = () => {
   const { visualEffect } = useTheme();
+  const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,9 +59,23 @@ export const ReadingPro: React.FC = () => {
   return (
     <>
       <main className="flex-grow pt-24 pb-32 px-6 max-w-7xl mx-auto w-full relative z-10">
-        <div className="mb-12 text-center">
-          <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'text-gray-900'}`}>外刊精读 Pro</h1>
-          <p className={`text-lg ${visualEffect === 'cyberpunk' ? 'text-cyan-100/70' : 'text-gray-600'}`}>深度解析国际顶级刊物，在线沉浸式阅读。</p>
+        <div className="mb-12 relative flex items-center justify-center">
+          <button 
+            onClick={() => navigate('/')}
+            className={`absolute left-0 flex items-center px-3 py-2 rounded-full transition-all ${
+              visualEffect === 'cyberpunk' 
+                ? 'text-cyan-400 hover:bg-cyan-900/40 border border-cyan-500/30' 
+                : 'text-gray-600 hover:bg-gray-200 border border-transparent hover:border-gray-300'
+            }`}
+          >
+            <ArrowLeft size={20} className="sm:mr-1" />
+            <span className="hidden sm:inline text-sm font-medium">返回主页</span>
+          </button>
+          
+          <div className="text-center">
+            <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'text-gray-900'}`}>外刊精读 Pro</h1>
+            <p className={`text-lg ${visualEffect === 'cyberpunk' ? 'text-cyan-100/70' : 'text-gray-600'}`}>深度解析国际顶级刊物，在线沉浸式阅读。</p>
+          </div>
         </div>
 
         {loading ? (

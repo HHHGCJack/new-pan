@@ -4,8 +4,9 @@ import { ZoomIn, ZoomOut, Download, ChevronLeft, ChevronRight, X, Loader2 } from
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Set worker path for react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Use local worker for better performance and reliability in mainland China
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface PdfViewerProps {
   url: string;
