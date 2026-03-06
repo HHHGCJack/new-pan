@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../App';
-import { BookOpen, X, ArrowLeft } from 'lucide-react';
+import { BookOpen, X, ArrowLeft, RefreshCw, AlertCircle } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
 import { PdfViewer } from './PdfViewer';
 
@@ -13,38 +13,73 @@ interface Book {
   pdfUrl: string;
 }
 
+const CACHE_KEY = 'pan_studio_books_cache';
+
 export const ReadingPro: React.FC = () => {
   const { visualEffect } = useTheme();
   const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    // 1. Load from cache immediately for instant display
+    const cachedBooks = localStorage.getItem(CACHE_KEY);
+    if (cachedBooks) {
       try {
-        if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-          console.warn('Supabase credentials missing. Showing empty state.');
-          setLoading(false);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('books')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        if (data) setBooks(data);
-      } catch (err) {
-        console.error("Error fetching books:", err);
-      } finally {
-        setLoading(false);
+        setBooks(JSON.parse(cachedBooks));
+        setLoading(false); // Stop loading immediately if we have cache
+      } catch (e) {
+        console.error('Failed to parse cached books', e);
       }
-    };
+    }
 
-    fetchBooks();
+    // 2. Fetch fresh data in the background
+    fetchBooks(!!cachedBooks);
   }, []);
+
+  const fetchBooks = async (hasCache: boolean = false) => {
+    if (hasCache) setIsSyncing(true);
+    else setLoading(true);
+    setError(null);
+
+    try {
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        console.warn('Supabase credentials missing.');
+        if (!hasCache) setError('未配置数据库连接，请在环境变量中设置 Supabase 凭证。');
+        return;
+      }
+
+      // Add a timeout to the fetch request (10 seconds)
+      const fetchPromise = supabase
+        .from('books')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('数据库连接超时，请检查网络或稍后重试。')), 10000)
+      );
+
+      const { data, error: dbError } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
+      if (dbError) throw dbError;
+      
+      if (data) {
+        setBooks(data);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      }
+    } catch (err: any) {
+      console.error("Error fetching books:", err);
+      if (!hasCache) {
+        setError(err.message || '加载失败，请检查网络连接。');
+      }
+    } finally {
+      setLoading(false);
+      setIsSyncing(false);
+    }
+  };
 
   const getGlassClasses = () => {
     if (visualEffect === 'liquid') {
@@ -72,8 +107,13 @@ export const ReadingPro: React.FC = () => {
             <span className="hidden sm:inline text-sm font-medium">返回主页</span>
           </button>
           
-          <div className="text-center">
-            <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'text-gray-900'}`}>外刊精读 Pro</h1>
+          <div className="text-center flex flex-col items-center">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <h1 className={`text-4xl md:text-5xl font-bold ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'text-gray-900'}`}>外刊精读 Pro</h1>
+              {isSyncing && (
+                <RefreshCw size={20} className={`animate-spin ${visualEffect === 'cyberpunk' ? 'text-cyan-500' : 'text-gray-400'}`} title="正在同步最新数据..." />
+              )}
+            </div>
             <p className={`text-lg ${visualEffect === 'cyberpunk' ? 'text-cyan-100/70' : 'text-gray-600'}`}>深度解析国际顶级刊物，在线沉浸式阅读。</p>
           </div>
         </div>
@@ -82,6 +122,22 @@ export const ReadingPro: React.FC = () => {
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
             <p className={`text-xl ${visualEffect === 'cyberpunk' ? 'text-cyan-100/50' : 'text-gray-500'}`}>加载中...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 max-w-md mx-auto">
+            <AlertCircle className={`mx-auto w-16 h-16 mb-4 ${visualEffect === 'cyberpunk' ? 'text-red-500/80' : 'text-red-400'}`} />
+            <p className={`text-xl mb-6 ${visualEffect === 'cyberpunk' ? 'text-red-400' : 'text-red-500'}`}>{error}</p>
+            <button 
+              onClick={() => fetchBooks(false)}
+              className={`px-6 py-3 rounded-full font-medium transition-all flex items-center justify-center mx-auto ${
+                visualEffect === 'cyberpunk'
+                  ? 'bg-cyan-900/40 text-cyan-400 border border-cyan-500/50 hover:bg-cyan-800/60'
+                  : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 shadow-sm'
+              }`}
+            >
+              <RefreshCw size={18} className="mr-2" />
+              重新加载
+            </button>
           </div>
         ) : books.length === 0 ? (
           <div className="text-center py-20">
