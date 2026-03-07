@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build",
+    "build": "shx cp node_modules/pdfjs-dist/build/pdf.worker.min.mjs public/ && vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit"
   },
@@ -30,6 +30,7 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "shx": "^0.4.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

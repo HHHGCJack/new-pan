@@ -26,14 +26,15 @@ export const ReadingPro: React.FC = () => {
 
   useEffect(() => {
     // 1. Load from cache immediately for instant display
-    const cachedBooks = localStorage.getItem(CACHE_KEY);
-    if (cachedBooks) {
-      try {
+    let cachedBooks = null;
+    try {
+      cachedBooks = localStorage.getItem(CACHE_KEY);
+      if (cachedBooks) {
         setBooks(JSON.parse(cachedBooks));
         setLoading(false); // Stop loading immediately if we have cache
-      } catch (e) {
-        console.error('Failed to parse cached books', e);
       }
+    } catch (e) {
+      console.warn('localStorage access failed or parse error', e);
     }
 
     // 2. Fetch fresh data in the background
@@ -68,7 +69,11 @@ export const ReadingPro: React.FC = () => {
       
       if (data) {
         setBooks(data);
-        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        } catch (e) {
+          console.warn('Failed to save cache', e);
+        }
       }
     } catch (err: any) {
       console.error("Error fetching books:", err);

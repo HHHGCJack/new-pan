@@ -4,11 +4,8 @@ import { ZoomIn, ZoomOut, Download, ChevronLeft, ChevronRight, X, Loader2 } from
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Use local worker for better performance and reliability in mainland China
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+// Use local worker from public folder for extreme speed in mainland China and 100% reliability
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 interface PdfViewerProps {
   url: string;
