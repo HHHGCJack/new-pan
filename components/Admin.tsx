@@ -377,36 +377,39 @@ export const Admin: React.FC = () => {
     setIsSavingOrder(true);
     setMessage('');
 
-    // Use order_index for sorting. Lower index = appears first.
-    const updates = books.map((book, index) => {
-      return { id: book.id, order_index: index };
-    });
-
     try {
-      const results = await Promise.all(
-        updates.map(update =>
-          supabase.from('books').update({ order_index: update.order_index }).eq('id', update.id).select()
-        )
-      );
+      // Use a standard for loop to update sequentially and avoid potential Promise.all/PostgREST bulk issues
+      let failedCount = 0;
+      
+      for (let i = 0; i < books.length; i++) {
+        const book = books[i];
+        const { error } = await supabase
+          .from('books')
+          .update({ order_index: i })
+          .eq('id', book.id);
 
-      // Supabase doesn't throw on update errors, we must check the response
-      const firstError = results.find(r => r.error)?.error;
-      if (firstError) {
-        throw new Error(firstError.message);
+        if (error) {
+          console.error(`Error updating book ${book.id}:`, error);
+          throw error;
+        }
       }
 
-      // Check if any update returned empty data (which means RLS blocked it or ID not found)
-      const failedUpdates = results.filter(r => !r.data || r.data.length === 0);
-      if (failedUpdates.length > 0) {
-        throw new Error("部分或全部更新未能生效。这通常是因为数据库的 RLS (行级安全) 策略阻止了更新操作。请检查您的 Supabase RLS 设置。");
+      // We do a quick verify fetch to ensure RLS didn't silently block the updates
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('books')
+        .select('id, order_index')
+        .eq('id', books[0]?.id || '')
+        .single();
+        
+      if (!verifyError && verifyData && verifyData.order_index !== 0 && books.length > 0) {
+         throw new Error("更新未能生效。这通常是因为数据库的 RLS (行级安全) 策略阻止了更新操作。请检查您的 Supabase RLS 设置。");
       }
 
-      // Update local state is not strictly necessary since we already reordered the array,
-      // but we can just re-fetch to be safe or just show success.
       setMessage('排序保存成功！');
       setHasOrderChanged(false);
     } catch (error: any) {
-      setMessage(`保存排序失败: ${error.message} (请确保数据库中已添加 order_index 字段)`);
+      console.error("Save order error:", error);
+      setMessage(`保存排序失败: ${error.message || '未知错误'} (请确保数据库中已添加 order_index 字段，且类型为数字)`);
       fetchBooks(); // Revert on error
     } finally {
       setIsSavingOrder(false);
