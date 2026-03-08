@@ -324,13 +324,16 @@ export const Admin: React.FC = () => {
   };
 
   const saveEditing = async (id: string) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('books')
       .update({ title: editTitle, description: editDescription })
-      .eq('id', id);
+      .eq('id', id)
+      .select();
     
     if (error) {
       setMessage(`更新失败: ${error.message}`);
+    } else if (!data || data.length === 0) {
+      setMessage('更新失败: 数据库 RLS 策略可能阻止了此操作。');
     } else {
       setMessage('更新成功！');
       setEditingId(null);
@@ -341,13 +344,16 @@ export const Admin: React.FC = () => {
   const deleteBook = async (id: string) => {
     if (!window.confirm('确定要删除这本书吗？')) return;
     
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('books')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select();
       
     if (error) {
       setMessage(`删除失败: ${error.message}`);
+    } else if (!data || data.length === 0) {
+      setMessage('删除失败: 数据库 RLS 策略可能阻止了此操作。');
     } else {
       setMessage('删除成功！');
       fetchBooks();
@@ -379,7 +385,7 @@ export const Admin: React.FC = () => {
     try {
       const results = await Promise.all(
         updates.map(update =>
-          supabase.from('books').update({ order_index: update.order_index }).eq('id', update.id)
+          supabase.from('books').update({ order_index: update.order_index }).eq('id', update.id).select()
         )
       );
 
@@ -387,6 +393,12 @@ export const Admin: React.FC = () => {
       const firstError = results.find(r => r.error)?.error;
       if (firstError) {
         throw new Error(firstError.message);
+      }
+
+      // Check if any update returned empty data (which means RLS blocked it or ID not found)
+      const failedUpdates = results.filter(r => !r.data || r.data.length === 0);
+      if (failedUpdates.length > 0) {
+        throw new Error("部分或全部更新未能生效。这通常是因为数据库的 RLS (行级安全) 策略阻止了更新操作。请检查您的 Supabase RLS 设置。");
       }
 
       // Update local state is not strictly necessary since we already reordered the array,
