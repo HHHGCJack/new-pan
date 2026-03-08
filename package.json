@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "shx cp node_modules/pdfjs-dist/build/pdf.worker.min.mjs public/ && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit"
   },
@@ -17,10 +17,8 @@
     "lucide-react": "^0.564.0",
     "motion": "^12.34.2",
     "multer": "^2.1.0",
-    "pdfjs-dist": "^5.5.207",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-pdf": "^10.4.1",
     "react-router-dom": "^7.13.1",
     "tailwindcss": "^4.2.0"
   },

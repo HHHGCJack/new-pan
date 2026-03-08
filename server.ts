@@ -11,6 +11,11 @@ app.use(cors());
 app.use(express.json());
 
 async function startServer() {
+  // API routes FIRST
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -20,7 +25,7 @@ async function startServer() {
     app.use(vite.middlewares);
 
     // Fallback for SPA routing in development
-    app.use('*', async (req, res, next) => {
+    app.use(async (req, res, next) => {
       if (req.originalUrl.startsWith('/api')) {
         return next();
       }
@@ -42,7 +47,7 @@ async function startServer() {
     });
   } else {
     app.use(express.static("dist"));
-    app.get("*", (req, res) => {
+    app.use((req, res) => {
       res.sendFile(path.resolve("dist/index.html"));
     });
   }
