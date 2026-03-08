@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../App';
-import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, ArrowUp, ArrowDown, Book } from 'lucide-react';
+import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, GripVertical } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface AdminBook {
   id: string;
@@ -11,6 +29,119 @@ interface AdminBook {
   pdfUrl: string;
   created_at: string;
 }
+
+interface SortableBookItemProps {
+  book: AdminBook;
+  visualEffect: string;
+  editingId: string | null;
+  editTitle: string;
+  editDescription: string;
+  setEditTitle: (val: string) => void;
+  setEditDescription: (val: string) => void;
+  saveEditing: (id: string) => void;
+  setEditingId: (id: string | null) => void;
+  startEditing: (book: AdminBook) => void;
+  deleteBook: (id: string) => void;
+  getInputClasses: () => string;
+}
+
+const SortableBookItem = ({
+  book, visualEffect, editingId, editTitle, editDescription,
+  setEditTitle, setEditDescription, saveEditing, setEditingId,
+  startEditing, deleteBook, getInputClasses
+}: SortableBookItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: book.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center transition-all relative ${
+      visualEffect === 'cyberpunk' ? 'bg-black/40 border-cyan-900/50' : 'bg-white/40 border-gray-200'
+    } ${isDragging ? 'shadow-2xl ring-2 ring-blue-500' : ''}`}>
+      
+      {/* Drag Handle */}
+      <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-2 -ml-2 text-gray-400 hover:text-gray-600 self-center md:self-auto touch-none">
+        <GripVertical className="w-6 h-6" />
+      </div>
+
+      {/* Cover Thumbnail */}
+      <div className="w-20 h-28 shrink-0 rounded-md overflow-hidden bg-gray-200">
+        <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover" />
+      </div>
+      
+      {/* Content */}
+      <div className="flex-grow w-full">
+        {editingId === book.id ? (
+          <div className="space-y-3">
+            <input 
+              type="text" 
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              className={getInputClasses()}
+              placeholder="书名"
+            />
+            <textarea 
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              className={`${getInputClasses()} min-h-[80px] text-sm`}
+              placeholder="简介"
+            />
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => saveEditing(book.id)}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 flex items-center"
+              >
+                <Save className="w-4 h-4 mr-1" /> 保存
+              </button>
+              <button 
+                onClick={() => setEditingId(null)}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg text-sm font-medium hover:bg-gray-600"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h3 className={`font-bold text-lg mb-1 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-900'}`}>{book.title}</h3>
+            <p className={`text-sm line-clamp-2 mb-3 ${visualEffect === 'cyberpunk' ? 'text-cyan-600' : 'text-gray-600'}`}>{book.description || '暂无简介'}</p>
+            
+            <div className="flex flex-wrap gap-2">
+              <button 
+                onClick={() => startEditing(book)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
+                  visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-800/50' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                }`}
+              >
+                <Edit2 className="w-4 h-4 mr-1" /> 编辑
+              </button>
+              <button 
+                onClick={() => deleteBook(book.id)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
+                  visualEffect === 'cyberpunk' ? 'bg-red-900/30 text-red-400 hover:bg-red-800/50' : 'bg-red-50 text-red-600 hover:bg-red-100'
+                }`}
+              >
+                <Trash2 className="w-4 h-4 mr-1" /> 删除
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export const Admin: React.FC = () => {
   const { visualEffect } = useTheme();
@@ -32,6 +163,23 @@ export const Admin: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (isAuthenticated && activeTab === 'manage') {
@@ -176,21 +324,42 @@ export const Admin: React.FC = () => {
     }
   };
 
-  const moveBook = async (index: number, direction: 'up' | 'down') => {
-    if (direction === 'up' && index === 0) return;
-    if (direction === 'down' && index === books.length - 1) return;
-    
-    const current = books[index];
-    const target = direction === 'up' ? books[index - 1] : books[index + 1];
-    
-    // Swap created_at to change order
-    const { error: err1 } = await supabase.from('books').update({ created_at: target.created_at }).eq('id', current.id);
-    const { error: err2 } = await supabase.from('books').update({ created_at: current.created_at }).eq('id', target.id);
-    
-    if (err1 || err2) {
-      setMessage(`移动失败: ${err1?.message || err2?.message}`);
-    } else {
-      fetchBooks();
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = books.findIndex((book) => book.id === active.id);
+      const newIndex = books.findIndex((book) => book.id === over.id);
+
+      const newBooks = arrayMove(books, oldIndex, newIndex);
+      setBooks(newBooks);
+
+      // Extract original timestamps (they are already sorted desc)
+      const originalTimestamps = books.map(b => b.created_at);
+
+      // Assign timestamps to the new order and find changes
+      const updates: { id: string; created_at: string }[] = [];
+      const updatedBooks = newBooks.map((book, index) => {
+        const newTimestamp = originalTimestamps[index];
+        if (book.created_at !== newTimestamp) {
+          updates.push({ id: book.id, created_at: newTimestamp });
+          return { ...book, created_at: newTimestamp };
+        }
+        return book;
+      });
+
+      setBooks(updatedBooks);
+
+      try {
+        await Promise.all(
+          updates.map(update =>
+            supabase.from('books').update({ created_at: update.created_at }).eq('id', update.id)
+          )
+        );
+      } catch (error: any) {
+        setMessage(`保存排序失败: ${error.message}`);
+        fetchBooks(); // Revert on error
+      }
     }
   };
 
@@ -289,105 +458,34 @@ export const Admin: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {books.map((book, index) => (
-                      <div key={book.id} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center transition-all ${
-                        visualEffect === 'cyberpunk' ? 'bg-black/40 border-cyan-900/50' : 'bg-white/40 border-gray-200'
-                      }`}>
-                        {/* Cover Thumbnail */}
-                        <div className="w-20 h-28 shrink-0 rounded-md overflow-hidden bg-gray-200">
-                          <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover" />
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="flex-grow w-full">
-                          {editingId === book.id ? (
-                            <div className="space-y-3">
-                              <input 
-                                type="text" 
-                                value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
-                                className={getInputClasses()}
-                                placeholder="书名"
-                              />
-                              <textarea 
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                                className={`${getInputClasses()} min-h-[80px] text-sm`}
-                                placeholder="简介"
-                              />
-                              <div className="flex space-x-2">
-                                <button 
-                                  onClick={() => saveEditing(book.id)}
-                                  className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 flex items-center"
-                                >
-                                  <Save className="w-4 h-4 mr-1" /> 保存
-                                </button>
-                                <button 
-                                  onClick={() => setEditingId(null)}
-                                  className="px-4 py-2 bg-gray-500 text-white rounded-lg text-sm font-medium hover:bg-gray-600"
-                                >
-                                  取消
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div>
-                              <h3 className={`font-bold text-lg mb-1 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-900'}`}>{book.title}</h3>
-                              <p className={`text-sm line-clamp-2 mb-3 ${visualEffect === 'cyberpunk' ? 'text-cyan-600' : 'text-gray-600'}`}>{book.description || '暂无简介'}</p>
-                              
-                              <div className="flex flex-wrap gap-2">
-                                <button 
-                                  onClick={() => startEditing(book)}
-                                  className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
-                                    visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-800/50' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                                  }`}
-                                >
-                                  <Edit2 className="w-4 h-4 mr-1" /> 编辑
-                                </button>
-                                <button 
-                                  onClick={() => deleteBook(book.id)}
-                                  className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
-                                    visualEffect === 'cyberpunk' ? 'bg-red-900/30 text-red-400 hover:bg-red-800/50' : 'bg-red-50 text-red-600 hover:bg-red-100'
-                                  }`}
-                                >
-                                  <Trash2 className="w-4 h-4 mr-1" /> 删除
-                                </button>
-                                
-                                <div className="flex-grow"></div>
-                                
-                                {/* Order Controls */}
-                                <div className="flex space-x-1">
-                                  <button 
-                                    onClick={() => moveBook(index, 'up')}
-                                    disabled={index === 0}
-                                    className={`p-1.5 rounded-lg transition-colors ${
-                                      index === 0 
-                                        ? 'opacity-30 cursor-not-allowed' 
-                                        : (visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-800/50' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')
-                                    }`}
-                                    title="上移"
-                                  >
-                                    <ArrowUp className="w-5 h-5" />
-                                  </button>
-                                  <button 
-                                    onClick={() => moveBook(index, 'down')}
-                                    disabled={index === books.length - 1}
-                                    className={`p-1.5 rounded-lg transition-colors ${
-                                      index === books.length - 1 
-                                        ? 'opacity-30 cursor-not-allowed' 
-                                        : (visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-800/50' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')
-                                    }`}
-                                    title="下移"
-                                  >
-                                    <ArrowDown className="w-5 h-5" />
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                    <DndContext 
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext 
+                        items={books.map(b => b.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {books.map((book) => (
+                          <SortableBookItem 
+                            key={book.id}
+                            book={book}
+                            visualEffect={visualEffect}
+                            editingId={editingId}
+                            editTitle={editTitle}
+                            editDescription={editDescription}
+                            setEditTitle={setEditTitle}
+                            setEditDescription={setEditDescription}
+                            saveEditing={saveEditing}
+                            setEditingId={setEditingId}
+                            startEditing={startEditing}
+                            deleteBook={deleteBook}
+                            getInputClasses={getInputClasses}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
                   </div>
                 )}
               </div>
