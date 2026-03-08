@@ -102,7 +102,7 @@ export const ReadingPro: React.FC = () => {
         <div className="mb-12 relative flex items-center justify-center">
           <button 
             onClick={() => navigate('/')}
-            className={`absolute left-0 flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${
+            className={`absolute left-0 top-0 md:top-2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-300 ${
               visualEffect === 'liquid'
                 ? 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[20px] backdrop-saturate-[200%] border border-white/40 text-gray-800 shadow-[0_8px_32px_0_rgba(31,38,135,0.15),_inset_0_1px_2px_rgba(255,255,255,0.9)] hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.25),_inset_0_1px_2px_rgba(255,255,255,0.9)] hover:bg-white/20 hover:scale-105'
                 : visualEffect === 'cyberpunk' 

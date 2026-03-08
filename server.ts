@@ -16,6 +16,26 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  app.get("/api/proxy-pdf", async (req, res) => {
+    const url = req.query.url as string;
+    if (!url) return res.status(400).send("Missing url parameter");
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+      }
+      
+      const buffer = await response.arrayBuffer();
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.send(Buffer.from(buffer));
+    } catch (error) {
+      console.error("Proxy PDF error:", error);
+      res.status(500).send("Failed to proxy PDF");
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
