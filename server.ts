@@ -17,8 +17,13 @@ async function startServer() {
   });
 
   app.get("/api/proxy-pdf", async (req, res) => {
-    const url = req.query.url as string;
+    let url = req.query.url as string;
     if (!url) return res.status(400).send("Missing url parameter");
+    
+    // Handle relative URLs by prepending the server's origin
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = `http://localhost:${PORT}${url.startsWith('/') ? '' : '/'}${url}`;
+    }
     
     try {
       const response = await fetch(url);
