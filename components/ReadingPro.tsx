@@ -102,14 +102,16 @@ export const ReadingPro: React.FC = () => {
         <div className="mb-12 relative flex items-center justify-center">
           <button 
             onClick={() => navigate('/')}
-            className={`absolute left-0 flex items-center px-3 py-2 rounded-full transition-all ${
-              visualEffect === 'cyberpunk' 
-                ? 'text-cyan-400 hover:bg-cyan-900/40 border border-cyan-500/30' 
-                : 'text-gray-600 hover:bg-gray-200 border border-transparent hover:border-gray-300'
+            className={`absolute left-0 flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${
+              visualEffect === 'liquid'
+                ? 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[20px] backdrop-saturate-[200%] border border-white/40 text-gray-800 shadow-[0_8px_32px_0_rgba(31,38,135,0.15),_inset_0_1px_2px_rgba(255,255,255,0.9)] hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.25),_inset_0_1px_2px_rgba(255,255,255,0.9)] hover:bg-white/20 hover:scale-105'
+                : visualEffect === 'cyberpunk' 
+                ? 'bg-black/60 backdrop-blur-md border border-cyan-500/50 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:bg-cyan-900/40 hover:scale-105' 
+                : 'bg-white/80 backdrop-blur-md border border-gray-200 text-gray-600 shadow-sm hover:shadow-md hover:bg-white hover:scale-105'
             }`}
+            title="返回主页"
           >
-            <ArrowLeft size={20} className="sm:mr-1" />
-            <span className="hidden sm:inline text-sm font-medium">返回主页</span>
+            <ArrowLeft size={24} />
           </button>
           
           <div className="text-center flex flex-col items-center">
