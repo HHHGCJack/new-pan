@@ -111,8 +111,20 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, visualEffect
               </div>
             }
             error={
-              <div className="flex items-center justify-center h-64 text-red-500">
-                {pdfError || '解析 PDF 文件失败'}
+              <div className="flex flex-col items-center justify-center h-64 space-y-4">
+                <div className="text-red-500 text-center px-4 font-medium">
+                  {pdfError || '解析 PDF 文件失败'}
+                </div>
+                <div className="text-gray-500 text-sm text-center px-4">
+                  如果无法预览，您可以直接下载文件到本地查看
+                </div>
+                <button 
+                  onClick={handleDownload}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-sm"
+                >
+                  <Download size={18} />
+                  <span>直接下载</span>
+                </button>
               </div>
             }
           >
