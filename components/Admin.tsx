@@ -344,35 +344,34 @@ export const Admin: React.FC = () => {
     setIsSavingOrder(true);
     setMessage('');
 
-    // Get all timestamps and sort them strictly descending
-    const originalTimestamps = books.map(b => new Date(b.created_at).getTime()).sort((a, b) => b - a);
-    
-    // Ensure strictly decreasing to avoid identical timestamps
-    for (let i = 1; i < originalTimestamps.length; i++) {
-      if (originalTimestamps[i] >= originalTimestamps[i-1]) {
-        originalTimestamps[i] = originalTimestamps[i-1] - 1000;
-      }
-    }
-
-    // Assign timestamps to the new order and find changes
-    const updates: { id: string; created_at: string }[] = [];
-    const updatedBooks = books.map((book, index) => {
-      const newTimestamp = new Date(originalTimestamps[index]).toISOString();
-      if (book.created_at !== newTimestamp) {
-        updates.push({ id: book.id, created_at: newTimestamp });
-        return { ...book, created_at: newTimestamp };
-      }
-      return book;
+    // Assign completely new timestamps based on current time to ensure strict descending order
+    const now = Date.now();
+    const updates = books.map((book, index) => {
+      // Subtract 1 minute (60000 ms) for each subsequent item to maintain descending order
+      const newTimestamp = new Date(now - index * 60000).toISOString();
+      return { id: book.id, created_at: newTimestamp };
     });
 
-    setBooks(updatedBooks);
-
     try {
-      await Promise.all(
+      const results = await Promise.all(
         updates.map(update =>
           supabase.from('books').update({ created_at: update.created_at }).eq('id', update.id)
         )
       );
+
+      // Supabase doesn't throw on update errors, we must check the response
+      const firstError = results.find(r => r.error)?.error;
+      if (firstError) {
+        throw new Error(firstError.message);
+      }
+
+      // Update local state to reflect new timestamps
+      const updatedBooks = books.map((book, index) => ({
+        ...book,
+        created_at: updates[index].created_at
+      }));
+      setBooks(updatedBooks);
+
       setMessage('排序保存成功！');
       setHasOrderChanged(false);
     } catch (error: any) {
