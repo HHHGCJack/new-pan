@@ -60,14 +60,14 @@ const SortableBookItem = ({
   } = useSortable({ id: book.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     zIndex: isDragging ? 50 : 1,
     opacity: isDragging ? 0.8 : 1,
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center transition-all relative ${
+    <div ref={setNodeRef} style={style} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center relative ${
       visualEffect === 'cyberpunk' ? 'bg-black/40 border-cyan-900/50' : 'bg-white/40 border-gray-200'
     } ${isDragging ? 'shadow-2xl ring-2 ring-blue-500' : ''}`}>
       
@@ -334,13 +334,20 @@ export const Admin: React.FC = () => {
       const newBooks = arrayMove(books, oldIndex, newIndex);
       setBooks(newBooks);
 
-      // Extract original timestamps (they are already sorted desc)
-      const originalTimestamps = books.map(b => b.created_at);
+      // Get all timestamps and sort them strictly descending
+      const originalTimestamps = books.map(b => new Date(b.created_at).getTime()).sort((a, b) => b - a);
+      
+      // Ensure strictly decreasing to avoid identical timestamps
+      for (let i = 1; i < originalTimestamps.length; i++) {
+        if (originalTimestamps[i] >= originalTimestamps[i-1]) {
+          originalTimestamps[i] = originalTimestamps[i-1] - 1000;
+        }
+      }
 
       // Assign timestamps to the new order and find changes
       const updates: { id: string; created_at: string }[] = [];
       const updatedBooks = newBooks.map((book, index) => {
-        const newTimestamp = originalTimestamps[index];
+        const newTimestamp = new Date(originalTimestamps[index]).toISOString();
         if (book.created_at !== newTimestamp) {
           updates.push({ id: book.id, created_at: newTimestamp });
           return { ...book, created_at: newTimestamp };
@@ -457,7 +464,7 @@ export const Admin: React.FC = () => {
                     <p>暂无图书，请先上传</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="flex flex-col gap-4">
                     <DndContext 
                       sensors={sensors}
                       collisionDetection={closestCenter}
