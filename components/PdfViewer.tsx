@@ -4,8 +4,11 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Set up the worker for react-pdf using unpkg with the exact version
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Set up the worker for react-pdf using local file
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 interface PdfViewerProps {
   url: string;
@@ -17,9 +20,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, visualEffect
   const [numPages, setNumPages] = useState<number>();
   const [scale, setScale] = useState(1);
   const [containerWidth, setContainerWidth] = useState<number>();
-  const [pdfData, setPdfData] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
-  const [isLoadingPdf, setIsLoadingPdf] = useState(true);
 
   useEffect(() => {
     // Lock body scroll when viewer is open
@@ -38,47 +39,6 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, visualEffect
       window.removeEventListener('resize', updateWidth);
     };
   }, []);
-
-  useEffect(() => {
-    let objectUrl: string | null = null;
-
-    const fetchPdf = async () => {
-      try {
-        setIsLoadingPdf(true);
-        setPdfError(null);
-        const proxyUrl = `/api/proxy-pdf?url=${encodeURIComponent(url)}`;
-        const response = await fetch(proxyUrl);
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to fetch PDF: ${response.status} ${errorText}`);
-        }
-        const blob = await response.blob();
-        if (blob.size === 0) {
-          throw new Error('PDF file is empty');
-        }
-        if (blob.type !== 'application/pdf' && !blob.type.includes('pdf')) {
-          console.warn('Warning: Fetched blob type is not application/pdf:', blob.type);
-        }
-        objectUrl = URL.createObjectURL(blob);
-        setPdfData(objectUrl);
-      } catch (err: any) {
-        console.error('Error fetching PDF:', err);
-        setPdfError(`无法加载 PDF 文件: ${err.message || '未知错误'}`);
-      } finally {
-        setIsLoadingPdf(false);
-      }
-    };
-
-    if (url) {
-      fetchPdf();
-    }
-
-    return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [url]);
 
   const handleDownload = () => {
     const link = document.createElement('a');
@@ -138,46 +98,36 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, visualEffect
       {/* Viewer Body */}
       <div className="flex-1 w-full h-full relative bg-gray-100 overflow-auto">
         <div className="flex justify-center min-w-full min-h-full p-4">
-          {isLoadingPdf ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
-          ) : pdfError ? (
-            <div className="flex items-center justify-center h-64 text-red-500">
-              {pdfError}
-            </div>
-          ) : pdfData ? (
-            <Document 
-              file={pdfData} 
-              onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={(error) => {
-                console.error('Error while loading document!', error);
-                setPdfError(`解析 PDF 文件失败: ${error.message}`);
-              }}
-              loading={
-                <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                </div>
-              }
-              error={
-                <div className="flex items-center justify-center h-64 text-red-500">
-                  解析 PDF 文件失败
-                </div>
-              }
-            >
-              {Array.from(new Array(numPages), (el, index) => (
-                <div key={`page_${index + 1}`} className="mb-4 shadow-lg bg-white">
-                  <Page 
-                    pageNumber={index + 1} 
-                    scale={scale} 
-                    width={containerWidth ? Math.min(containerWidth - 32, 800) : undefined}
-                    renderTextLayer={true}
-                    renderAnnotationLayer={true}
-                  />
-                </div>
-              ))}
-            </Document>
-          ) : null}
+          <Document 
+            file={url} 
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={(error) => {
+              console.error('Error while loading document!', error);
+              setPdfError(`解析 PDF 文件失败: ${error.message}`);
+            }}
+            loading={
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              </div>
+            }
+            error={
+              <div className="flex items-center justify-center h-64 text-red-500">
+                {pdfError || '解析 PDF 文件失败'}
+              </div>
+            }
+          >
+            {numPages ? Array.from(new Array(numPages), (el, index) => (
+              <div key={`page_${index + 1}`} className="mb-4 shadow-lg bg-white">
+                <Page 
+                  pageNumber={index + 1} 
+                  scale={scale} 
+                  width={containerWidth ? Math.min(containerWidth - 32, 800) : undefined}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                />
+              </div>
+            )) : null}
+          </Document>
         </div>
       </div>
     </div>

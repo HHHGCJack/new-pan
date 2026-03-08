@@ -22,7 +22,7 @@ async function startServer() {
     
     // Handle relative URLs by prepending the server's origin
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      url = `http://localhost:${PORT}${url.startsWith('/') ? '' : '/'}${url}`;
+      url = `http://127.0.0.1:${PORT}${url.startsWith('/') ? '' : '/'}${url}`;
     }
     
     try {
@@ -31,10 +31,17 @@ async function startServer() {
         throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
       }
       
+      const contentType = response.headers.get('content-type');
+      if (contentType && !contentType.includes('pdf') && !contentType.includes('octet-stream')) {
+        const text = await response.text();
+        console.error(`Proxy fetched non-PDF content (${contentType}):`, text.substring(0, 200));
+        return res.status(400).send(`URL did not return a PDF. Content-Type: ${contentType}`);
+      }
+      
       const buffer = await response.arrayBuffer();
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.send(Buffer.from(buffer));
+      res.end(Buffer.from(buffer));
     } catch (error) {
       console.error("Proxy PDF error:", error);
       res.status(500).send("Failed to proxy PDF");
