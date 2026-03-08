@@ -345,10 +345,11 @@ export const Admin: React.FC = () => {
     setMessage('');
 
     // Assign completely new timestamps based on current time to ensure strict descending order
+    // Use a larger gap (e.g., 1 hour = 3600000 ms) to avoid any potential precision issues
     const now = Date.now();
     const updates = books.map((book, index) => {
-      // Subtract 1 minute (60000 ms) for each subsequent item to maintain descending order
-      const newTimestamp = new Date(now - index * 60000).toISOString();
+      // Subtract 1 hour for each subsequent item to maintain descending order
+      const newTimestamp = new Date(now - index * 3600000).toISOString();
       return { id: book.id, created_at: newTimestamp };
     });
 
