@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../App';
-import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, GripVertical } from 'lucide-react';
+import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
 import {
   DndContext,
@@ -67,13 +67,13 @@ const SortableBookItem = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center relative ${
+    <div ref={setNodeRef} style={style} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center relative pr-12 ${
       visualEffect === 'cyberpunk' ? 'bg-black/40 border-cyan-900/50' : 'bg-white/40 border-gray-200'
     } ${isDragging ? 'shadow-2xl ring-2 ring-blue-500' : ''}`}>
       
       {/* Drag Handle */}
-      <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-2 -ml-2 text-gray-400 hover:text-gray-600 self-center md:self-auto touch-none">
-        <GripVertical className="w-6 h-6" />
+      <div {...attributes} {...listeners} className="absolute top-2 right-2 cursor-grab active:cursor-grabbing p-2 text-gray-400 hover:text-gray-600 touch-none">
+        <Equal className="w-6 h-6" />
       </div>
 
       {/* Cover Thumbnail */}
@@ -163,6 +163,8 @@ export const Admin: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [hasOrderChanged, setHasOrderChanged] = useState(false);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -198,6 +200,7 @@ export const Admin: React.FC = () => {
       setMessage(`加载图书失败: ${error.message}`);
     } else if (data) {
       setBooks(data);
+      setHasOrderChanged(false);
     }
     setIsLoadingBooks(false);
   };
@@ -324,7 +327,7 @@ export const Admin: React.FC = () => {
     }
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -333,40 +336,50 @@ export const Admin: React.FC = () => {
 
       const newBooks = arrayMove(books, oldIndex, newIndex);
       setBooks(newBooks);
+      setHasOrderChanged(true);
+    }
+  };
 
-      // Get all timestamps and sort them strictly descending
-      const originalTimestamps = books.map(b => new Date(b.created_at).getTime()).sort((a, b) => b - a);
-      
-      // Ensure strictly decreasing to avoid identical timestamps
-      for (let i = 1; i < originalTimestamps.length; i++) {
-        if (originalTimestamps[i] >= originalTimestamps[i-1]) {
-          originalTimestamps[i] = originalTimestamps[i-1] - 1000;
-        }
+  const saveOrder = async () => {
+    setIsSavingOrder(true);
+    setMessage('');
+
+    // Get all timestamps and sort them strictly descending
+    const originalTimestamps = books.map(b => new Date(b.created_at).getTime()).sort((a, b) => b - a);
+    
+    // Ensure strictly decreasing to avoid identical timestamps
+    for (let i = 1; i < originalTimestamps.length; i++) {
+      if (originalTimestamps[i] >= originalTimestamps[i-1]) {
+        originalTimestamps[i] = originalTimestamps[i-1] - 1000;
       }
+    }
 
-      // Assign timestamps to the new order and find changes
-      const updates: { id: string; created_at: string }[] = [];
-      const updatedBooks = newBooks.map((book, index) => {
-        const newTimestamp = new Date(originalTimestamps[index]).toISOString();
-        if (book.created_at !== newTimestamp) {
-          updates.push({ id: book.id, created_at: newTimestamp });
-          return { ...book, created_at: newTimestamp };
-        }
-        return book;
-      });
-
-      setBooks(updatedBooks);
-
-      try {
-        await Promise.all(
-          updates.map(update =>
-            supabase.from('books').update({ created_at: update.created_at }).eq('id', update.id)
-          )
-        );
-      } catch (error: any) {
-        setMessage(`保存排序失败: ${error.message}`);
-        fetchBooks(); // Revert on error
+    // Assign timestamps to the new order and find changes
+    const updates: { id: string; created_at: string }[] = [];
+    const updatedBooks = books.map((book, index) => {
+      const newTimestamp = new Date(originalTimestamps[index]).toISOString();
+      if (book.created_at !== newTimestamp) {
+        updates.push({ id: book.id, created_at: newTimestamp });
+        return { ...book, created_at: newTimestamp };
       }
+      return book;
+    });
+
+    setBooks(updatedBooks);
+
+    try {
+      await Promise.all(
+        updates.map(update =>
+          supabase.from('books').update({ created_at: update.created_at }).eq('id', update.id)
+        )
+      );
+      setMessage('排序保存成功！');
+      setHasOrderChanged(false);
+    } catch (error: any) {
+      setMessage(`保存排序失败: ${error.message}`);
+      fetchBooks(); // Revert on error
+    } finally {
+      setIsSavingOrder(false);
     }
   };
 
@@ -454,6 +467,27 @@ export const Admin: React.FC = () => {
             {/* Tab Content: Manage */}
             {activeTab === 'manage' && (
               <div className="space-y-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className={`text-xl font-bold ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-800'}`}>图书列表</h2>
+                  {hasOrderChanged && (
+                    <button
+                      onClick={saveOrder}
+                      disabled={isSavingOrder}
+                      className={`px-4 py-2 rounded-lg font-medium flex items-center transition-all ${
+                        visualEffect === 'cyberpunk'
+                          ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] disabled:bg-cyan-900/50 disabled:text-cyan-500/50'
+                          : 'bg-black text-white hover:bg-gray-800 hover:shadow-md disabled:bg-gray-300 disabled:text-gray-500'
+                      }`}
+                    >
+                      {isSavingOrder ? (
+                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> 保存中...</>
+                      ) : (
+                        <><Save className="w-4 h-4 mr-2" /> 保存排序</>
+                      )}
+                    </button>
+                  )}
+                </div>
+
                 {isLoadingBooks ? (
                   <div className="flex justify-center items-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
