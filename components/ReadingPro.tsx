@@ -11,6 +11,7 @@ interface Book {
   description: string;
   coverUrl: string;
   pdfUrl: string;
+  order_index?: number;
 }
 
 const CACHE_KEY = 'pan_studio_books_cache';
@@ -57,7 +58,14 @@ export const ReadingPro: React.FC = () => {
       const fetchPromise = supabase
         .from('books')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('order_index', { ascending: true })
+        .order('created_at', { ascending: false })
+        .then(res => {
+          if (res.error && res.error.message.includes('order_index')) {
+            return supabase.from('books').select('*').order('created_at', { ascending: false });
+          }
+          return res;
+        });
         
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('数据库连接超时，请检查网络或稍后重试。')), 10000)

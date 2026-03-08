@@ -28,6 +28,7 @@ interface AdminBook {
   coverUrl: string;
   pdfUrl: string;
   created_at: string;
+  order_index?: number;
 }
 
 interface SortableBookItemProps {
@@ -191,11 +192,22 @@ export const Admin: React.FC = () => {
 
   const fetchBooks = async () => {
     setIsLoadingBooks(true);
-    const { data, error } = await supabase
+    
+    let { data, error } = await supabase
       .from('books')
       .select('*')
+      .order('order_index', { ascending: true })
       .order('created_at', { ascending: false });
-    
+      
+    if (error && error.message.includes('order_index')) {
+      const fallback = await supabase
+        .from('books')
+        .select('*')
+        .order('created_at', { ascending: false });
+      data = fallback.data;
+      error = fallback.error;
+    }
+      
     if (error) {
       setMessage(`加载图书失败: ${error.message}`);
     } else if (data) {
@@ -258,16 +270,31 @@ export const Admin: React.FC = () => {
         .getPublicUrl(pdfName);
 
       // 3. Insert into Database
-      const { error: dbError } = await supabase
+      let { error: dbError } = await supabase
         .from('books')
         .insert([
           { 
             title, 
             description, 
             coverUrl: coverUrlData.publicUrl, 
-            pdfUrl: pdfUrlData.publicUrl 
+            pdfUrl: pdfUrlData.publicUrl,
+            order_index: 0
           }
         ]);
+
+      if (dbError && dbError.message.includes('order_index')) {
+        const fallback = await supabase
+          .from('books')
+          .insert([
+            { 
+              title, 
+              description, 
+              coverUrl: coverUrlData.publicUrl, 
+              pdfUrl: pdfUrlData.publicUrl 
+            }
+          ]);
+        dbError = fallback.error;
+      }
 
       if (dbError) throw new Error(`数据库保存失败: ${dbError.message}`);
 
@@ -344,19 +371,15 @@ export const Admin: React.FC = () => {
     setIsSavingOrder(true);
     setMessage('');
 
-    // Assign completely new timestamps based on current time to ensure strict descending order
-    // Use a larger gap (e.g., 1 hour = 3600000 ms) to avoid any potential precision issues
-    const now = Date.now();
+    // Use order_index for sorting. Lower index = appears first.
     const updates = books.map((book, index) => {
-      // Subtract 1 hour for each subsequent item to maintain descending order
-      const newTimestamp = new Date(now - index * 3600000).toISOString();
-      return { id: book.id, created_at: newTimestamp };
+      return { id: book.id, order_index: index };
     });
 
     try {
       const results = await Promise.all(
         updates.map(update =>
-          supabase.from('books').update({ created_at: update.created_at }).eq('id', update.id)
+          supabase.from('books').update({ order_index: update.order_index }).eq('id', update.id)
         )
       );
 
@@ -366,17 +389,12 @@ export const Admin: React.FC = () => {
         throw new Error(firstError.message);
       }
 
-      // Update local state to reflect new timestamps
-      const updatedBooks = books.map((book, index) => ({
-        ...book,
-        created_at: updates[index].created_at
-      }));
-      setBooks(updatedBooks);
-
+      // Update local state is not strictly necessary since we already reordered the array,
+      // but we can just re-fetch to be safe or just show success.
       setMessage('排序保存成功！');
       setHasOrderChanged(false);
     } catch (error: any) {
-      setMessage(`保存排序失败: ${error.message}`);
+      setMessage(`保存排序失败: ${error.message} (请确保数据库中已添加 order_index 字段)`);
       fetchBooks(); // Revert on error
     } finally {
       setIsSavingOrder(false);
