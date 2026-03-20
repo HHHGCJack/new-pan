@@ -201,6 +201,15 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
+      {/* Global Overlay for Dropdown Menu */}
+      <div 
+        className={`fixed inset-0 z-40 transition-all duration-500 pointer-events-none ${
+          visualEffect === 'cyberpunk' ? 'bg-black/60 backdrop-blur-sm' : 'bg-black/20 backdrop-blur-sm'
+        } ${
+          activeDropdown !== null || mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`}
+      />
+
       <nav 
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
           mobileMenuOpen ? 'bg-transparent' : getGlassStyle('nav')
