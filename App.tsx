@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -6,6 +6,7 @@ import { Home } from './components/Home';
 import { ReadingPro } from './components/ReadingPro';
 import { Admin } from './components/Admin';
 import { ThemeContextType, VisualEffect } from './types';
+import { supabase } from './src/lib/supabase';
 
 // Create Context
 export const ThemeContext = createContext<ThemeContextType>({
@@ -13,6 +14,8 @@ export const ThemeContext = createContext<ThemeContextType>({
   setVisualEffect: () => {},
   showToast: () => {},
   handleCardToast: () => {},
+  pansouEnabled: true,
+  setPansouEnabled: () => {},
 });
 
 // Use Context Hook
@@ -54,6 +57,26 @@ function App() {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('敬请期待 Coming Soon');
   const [visualEffect, setVisualEffect] = useState<VisualEffect>('liquid');
+  const [pansouEnabled, setPansouEnabled] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('settings')
+          .select('value')
+          .eq('id', 'pansou_enabled')
+          .single();
+        
+        if (data && !error) {
+          setPansouEnabled(data.value);
+        }
+      } catch (err) {
+        console.error('Failed to fetch settings:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -66,7 +89,7 @@ function App() {
   };
 
   return (
-    <ThemeContext.Provider value={{ visualEffect, setVisualEffect, showToast, handleCardToast }}>
+    <ThemeContext.Provider value={{ visualEffect, setVisualEffect, showToast, handleCardToast, pansouEnabled, setPansouEnabled }}>
       <div className={`min-h-screen flex flex-col font-sans selection:bg-black selection:text-white transition-colors duration-500 relative overflow-hidden ${visualEffect === 'cyberpunk' ? 'bg-[#050505] selection:bg-cyan-500 selection:text-black' : 'bg-[#f5f5f7]'}`}>
         
         {/* Cyberpunk Background Elements */}

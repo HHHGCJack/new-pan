@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { useTheme } from '../App';
 
 export const Home: React.FC = () => {
-  const { handleCardToast } = useTheme();
+  const { handleCardToast, pansouEnabled, showToast } = useTheme();
 
   return (
     <main className="flex-grow pt-16">
@@ -36,7 +36,8 @@ export const Home: React.FC = () => {
               title="网盘影视资源搜"
               description="聚合全网资源，打破信息孤岛。一次搜索，极速直达云端内容。"
               imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1618005182384-a83a8bd57fbe&w=800&q=50&output=webp"
-              href="http://gongcheng.yyboxdns.com:12309"
+              href={pansouEnabled ? "http://gongcheng.yyboxdns.com:12309" : "#"}
+              onToast={() => !pansouEnabled ? showToast('因政策原因暂停服务') : undefined}
               tag="HOT TOOL"
               size="wide"
               theme="light"

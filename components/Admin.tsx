@@ -145,10 +145,10 @@ const SortableBookItem = ({
 };
 
 export const Admin: React.FC = () => {
-  const { visualEffect } = useTheme();
+  const { visualEffect, pansouEnabled, setPansouEnabled } = useTheme();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState<'manage' | 'upload'>('manage');
+  const [activeTab, setActiveTab] = useState<'manage' | 'upload' | 'settings'>('manage');
   
   // Upload State
   const [title, setTitle] = useState('');
@@ -416,6 +416,28 @@ export const Admin: React.FC = () => {
     }
   };
 
+  const handleTogglePansou = async () => {
+    const newValue = !pansouEnabled;
+    try {
+      const { error } = await supabase
+        .from('settings')
+        .upsert([{ id: 'pansou_enabled', value: newValue }]);
+        
+      if (error) {
+        throw error;
+      }
+      setPansouEnabled(newValue);
+      setMessage(`网盘影视资源搜功能已${newValue ? '开启' : '关闭'}`);
+    } catch (err: any) {
+      console.error('Failed to update settings:', err);
+      if (err.message && err.message.includes('relation "public.settings" does not exist')) {
+        setMessage('更新失败: 数据库中未找到 settings 表。请在 Supabase 创建 id(text) 和 value(boolean) 的 settings 表。');
+      } else {
+        setMessage(`更新失败: ${err.message || '未知错误'}`);
+      }
+    }
+  };
+
   const getGlassClasses = () => {
     if (visualEffect === 'liquid') {
       return 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[20px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border border-white/40 text-gray-900 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1),_inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
@@ -494,6 +516,16 @@ export const Admin: React.FC = () => {
                 }`}
               >
                 图书上传
+              </button>
+              <button
+                onClick={() => { setActiveTab('settings'); setMessage(''); }}
+                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                  activeTab === 'settings' 
+                    ? (visualEffect === 'cyberpunk' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-black text-white')
+                    : (visualEffect === 'cyberpunk' ? 'text-cyan-600 hover:text-cyan-400' : 'text-gray-500 hover:text-gray-900')
+                }`}
+              >
+                系统设置
               </button>
             </div>
 
@@ -654,6 +686,39 @@ export const Admin: React.FC = () => {
                   )}
                 </button>
               </form>
+            )}
+
+            {/* Tab Content: Settings */}
+            {activeTab === 'settings' && (
+              <div className="space-y-6">
+                <div className={`p-6 rounded-2xl border flex items-center justify-between ${
+                  visualEffect === 'cyberpunk' 
+                    ? 'bg-cyan-950/20 border-cyan-500/30' 
+                    : 'bg-white/50 border-gray-100'
+                }`}>
+                  <div>
+                    <h3 className={`font-semibold text-lg ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-900'}`}>网盘影视资源搜功能</h3>
+                    <p className={`text-sm mt-1 ${visualEffect === 'cyberpunk' ? 'text-cyan-600' : 'text-gray-500'}`}>
+                      控制前端首页是否允许访问网盘影视搜索模块。关闭后将会提示政策原因暂停服务。
+                    </p>
+                  </div>
+                  
+                  <button
+                    onClick={handleTogglePansou}
+                    className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none ${
+                        pansouEnabled 
+                          ? (visualEffect === 'cyberpunk' ? 'bg-cyan-500' : 'bg-green-500')
+                          : (visualEffect === 'cyberpunk' ? 'bg-gray-800' : 'bg-gray-300')
+                      }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        pansouEnabled ? 'translate-x-8' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
             )}
           </>
         )}

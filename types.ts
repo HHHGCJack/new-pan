@@ -32,4 +32,6 @@ export interface ThemeContextType {
   setVisualEffect: (effect: VisualEffect) => void;
   showToast: (message: string) => void;
   handleCardToast: () => void;
+  pansouEnabled: boolean;
+  setPansouEnabled: (enabled: boolean) => void;
 }

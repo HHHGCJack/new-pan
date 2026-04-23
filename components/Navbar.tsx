@@ -3,31 +3,37 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Settings, Zap, Droplets, Monitor } from 'lucide-react';
 import { useTheme } from '../App';
 
-const navData = [
-  { 
-    name: '学习', 
-    items: [
-      { title: '外刊精读 Pro', desc: '深度解析国际刊物', href: '/reading-pro' }
-    ] 
-  },
-  { 
-    name: '娱乐', 
-    items: [
-      { title: '网盘资源搜', desc: '全网影视资源聚合', href: 'http://gongcheng.yyboxdns.com:12309' },
-      { title: '极简小说', desc: '沉浸式阅读体验', href: '#' }
-    ] 
-  },
-  { 
-    name: '科技', 
-    items: [
-      { title: 'AI 智能体', desc: '私人数字助手', href: '#' },
-      { title: '实验室', desc: 'UI 视觉风格设置', href: '#settings' }
-    ] 
-  }
-];
-
 export const Navbar: React.FC = () => {
-  const { visualEffect, setVisualEffect, showToast } = useTheme();
+  const { visualEffect, setVisualEffect, showToast, pansouEnabled } = useTheme();
+
+  const navData = [
+    { 
+      name: '学习', 
+      items: [
+        { title: '外刊精读 Pro', desc: '深度解析国际刊物', href: '/reading-pro' }
+      ] 
+    },
+    { 
+      name: '娱乐', 
+      items: [
+        { 
+          title: '网盘资源搜', 
+          desc: '全网影视资源聚合', 
+          href: pansouEnabled ? 'http://gongcheng.yyboxdns.com:12309' : '#',
+          onToast: () => !pansouEnabled ? showToast('因政策原因暂停服务') : undefined
+        },
+        { title: '极简小说', desc: '沉浸式阅读体验', href: '#' }
+      ] 
+    },
+    { 
+      name: '科技', 
+      items: [
+        { title: 'AI 智能体', desc: '私人数字助手', href: '#' },
+        { title: '实验室', desc: 'UI 视觉风格设置', href: '#settings' }
+      ] 
+    }
+  ];
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
@@ -63,7 +69,7 @@ export const Navbar: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleItemClick = (e: React.MouseEvent, title: string, href: string) => {
+  const handleItemClick = (e: React.MouseEvent, title: string, href: string, subItem?: any) => {
     if (title === '实验室') {
       e.preventDefault();
       setShowSettingsModal(true);
@@ -71,12 +77,16 @@ export const Navbar: React.FC = () => {
       return;
     }
 
-    if (href === '#' || title === 'AI 智能体' || title === '极简小说') {
-        e.preventDefault();
+    if (href === '#') {
+      e.preventDefault();
+      if (subItem && subItem.onToast) {
+        subItem.onToast();
+      } else {
         showToast('敬请期待 Coming Soon');
-        setMobileMenuOpen(false);
-        setActiveDropdown(null);
-        return;
+      }
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+      return;
     }
 
     if (href.startsWith('/')) {
@@ -284,7 +294,7 @@ export const Navbar: React.FC = () => {
                         key={subItem.title} 
                         href={subItem.href}
                         target={subItem.href === '#settings' ? undefined : "_blank"}
-                        onClick={(e) => handleItemClick(e, subItem.title, subItem.href)}
+                        onClick={(e) => handleItemClick(e, subItem.title, subItem.href, subItem)}
                         className={`group block p-4 rounded-2xl transition-all duration-200 ${
                             visualEffect === 'liquid' 
                             ? 'hover:bg-white/30 hover:shadow-[inset_0_0_10px_rgba(255,255,255,0.2)]' 
@@ -336,7 +346,7 @@ export const Navbar: React.FC = () => {
                       <a 
                         key={sub.title} 
                         href={sub.href}
-                        onClick={(e) => handleItemClick(e, sub.title, sub.href)}
+                        onClick={(e) => handleItemClick(e, sub.title, sub.href, sub)}
                         className={`block p-4 rounded-2xl transition-all duration-300 ${
                           visualEffect === 'liquid'
                             ? 'bg-white/40 border border-white/60 shadow-[inset_0_1px_10px_rgba(255,255,255,0.8),0_10px_20px_rgba(0,0,0,0.1)] active:bg-white/60 active:scale-[0.98] active:shadow-inner'

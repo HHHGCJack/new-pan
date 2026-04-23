@@ -38,19 +38,11 @@ export const Hero: React.FC = () => {
               index === activeIndex
                 ? 'opacity-100 transform translate-y-0 scale-100 blur-0'
                 : 'opacity-0 transform translate-y-8 scale-90 blur-sm'
-            } ${visualEffect === 'cyberpunk' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : ''}`}
+            } ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'text-gray-800 drop-shadow-md'}`}
             style={{
-              // Use a robust stack for rounded fonts: SF Pro Rounded (Apple), Arial Rounded MT Bold (Win), or general rounded
               fontFamily: '"SF Pro Rounded", "Arial Rounded MT Bold", "Nunito", "Varela Round", sans-serif',
-              fontWeight: 900, // Heavy weight for that "Hello" look
+              fontWeight: 900,
               fontSize: ['cn', 'jp', 'kr'].includes(word.lang) ? 'clamp(3rem, 15vw, 8rem)' : 'clamp(3.5rem, 18vw, 10rem)',
-              background: visualEffect === 'cyberpunk' 
-                ? 'linear-gradient(180deg, #22d3ee 0%, #3b82f6 100%)' 
-                : 'linear-gradient(180deg, #1a1a1a 0%, #4a4a4a 100%)',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              color: 'transparent',
               lineHeight: 1.2,
               letterSpacing: '-0.02em'
             }}
