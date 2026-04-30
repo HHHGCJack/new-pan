@@ -1,96 +1,73 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../App';
-
-const words = [
-  { text: 'hello', lang: 'en' },
-  { text: '你好', lang: 'cn' },
-  { text: 'hola', lang: 'es' },
-  { text: 'bonjour', lang: 'fr' },
-  { text: 'こんにちは', lang: 'jp' },
-  { text: '안녕하세요', lang: 'kr' },
-  { text: 'привет', lang: 'ru' },
-];
+import { translations } from '../i18n';
 
 export const Hero: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { visualEffect } = useTheme();
+  const { theme, language } = useTheme();
+  const t = translations[language];
 
-  useEffect(() => {
-    // Apple's animation is slow and deliberate
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % words.length);
-    }, 3200);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Apple-style iOS setup screen variants
-  const variants = {
-    enter: {
-      opacity: 0,
-      scale: 0.9,
-      filter: 'blur(10px)',
-    },
-    center: {
-      opacity: 1,
-      scale: 1,
-      filter: 'blur(0px)',
-      transition: {
-        duration: 1.2,
-        ease: [0.22, 1, 0.36, 1], // Custom spring-like Apple ease
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 1.05,
-      filter: 'blur(10px)',
-      transition: {
-        duration: 1.0,
-        ease: [0.22, 1, 0.36, 1],
-      }
-    }
+  // We map the language to specific handwriting fonts downloaded in App.tsx
+  const getFontFamily = () => {
+    return language === 'zh' ? "'Zhi Mang Xing', cursive" : "'Dancing Script', cursive";
   };
 
+  // Re-trigger animation when language changes
+  const [animationKey, setAnimationKey] = useState(0);
+  
+  useEffect(() => {
+    setAnimationKey(prev => prev + 1);
+  }, [language]);
+
   return (
-    <motion.section 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      className={`relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden transition-colors duration-500 ${visualEffect === 'cyberpunk' ? 'bg-[#050505]' : 'bg-[#f5f5f7]'}`}
+    <section 
+      className={`relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden transition-colors duration-500`}
     >
       <div className="relative h-48 w-full flex justify-center items-center">
-        <AnimatePresence>
-          <motion.span
-            key={activeIndex}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className={`absolute ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'text-[#1d1d1f]'}`}
+        <motion.svg 
+          key={animationKey}
+          className="w-full h-full max-w-2xl px-6" 
+          viewBox="0 0 600 200" 
+          preserveAspectRatio="xMinYMin meet"
+          style={{ overflow: 'visible' }} // Ensure text is fully visible
+        >
+          {/* Drop shadow for better legibility */}
+          <motion.text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="central"
+            className={`${theme === 'dark' ? 'stroke-white' : 'stroke-gray-900'}`}
             style={{
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
-              fontWeight: 500, // Medium weight for elegance
-              fontSize: ['cn', 'jp', 'kr'].includes(words[activeIndex].lang) ? 'clamp(3rem, 15vw, 6rem)' : 'clamp(4rem, 18vw, 8rem)',
-              lineHeight: 1,
-              letterSpacing: '-0.04em',
-              // Force hardware acceleration for smooth blur/scale
-              WebkitFontSmoothing: 'antialiased',
-              transformStyle: 'preserve-3d',
-              backfaceVisibility: 'hidden'
+               fontFamily: getFontFamily(),
+               strokeWidth: 2,
+               strokeLinecap: "round",
+               strokeLinejoin: "round",
+               fontSize: language === 'zh' ? '120px' : '100px',
+               paintOrder: 'stroke fill',
+               verticalAlign: 'middle',
+            }}
+            initial={{ strokeDasharray: 1000, strokeDashoffset: 1000, fill: "transparent" }}
+            animate={{ strokeDashoffset: 0, fill: theme === 'dark' ? "#fff" : "#111827" }}
+            transition={{
+              strokeDashoffset: { duration: 2.5, ease: "linear" },
+              fill: { duration: 0.8, delay: 2.2, ease: "easeIn" }
             }}
           >
-            {words[activeIndex].text}
-          </motion.span>
-        </AnimatePresence>
+            {t.hero.welcome}
+          </motion.text>
+        </motion.svg>
       </div>
+
       <motion.p 
+        key={`sub-${animationKey}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 0.8, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className={`mt-12 text-xs font-semibold tracking-[0.3em] uppercase ${visualEffect === 'cyberpunk' ? 'text-cyan-500/70 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]' : 'text-gray-400'}`}
+        transition={{ delay: 0.5, duration: 1 }}
+        className={`mt-4 text-xs font-semibold tracking-[0.3em] uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
       >
-        Simple . Pure . Powerful
+        {t.hero.subtitle}
       </motion.p>
-    </motion.section>
+    </section>
   );
 };

@@ -33,7 +33,7 @@ interface AdminBook {
 
 interface SortableBookItemProps {
   book: AdminBook;
-  visualEffect: string;
+  theme: string;
   editingId: string | null;
   editTitle: string;
   editDescription: string;
@@ -47,7 +47,7 @@ interface SortableBookItemProps {
 }
 
 const SortableBookItem = ({
-  book, visualEffect, editingId, editTitle, editDescription,
+  book, theme, editingId, editTitle, editDescription,
   setEditTitle, setEditDescription, saveEditing, setEditingId,
   startEditing, deleteBook, getInputClasses
 }: SortableBookItemProps) => {
@@ -69,7 +69,7 @@ const SortableBookItem = ({
 
   return (
     <div ref={setNodeRef} style={style} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center relative pr-12 ${
-      visualEffect === 'cyberpunk' ? 'bg-black/40 border-cyan-900/50' : 'bg-white/40 border-gray-200'
+      theme === 'dark' ? 'bg-white/10 border-white/20' : 'bg-white/40 border-gray-200'
     } ${isDragging ? 'shadow-2xl ring-2 ring-blue-500' : ''}`}>
       
       {/* Drag Handle */}
@@ -116,14 +116,14 @@ const SortableBookItem = ({
           </div>
         ) : (
           <div>
-            <h3 className={`font-bold text-lg mb-1 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-900'}`}>{book.title}</h3>
-            <p className={`text-sm line-clamp-2 mb-3 ${visualEffect === 'cyberpunk' ? 'text-cyan-600' : 'text-gray-600'}`}>{book.description || '暂无简介'}</p>
+            <h3 className={`font-bold text-lg mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{book.title}</h3>
+            <p className={`text-sm line-clamp-2 mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{book.description || '暂无简介'}</p>
             
             <div className="flex flex-wrap gap-2">
               <button 
                 onClick={() => startEditing(book)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
-                  visualEffect === 'cyberpunk' ? 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-800/50' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                  theme === 'dark' ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                 }`}
               >
                 <Edit2 className="w-4 h-4 mr-1" /> 编辑
@@ -131,7 +131,7 @@ const SortableBookItem = ({
               <button 
                 onClick={() => deleteBook(book.id)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
-                  visualEffect === 'cyberpunk' ? 'bg-red-900/30 text-red-400 hover:bg-red-800/50' : 'bg-red-50 text-red-600 hover:bg-red-100'
+                  theme === 'dark' ? 'bg-red-400/20 text-red-400 hover:bg-red-400/30' : 'bg-red-50 text-red-600 hover:bg-red-100'
                 }`}
               >
                 <Trash2 className="w-4 h-4 mr-1" /> 删除
@@ -145,7 +145,7 @@ const SortableBookItem = ({
 };
 
 export const Admin: React.FC = () => {
-  const { visualEffect, pansouEnabled, setPansouEnabled } = useTheme();
+  const { theme, pansouEnabled, setPansouEnabled } = useTheme();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'manage' | 'upload' | 'settings'>('manage');
@@ -439,18 +439,15 @@ export const Admin: React.FC = () => {
   };
 
   const getGlassClasses = () => {
-    if (visualEffect === 'liquid') {
-      return 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[20px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border border-white/40 text-gray-900 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1),_inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
-    } else if (visualEffect === 'cyberpunk') {
-      return 'bg-black/80 backdrop-blur-xl border border-cyan-500/50 text-cyan-50 shadow-[0_0_20px_rgba(6,182,212,0.15),_inset_0_0_20px_rgba(6,182,212,0.05)]';
-    } else {
-      return 'bg-white/85 backdrop-blur-xl border border-white/50 text-gray-900 shadow-md';
+    if (theme === 'dark') {
+      return 'bg-white/10 backdrop-blur-[20px] backdrop-saturate-[150%] backdrop-contrast-[110%] border border-white/20 text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]';
     }
+    return 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[20px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border border-white/40 text-gray-900 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)]';
   };
 
   const getInputClasses = () => {
-    if (visualEffect === 'cyberpunk') {
-      return 'w-full bg-cyan-950/30 border border-cyan-500/50 rounded-xl px-4 py-3 text-cyan-100 placeholder-cyan-500/50 focus:outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all';
+    if (theme === 'dark') {
+      return 'w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white/50 focus:shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all';
     }
     return 'w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all';
   };
@@ -458,7 +455,7 @@ export const Admin: React.FC = () => {
   return (
     <main className="flex-grow pt-24 pb-32 px-6 max-w-4xl mx-auto w-full relative z-10">
       <div className={`rounded-[2.5rem] p-8 md:p-12 ${getGlassClasses()}`}>
-        <h1 className={`text-3xl font-bold mb-8 text-center ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'text-gray-900'}`}>后台管理</h1>
+        <h1 className={`text-3xl font-bold mb-8 text-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>后台管理</h1>
         
         {message && (
           <div className={`mb-6 p-4 rounded-xl text-center font-medium ${message.includes('成功') ? 'bg-green-500/20 text-green-600 border border-green-500/30' : 'bg-red-500/20 text-red-600 border border-red-500/30'}`}>
@@ -469,9 +466,9 @@ export const Admin: React.FC = () => {
         {!isAuthenticated ? (
           <form onSubmit={handleLogin} className="space-y-6 max-w-sm mx-auto mt-12">
             <div>
-              <label className={`block text-sm font-semibold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-700'}`}>管理员密码</label>
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>管理员密码</label>
               <div className="relative">
-                <Lock className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${visualEffect === 'cyberpunk' ? 'text-cyan-500/50' : 'text-gray-400'}`} />
+                <Lock className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} />
                 <input 
                   type="password" 
                   value={password}
@@ -485,8 +482,8 @@ export const Admin: React.FC = () => {
             <button 
               type="submit" 
               className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center ${
-                visualEffect === 'cyberpunk' 
-                  ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)]' 
+                theme === 'dark' 
+                  ? 'bg-white text-black hover:bg-gray-200 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]' 
                   : 'bg-black text-white hover:bg-gray-800 hover:shadow-lg'
               }`}
             >
@@ -501,8 +498,8 @@ export const Admin: React.FC = () => {
                 onClick={() => { setActiveTab('manage'); setMessage(''); }}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
                   activeTab === 'manage' 
-                    ? (visualEffect === 'cyberpunk' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-black text-white')
-                    : (visualEffect === 'cyberpunk' ? 'text-cyan-600 hover:text-cyan-400' : 'text-gray-500 hover:text-gray-900')
+                    ? (theme === 'dark' ? 'bg-white/20 text-white border border-white/30' : 'bg-black text-white')
+                    : (theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900')
                 }`}
               >
                 图书管理
@@ -511,8 +508,8 @@ export const Admin: React.FC = () => {
                 onClick={() => { setActiveTab('upload'); setMessage(''); }}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
                   activeTab === 'upload' 
-                    ? (visualEffect === 'cyberpunk' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-black text-white')
-                    : (visualEffect === 'cyberpunk' ? 'text-cyan-600 hover:text-cyan-400' : 'text-gray-500 hover:text-gray-900')
+                    ? (theme === 'dark' ? 'bg-white/20 text-white border border-white/30' : 'bg-black text-white')
+                    : (theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900')
                 }`}
               >
                 图书上传
@@ -521,8 +518,8 @@ export const Admin: React.FC = () => {
                 onClick={() => { setActiveTab('settings'); setMessage(''); }}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
                   activeTab === 'settings' 
-                    ? (visualEffect === 'cyberpunk' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-black text-white')
-                    : (visualEffect === 'cyberpunk' ? 'text-cyan-600 hover:text-cyan-400' : 'text-gray-500 hover:text-gray-900')
+                    ? (theme === 'dark' ? 'bg-white/20 text-white border border-white/30' : 'bg-black text-white')
+                    : (theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900')
                 }`}
               >
                 系统设置
@@ -533,14 +530,14 @@ export const Admin: React.FC = () => {
             {activeTab === 'manage' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className={`text-xl font-bold ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-800'}`}>图书列表</h2>
+                  <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>图书列表</h2>
                   {hasOrderChanged && (
                     <button
                       onClick={saveOrder}
                       disabled={isSavingOrder}
                       className={`px-4 py-2 rounded-lg font-medium flex items-center transition-all ${
-                        visualEffect === 'cyberpunk'
-                          ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] disabled:bg-cyan-900/50 disabled:text-cyan-500/50'
+                        theme === 'dark'
+                          ? 'bg-white text-black hover:bg-gray-200 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] disabled:bg-white/10 disabled:text-white/30'
                           : 'bg-black text-white hover:bg-gray-800 hover:shadow-md disabled:bg-gray-300 disabled:text-gray-500'
                       }`}
                     >
@@ -577,7 +574,7 @@ export const Admin: React.FC = () => {
                           <SortableBookItem 
                             key={book.id}
                             book={book}
-                            visualEffect={visualEffect}
+                            theme={theme}
                             editingId={editingId}
                             editTitle={editTitle}
                             editDescription={editDescription}
@@ -601,7 +598,7 @@ export const Admin: React.FC = () => {
             {activeTab === 'upload' && (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className={`block text-sm font-semibold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-700'}`}>书名</label>
+                  <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>书名</label>
                   <input 
                     type="text" 
                     value={title}
@@ -613,7 +610,7 @@ export const Admin: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-semibold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-700'}`}>简介</label>
+                  <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>简介</label>
                   <textarea 
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -624,8 +621,8 @@ export const Admin: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className={`block text-sm font-semibold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-700'}`}>封面图片 (JPG/PNG)</label>
-                    <div className={`relative flex items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-all ${visualEffect === 'cyberpunk' ? 'border-cyan-500/50 hover:border-cyan-400 hover:bg-cyan-900/20' : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50/50'}`}>
+                    <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>封面图片 (JPG/PNG)</label>
+                    <div className={`relative flex items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-all ${theme === 'dark' ? 'border-white/30 hover:border-white/50 hover:bg-white/5' : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50/50'}`}>
                       <input 
                         id="cover-upload"
                         type="file" 
@@ -635,8 +632,8 @@ export const Admin: React.FC = () => {
                         required
                       />
                       <div className="text-center flex flex-col items-center">
-                        <ImageIcon className={`w-8 h-8 mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-500/50' : 'text-gray-400'}`} />
-                        <span className={`text-sm font-medium ${visualEffect === 'cyberpunk' ? 'text-cyan-400/80' : 'text-gray-500'}`}>
+                        <ImageIcon className={`w-8 h-8 mb-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} />
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white/80' : 'text-gray-500'}`}>
                           {cover ? cover.name : '点击或拖拽上传封面'}
                         </span>
                       </div>
@@ -644,8 +641,8 @@ export const Admin: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-semibold mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-700'}`}>PDF 文件</label>
-                    <div className={`relative flex items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-all ${visualEffect === 'cyberpunk' ? 'border-cyan-500/50 hover:border-cyan-400 hover:bg-cyan-900/20' : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50/50'}`}>
+                    <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>PDF 文件</label>
+                    <div className={`relative flex items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-all ${theme === 'dark' ? 'border-white/30 hover:border-white/50 hover:bg-white/5' : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50/50'}`}>
                       <input 
                         id="pdf-upload"
                         type="file" 
@@ -655,8 +652,8 @@ export const Admin: React.FC = () => {
                         required
                       />
                       <div className="text-center flex flex-col items-center">
-                        <FileText className={`w-8 h-8 mb-2 ${visualEffect === 'cyberpunk' ? 'text-cyan-500/50' : 'text-gray-400'}`} />
-                        <span className={`text-sm font-medium ${visualEffect === 'cyberpunk' ? 'text-cyan-400/80' : 'text-gray-500'}`}>
+                        <FileText className={`w-8 h-8 mb-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`} />
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white/80' : 'text-gray-500'}`}>
                           {pdf ? pdf.name : '点击或拖拽上传 PDF'}
                         </span>
                       </div>
@@ -668,8 +665,8 @@ export const Admin: React.FC = () => {
                   type="submit" 
                   disabled={isUploading}
                   className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center ${
-                    visualEffect === 'cyberpunk' 
-                      ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)] disabled:bg-cyan-900/50 disabled:text-cyan-500/50' 
+                    theme === 'dark' 
+                      ? 'bg-white text-black hover:bg-gray-200 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] disabled:bg-white/10 disabled:text-white/50' 
                       : 'bg-black text-white hover:bg-gray-800 hover:shadow-lg disabled:bg-gray-300 disabled:text-gray-500'
                   }`}
                 >
@@ -692,13 +689,13 @@ export const Admin: React.FC = () => {
             {activeTab === 'settings' && (
               <div className="space-y-6">
                 <div className={`p-6 rounded-2xl border flex items-center justify-between ${
-                  visualEffect === 'cyberpunk' 
-                    ? 'bg-cyan-950/20 border-cyan-500/30' 
+                  theme === 'dark' 
+                    ? 'bg-white/5 border-white/20' 
                     : 'bg-white/50 border-gray-100'
                 }`}>
                   <div>
-                    <h3 className={`font-semibold text-lg ${visualEffect === 'cyberpunk' ? 'text-cyan-300' : 'text-gray-900'}`}>网盘影视资源搜功能</h3>
-                    <p className={`text-sm mt-1 ${visualEffect === 'cyberpunk' ? 'text-cyan-600' : 'text-gray-500'}`}>
+                    <h3 className={`font-semibold text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>网盘影视资源搜功能</h3>
+                    <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                       控制前端首页是否允许访问网盘影视搜索模块。关闭后将会提示政策原因暂停服务。
                     </p>
                   </div>
@@ -707,8 +704,8 @@ export const Admin: React.FC = () => {
                     onClick={handleTogglePansou}
                     className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none ${
                         pansouEnabled 
-                          ? (visualEffect === 'cyberpunk' ? 'bg-cyan-500' : 'bg-green-500')
-                          : (visualEffect === 'cyberpunk' ? 'bg-gray-800' : 'bg-gray-300')
+                          ? (theme === 'dark' ? 'bg-white/80' : 'bg-green-500')
+                          : (theme === 'dark' ? 'bg-white/20' : 'bg-gray-300')
                       }`}
                   >
                     <span
