@@ -64,15 +64,47 @@ export const Home: React.FC = () => {
             />
           </motion.div>
 
-            {/* 3. Minimalist Novel - Light Card - Stable Book/Nature */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }} className="md:col-span-3">
+          {/* 3. Tech Card */}
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}>
+            <Card
+              title={t.nav.tech}
+              description="Stay up-to-date with the latest technology trends and news."
+              imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1518770660439-4636190af475&w=500&q=50&output=webp"
+              href="#"
+              tag="NEW"
+              size="normal"
+              uiTheme={theme}
+              onToast={handleCardToast}
+              i18nVisit={t.actions.visit}
+              i18nComingSoon={t.actions.comingSoon}
+            />
+          </motion.div>
+
+          {/* 4. AI Agents Card */}
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}>
+            <Card
+              title={t.nav.ai}
+              description="Explore powerful AI agents capable of assisting with various tasks."
+              imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1620712943543-bcc4688e7485&w=500&q=50&output=webp"
+              href="#"
+              tag="BETA"
+              size="normal"
+              uiTheme={theme}
+              onToast={handleCardToast}
+              i18nVisit={t.actions.visit}
+              i18nComingSoon={t.actions.comingSoon}
+            />
+          </motion.div>
+
+          {/* 5. Minimalist Novel - Light Card - Stable Book/Nature */}
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }} className="md:col-span-1 lg:col-span-1">
             <Card
               title={t.home.novelTitle}
               description={t.home.novelCardDesc}
               imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1476275466078-4007374efbbe&w=800&q=50&output=webp"
               href="#"
               tag={t.home.classic}
-              size="wide"
+              size="normal"
               uiTheme={theme}
               onToast={handleCardToast}
               i18nVisit={t.actions.visit}

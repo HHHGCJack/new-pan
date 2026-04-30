@@ -7,60 +7,51 @@ export const Hero: React.FC = () => {
   const { theme, language } = useTheme();
   const t = translations[language];
 
-  // We map the language to specific handwriting fonts downloaded in App.tsx
-  const getFontFamily = () => {
-    return language === 'zh' ? "'Zhi Mang Xing', cursive" : "'Dancing Script', cursive";
-  };
+  const [helloIndex, setHelloIndex] = useState(0);
 
-  // Re-trigger animation when language changes
-  const [animationKey, setAnimationKey] = useState(0);
-  
+  const hellos = [
+    { text: 'Hello', lang: 'en' },
+    { text: '你好', lang: 'zh' },
+    { text: 'Bonjour', lang: 'fr' },
+    { text: 'Hola', lang: 'es' },
+    { text: 'こんにちは', lang: 'ja' },
+    { text: '안녕하세요', lang: 'ko' }
+  ];
+
   useEffect(() => {
-    setAnimationKey(prev => prev + 1);
-  }, [language]);
+    const interval = setInterval(() => {
+      setHelloIndex((prev) => (prev + 1) % hellos.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [hellos.length]);
 
   return (
     <section 
       className={`relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden transition-colors duration-500`}
     >
       <div className="relative h-48 w-full flex justify-center items-center">
-        <motion.svg 
-          key={animationKey}
-          className="w-full h-full max-w-2xl px-6" 
-          viewBox="0 0 600 200" 
-          preserveAspectRatio="xMinYMin meet"
-          style={{ overflow: 'visible' }} // Ensure text is fully visible
-        >
-          {/* Drop shadow for better legibility */}
-          <motion.text
-            x="50%"
-            y="50%"
-            textAnchor="middle"
-            dominantBaseline="central"
-            className={`${theme === 'dark' ? 'stroke-white' : 'stroke-gray-900'}`}
-            style={{
-               fontFamily: getFontFamily(),
-               strokeWidth: 2,
-               strokeLinecap: "round",
-               strokeLinejoin: "round",
-               fontSize: language === 'zh' ? '120px' : '100px',
-               paintOrder: 'stroke fill',
-               verticalAlign: 'middle',
-            }}
-            initial={{ strokeDasharray: 1000, strokeDashoffset: 1000, fill: "transparent" }}
-            animate={{ strokeDashoffset: 0, fill: theme === 'dark' ? "#fff" : "#111827" }}
-            transition={{
-              strokeDashoffset: { duration: 2.5, ease: "linear" },
-              fill: { duration: 0.8, delay: 2.2, ease: "easeIn" }
-            }}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={helloIndex}
+            initial={{ opacity: 0, scale: 0.5, y: 20, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, scale: 1.1, y: -20, filter: 'blur(10px)' }}
+            transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+            className={`absolute flex justify-center items-center w-full`}
           >
-            {t.hero.welcome}
-          </motion.text>
-        </motion.svg>
+            <h1 
+              className={`font-semibold tracking-tight leading-none ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+              style={{
+                fontSize: hellos[helloIndex].lang === 'zh' || hellos[helloIndex].lang === 'ja' || hellos[helloIndex].lang === 'ko' ? 'clamp(6rem, 15vw, 10rem)' : 'clamp(5rem, 15vw, 10rem)',
+              }}
+            >
+              {hellos[helloIndex].text}
+            </h1>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       <motion.p 
-        key={`sub-${animationKey}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 0.8, y: 0 }}
         transition={{ delay: 0.5, duration: 1 }}

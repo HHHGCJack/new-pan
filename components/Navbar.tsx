@@ -16,6 +16,18 @@ export const Navbar: React.FC = () => {
         { title: t.nav.readingPro, desc: t.nav.readingProDesc, href: '/reading-pro' }
       ] 
     },
+    {
+      name: t.nav.tech,
+      items: [
+        { title: 'Tech News', desc: 'Latest updates', href: '#' },
+      ]
+    },
+    {
+      name: t.nav.ai,
+      items: [
+        { title: 'AI Assist', desc: 'Smart agents', href: '#' },
+      ]
+    },
     { 
       name: t.nav.entertainment, 
       items: [
@@ -221,7 +233,7 @@ export const Navbar: React.FC = () => {
                 }`}
              >
                 <Globe size={16} />
-                <span className="text-xs font-bold uppercase">{language === 'zh' ? 'EN' : '中'}</span>
+                <span className="text-xs font-bold uppercase">{language === 'zh' ? '中' : '英'}</span>
              </button>
 
             <button 
@@ -252,7 +264,7 @@ export const Navbar: React.FC = () => {
                 }`}
              >
                 <div className="flex items-center justify-center font-bold text-sm h-5 w-5 border-2 rounded-full border-current">
-                   {language === 'zh' ? 'E' : '中'}
+                   {language === 'zh' ? '中' : '英'}
                 </div>
              </button>
             <button 
