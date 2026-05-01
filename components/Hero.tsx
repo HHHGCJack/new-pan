@@ -14,7 +14,18 @@ const words = [
 
 export const Hero: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { visualEffect } = useTheme();
+  const { themeMode, language } = useTheme();
+
+  const translations = {
+    zh: {
+      slogan: '简单 · 纯粹 · 强大'
+    },
+    en: {
+      slogan: 'Simple . Pure . Powerful'
+    }
+  };
+
+  const t = translations[language];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,7 +39,7 @@ export const Hero: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className={`relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden transition-colors duration-500 ${visualEffect === 'cyberpunk' ? 'bg-[#050505]' : 'bg-[#f5f5f7]'}`}
+      className={`relative w-full h-[60vh] min-h-[400px] flex flex-col justify-center items-center overflow-hidden transition-colors duration-500`}
     >
       <div className="relative h-48 w-full flex justify-center items-center">
         {words.map((word, index) => (
@@ -38,7 +49,7 @@ export const Hero: React.FC = () => {
               index === activeIndex
                 ? 'opacity-100 transform translate-y-0 scale-100 blur-0'
                 : 'opacity-0 transform translate-y-8 scale-90 blur-sm'
-            } ${visualEffect === 'cyberpunk' ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'text-gray-800 drop-shadow-md'}`}
+            } ${themeMode === 'dark' ? 'text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.2)]' : 'text-gray-800 drop-shadow-md'}`}
             style={{
               fontFamily: '"SF Pro Rounded", "Arial Rounded MT Bold", "Nunito", "Varela Round", sans-serif',
               fontWeight: 900,
@@ -55,9 +66,9 @@ export const Hero: React.FC = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 0.8, y: 0 }}
         transition={{ delay: 0.5, duration: 0.8 }}
-        className={`mt-8 text-xs font-semibold tracking-[0.3em] uppercase ${visualEffect === 'cyberpunk' ? 'text-cyan-500/70 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]' : 'text-gray-400'}`}
+        className={`mt-8 text-xs font-semibold tracking-[0.3em] uppercase ${themeMode === 'dark' ? 'text-gray-400' : 'text-gray-400'}`}
       >
-        Simple . Pure . Powerful
+        {t.slogan}
       </motion.p>
     </motion.section>
   );
