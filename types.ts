@@ -19,22 +19,17 @@ export interface ProductCardProps {
   gradient?: string;
   href: string;
   tag?: string;
+  theme?: 'light' | 'dark';
   size?: 'normal' | 'wide';
   isExternal?: boolean;
   onToast?: () => void;
-  uiTheme: 'light' | 'dark';
-  i18nVisit: string;
-  i18nComingSoon: string;
 }
 
-export type Theme = 'light' | 'dark';
-export type Language = 'zh' | 'en';
+export type VisualEffect = 'liquid' | 'blur' | 'cyberpunk';
 
 export interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  visualEffect: VisualEffect;
+  setVisualEffect: (effect: VisualEffect) => void;
   showToast: (message: string) => void;
   handleCardToast: () => void;
   pansouEnabled: boolean;
