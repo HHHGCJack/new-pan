@@ -47,7 +47,7 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  const t = translations[language];
+  const t = (translations as any)[language] || translations.en;
 
   const navData = [
     { 
