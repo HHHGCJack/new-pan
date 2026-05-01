@@ -215,8 +215,9 @@ export const Navbar: React.FC = () => {
             ))}
             
             <div className="flex items-center space-x-2 ml-4">
-              <button onClick={toggleLanguage} className={`p-2 rounded-full transition-all ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换语言 / Switch Language">
-                <Globe size={20} />
+              <button onClick={toggleLanguage} className={`px-3 py-2 rounded-full transition-all flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换语言 / Switch Language">
+                <Globe size={18} />
+                <span className="text-xs font-semibold uppercase">{language === 'zh' ? '简' : 'EN'}</span>
               </button>
               <button onClick={toggleTheme} className={`p-2 rounded-full transition-all ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换主题 / Switch Theme">
                 {themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -235,8 +236,9 @@ export const Navbar: React.FC = () => {
           </div>
 
           <div className="md:hidden flex items-center justify-center -mr-2 space-x-1">
-            <button onClick={toggleLanguage} className={`p-2 rounded-full active:bg-black/5 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
-              <Globe size={20} />
+            <button onClick={toggleLanguage} className={`px-3 py-2 rounded-full active:bg-black/5 flex items-center space-x-1 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+              <Globe size={18} />
+              <span className="text-xs font-semibold uppercase">{language === 'zh' ? '简' : 'EN'}</span>
             </button>
             <button onClick={toggleTheme} className={`p-2 rounded-full active:bg-black/5 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
               {themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}

@@ -18,7 +18,7 @@ export const Hero: React.FC = () => {
 
   const translations = {
     zh: {
-      slogan: '简单 · 纯粹 · 强大'
+      slogan: 'Simple . Pure . Powerful'
     },
     en: {
       slogan: 'Simple . Pure . Powerful'

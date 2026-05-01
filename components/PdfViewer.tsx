@@ -3,10 +3,9 @@ import { X, Download, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-// Set up the worker for react-pdf using local file
-pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+// Set up the worker for react-pdf using unpkg CDN
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PdfViewerProps {
   url: string;
@@ -50,6 +49,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, themeMode })
   };
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    console.log(`Document loaded successfully with ${numPages} pages.`);
     setNumPages(numPages);
   };
 
@@ -57,8 +57,8 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, themeMode })
   const zoomOut = () => setScale(prev => Math.max(prev - 0.25, 0.5));
   const resetZoom = () => setScale(1);
 
-  // Use proxy to avoid CORS issues when fetching PDFs from external sources like Supabase Storage
-  const proxyUrl = `/api/proxy-pdf?url=${encodeURIComponent(url)}`;
+  // Try direct URL first, Supabase usually has CORS configured for public buckets
+  const proxyUrl = url;
 
   return (
     <div className="fixed inset-0 z-[99999] flex flex-col bg-black/95 backdrop-blur-xl h-[100dvh]">
