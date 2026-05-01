@@ -329,7 +329,7 @@ export const Navbar: React.FC = () => {
                         }`}
                       >
                         <div className={`font-medium text-sm flex items-center justify-between ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {subItem.title}
+                          {sub.title}
                           <ChevronRight size={14} className={themeMode === 'dark' ? 'text-gray-500' : 'text-gray-400'} />
                         </div>
                       </a>

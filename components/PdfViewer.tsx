@@ -3,12 +3,10 @@ import { X, Download, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
 // Set up the worker for react-pdf using local file
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 interface PdfViewerProps {
   url: string;
@@ -100,7 +98,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ url, onClose, themeMode })
       <div className="flex-1 w-full h-full relative bg-gray-100 overflow-auto">
         <div className="flex justify-center min-w-full min-h-full p-4">
           <Document 
-            file={url} 
+            file={proxyUrl} 
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={(error) => {
               console.error('Error while loading document!', error);

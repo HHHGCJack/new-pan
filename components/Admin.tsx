@@ -33,24 +33,24 @@ interface AdminBook {
 
 interface SortableBookItemProps {
   book: AdminBook;
-  themeMode: 'light' | 'dark';
+  themeMode: string;
   editingId: string | null;
   editTitle: string;
   editDescription: string;
   setEditTitle: (val: string) => void;
   setEditDescription: (val: string) => void;
-  saveEditing: (id: string) => void;
+  saveEditing: (id: string) => Promise<void>;
   setEditingId: (id: string | null) => void;
   startEditing: (book: AdminBook) => void;
-  deleteBook: (id: string) => void;
+  deleteBook: (id: string) => Promise<void>;
   getInputClasses: () => string;
 }
 
-const SortableBookItem = ({
+const SortableBookItem: React.FC<SortableBookItemProps> = ({
   book, themeMode, editingId, editTitle, editDescription,
   setEditTitle, setEditDescription, saveEditing, setEditingId,
   startEditing, deleteBook, getInputClasses
-}: SortableBookItemProps) => {
+}) => {
   const isDark = themeMode === 'dark';
   const {
     attributes,
