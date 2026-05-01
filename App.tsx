@@ -24,13 +24,14 @@ export const ThemeContext = createContext<ThemeContextType>({
 export const useTheme = () => useContext(ThemeContext);
 
 // Translations
-export const translations = {
-  zh: {
-    comingSoon: '敬请期待 Coming Soon',
-  },
-  en: {
-    comingSoon: 'Coming Soon',
-  }
+export const translations: Record<Language, { comingSoon: string }> = {
+  zh: { comingSoon: '敬请期待 Coming Soon' },
+  en: { comingSoon: 'Coming Soon' },
+  ja: { comingSoon: '近日公開 Coming Soon' },
+  ko: { comingSoon: '출시 예정 Coming Soon' },
+  es: { comingSoon: 'Próximamente Coming Soon' },
+  fr: { comingSoon: 'Bientôt disponible Coming Soon' },
+  de: { comingSoon: 'Demnächst Coming Soon' },
 };
 
 // Simple Toast Component - Liquid Glass

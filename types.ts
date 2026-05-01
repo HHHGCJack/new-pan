@@ -26,7 +26,7 @@ export interface ProductCardProps {
 }
 
 export type ThemeMode = 'light' | 'dark';
-export type Language = 'zh' | 'en';
+export type Language = 'zh' | 'en' | 'ja' | 'ko' | 'es' | 'fr' | 'de';
 
 export interface ThemeContextType {
   themeMode: ThemeMode;

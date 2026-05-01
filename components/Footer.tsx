@@ -51,7 +51,7 @@ export const Footer: React.FC = () => {
     }
   };
 
-  const t = translations[language];
+  const t = (translations as any)[language] || translations.en;
   const closeModal = () => setActiveModal(null);
 
   const modalStyle = isDark

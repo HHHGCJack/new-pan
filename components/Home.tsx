@@ -56,7 +56,7 @@ export const Home: React.FC = () => {
     }
   };
 
-  const t = translations[language];
+  const t = (translations as any)[language] || translations.en;
 
   return (
     <main className="flex-grow pt-16">

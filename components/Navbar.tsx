@@ -176,10 +176,6 @@ export const Navbar: React.FC = () => {
     ? 'bg-black/40 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.5),_inset_0_1px_1px_rgba(255,255,255,0.1),_inset_0_-1px_1px_rgba(0,0,0,0.5)] border border-white/10 will-change-[backdrop-filter,transform,opacity] text-white'
     : 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 will-change-[backdrop-filter,transform,opacity] text-gray-900';
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'zh' ? 'en' : 'zh');
-  };
-
   const toggleTheme = () => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
   };
@@ -215,10 +211,44 @@ export const Navbar: React.FC = () => {
             ))}
             
             <div className="flex items-center space-x-2 ml-4">
-              <button onClick={toggleLanguage} className={`px-3 py-2 rounded-full transition-all flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换语言 / Switch Language">
-                <Globe size={18} />
-                <span className="text-xs font-semibold uppercase">{language === 'zh' ? '简' : 'EN'}</span>
-              </button>
+              <div 
+                className="relative flex items-center"
+                onMouseEnter={() => setLangDropdownOpen(true)}
+                onMouseLeave={() => setLangDropdownOpen(false)}
+              >
+                <button className={`px-3 py-2 rounded-full transition-all flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换语言 / Switch Language">
+                  <Globe size={18} />
+                  <span className="text-xs font-semibold uppercase">{languages.find((l: any) => l.code === language)?.label || 'EN'}</span>
+                </button>
+                
+                {/* Desktop Lang Dropdown */}
+                <div 
+                  className={`absolute top-full right-0 mt-2 w-32 rounded-2xl overflow-hidden transition-all duration-200 origin-top flex flex-col z-[100] ${
+                    langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
+                  } ${
+                    themeMode === 'dark' 
+                      ? 'bg-[#1a1a1c]/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] text-white' 
+                      : 'bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
+                  }`}
+                >
+                  {languages.map((l: any) => (
+                    <button
+                      key={l.code}
+                      onClick={() => {
+                        setLanguage(l.code as any);
+                        setLangDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                        language === l.code
+                          ? (themeMode === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-black/5 text-black font-semibold')
+                          : (themeMode === 'dark' ? 'hover:bg-white/5 text-gray-300' : 'hover:bg-black/5 text-gray-700')
+                      }`}
+                    >
+                      {l.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <button onClick={toggleTheme} className={`p-2 rounded-full transition-all ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换主题 / Switch Theme">
                 {themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
@@ -236,16 +266,53 @@ export const Navbar: React.FC = () => {
           </div>
 
           <div className="md:hidden flex items-center justify-center -mr-2 space-x-1">
-            <button onClick={toggleLanguage} className={`px-3 py-2 rounded-full active:bg-black/5 flex items-center space-x-1 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
-              <Globe size={18} />
-              <span className="text-xs font-semibold uppercase">{language === 'zh' ? '简' : 'EN'}</span>
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                className={`px-3 py-2 rounded-full active:bg-black/5 flex items-center space-x-1 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}
+              >
+                <Globe size={18} />
+                <span className="text-xs font-semibold uppercase">{languages.find((l: any) => l.code === language)?.label || 'EN'}</span>
+              </button>
+
+              {/* Mobile Lang Dropdown */}
+              <div 
+                className={`absolute top-full right-0 mt-2 w-32 rounded-2xl overflow-hidden transition-all duration-200 origin-top flex flex-col z-[100] ${
+                  langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
+                } ${
+                  themeMode === 'dark' 
+                    ? 'bg-[#1a1a1c]/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] text-white' 
+                    : 'bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
+                }`}
+              >
+                {languages.map((l: any) => (
+                  <button
+                    key={l.code}
+                    onClick={() => {
+                      setLanguage(l.code as any);
+                      setLangDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                      language === l.code
+                        ? (themeMode === 'dark' ? 'bg-white/10 text-white font-semibold' : 'bg-black/5 text-black font-semibold')
+                        : (themeMode === 'dark' ? 'active:bg-white/5 text-gray-300' : 'active:bg-black/5 text-gray-700')
+                    }`}
+                  >
+                    {l.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
             <button onClick={toggleTheme} className={`p-2 rounded-full active:bg-black/5 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
               {themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             <button 
               className={`p-2 rounded-full active:bg-black/5 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+                setLangDropdownOpen(false);
+              }}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>

@@ -25,7 +25,7 @@ export const Hero: React.FC = () => {
     }
   };
 
-  const t = translations[language];
+  const t = (translations as any)[language] || translations.en;
 
   useEffect(() => {
     const interval = setInterval(() => {
