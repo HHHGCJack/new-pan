@@ -81,8 +81,19 @@ export const Navbar: React.FC = () => {
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   const isDropdownOpen = activeDropdown !== null;
+
+  const languages = [
+    { code: 'zh', label: '简', name: '简体中文' },
+    { code: 'en', label: 'EN', name: 'English' },
+    { code: 'ja', label: 'JA', name: '日本語' },
+    { code: 'ko', label: 'KO', name: '한국어' },
+    { code: 'es', label: 'ES', name: 'Español' },
+    { code: 'fr', label: 'FR', name: 'Français' },
+    { code: 'de', label: 'DE', name: 'Deutsch' }
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
