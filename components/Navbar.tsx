@@ -119,6 +119,21 @@ export const Navbar: React.FC = () => {
       pansouDisabled: 'Dienst ausgesetzt',
       comingSoon: 'Demnächst',
       selectLang: 'Premium-Ressourcen',
+    },
+    el: {
+      brand: 'GongPan',
+      nav: { learn: 'Μαθαίνω', entertainment: 'Ψυχαγωγία', tech: 'Τεχνολογία' },
+      items: {
+        readingPro: { title: 'Reading Pro', desc: 'Διεθνή περιοδικά' },
+        pansou: { title: 'Αναζήτηση Cloud', desc: 'Πόροι ταινιών' },
+        chat: { title: 'Instant Chat', desc: 'Κινεζικό Telegram' },
+        ai: { title: 'Agent AI', desc: 'Προσωπικός βοηθός' },
+      },
+      support: 'Υποστήριξη',
+      supportThanks: 'Ευχαριστώ για την υποστήριξη',
+      pansouDisabled: 'Η υπηρεσία έχει ανασταλεί',
+      comingSoon: 'Σύντομα',
+      selectLang: 'Premium Πόροι',
     }
   };
 
@@ -167,7 +182,8 @@ export const Navbar: React.FC = () => {
     { code: 'ko', label: 'KO', name: '한국어' },
     { code: 'es', label: 'ES', name: 'Español' },
     { code: 'fr', label: 'FR', name: 'Français' },
-    { code: 'de', label: 'DE', name: 'Deutsch' }
+    { code: 'de', label: 'DE', name: 'Deutsch' },
+    { code: 'el', label: 'EL', name: 'Ελληνικά' }
   ];
 
   useEffect(() => {

@@ -10,6 +10,7 @@ const words = [
   { text: 'こんにちは', lang: 'jp' },
   { text: '안녕하세요', lang: 'kr' },
   { text: 'Привет', lang: 'ru' },
+  { text: 'Γεια σας', lang: 'el' }
 ];
 
 export const Hero: React.FC = () => {

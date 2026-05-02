@@ -50,8 +50,91 @@ export const ReadingPro: React.FC = () => {
       loadFail: 'Failed to load, please check your network connection.',
       reload: 'Reload',
       noBooks: 'No books available, or database not configured.'
+    },
+    ja: {
+      returnHome: 'ホームに戻る',
+      title: 'ジャーナル Pro',
+      syncing: 'データを同期中...',
+      desc: 'トップ国際ジャーナルの詳細な分析と没入型オンライン読書。',
+      loading: '読み込み中...',
+      noDb: 'データベース接続が構成されていません。Supabaseの認証情報を設定してください。',
+      timeout: 'データベース接続がタイムアウトしました。',
+      loadFail: '読み込みに失敗しました。',
+      reload: '再読み込み',
+      noBooks: '利用可能な本がないか、データベースが構成されていません。'
+    },
+    ko: {
+      returnHome: '홈으로 이동',
+      title: '저널 Pro',
+      syncing: '데이터 동기화 중...',
+      desc: 'Top 국제 저널 심층 분석 및 몰입형 온라인 독서.',
+      loading: '로딩 중...',
+      noDb: '데이터베이스 연결이 구성되지 않았습니다.',
+      timeout: '데이터베이스 연결 시간 초과.',
+      loadFail: '로드 실패.',
+      reload: '새로고침',
+      noBooks: '사용 가능한 책이 없습니다.'
+    },
+    es: {
+      returnHome: 'Volver al Inicio',
+      title: 'Revistas Pro',
+      syncing: 'Sincronizando datos...',
+      desc: 'Análisis profundo de revistas internacionales, lectura en línea.',
+      loading: 'Cargando...',
+      noDb: 'Conexión a base de datos no configurada.',
+      timeout: 'Tiempo de conexión agotado.',
+      loadFail: 'Fallo al cargar.',
+      reload: 'Recargar',
+      noBooks: 'No hay libros disponibles.'
+    },
+    fr: {
+      returnHome: 'Retour à l\'accueil',
+      title: 'Revues Pro',
+      syncing: 'Synchronisation des données...',
+      desc: 'Analyse approfondie des revues internationales de haut niveau.',
+      loading: 'Chargement...',
+      noDb: 'Connexion à la base de données non configurée.',
+      timeout: 'Délai de connexion dépassé.',
+      loadFail: 'Échec du chargement.',
+      reload: 'Recharger',
+      noBooks: 'Aucun livre disponible.'
+    },
+    de: {
+      returnHome: 'Zurück zur Startseite',
+      title: 'Journals Pro',
+      syncing: 'Daten synchronisieren...',
+      desc: 'Eingehende Analyse von internationalen Top-Zeitschriften.',
+      loading: 'Wird geladen...',
+      noDb: 'Datenbankverbindung nicht konfiguriert.',
+      timeout: 'Zeitüberschreitung der Datenbankverbindung.',
+      loadFail: 'Fehler beim Laden.',
+      reload: 'Neu laden',
+      noBooks: 'Keine Bücher verfügbar.'
+    },
+    el: {
+      returnHome: 'Επιστροφή στην Αρχική',
+      title: 'Περιοδικά Pro',
+      syncing: 'Συγχρονισμός...',
+      desc: 'Σε βάθος ανάλυση διεθνών περιοδικών.',
+      loading: 'Φόρτωση...',
+      noDb: 'Η σύνδεση στη βάση δεν έχει ρυθμιστεί.',
+      timeout: 'Λήξη χρόνου σύνδεσης.',
+      loadFail: 'Αποτυχία φόρτωσης.',
+      reload: 'Επαναφόρτωση',
+      noBooks: 'Δεν υπάρχουν διαθέσιμα βιβλία.'
     }
-  }[language];
+  }[language] || {
+      returnHome: 'Return to Home',
+      title: 'Journals Pro',
+      syncing: 'Syncing latest data...',
+      desc: 'In-depth analysis of top international international journals, immersive online reading.',
+      loading: 'Loading...',
+      noDb: 'Database connection not configured. Please set Supabase credentials in environment variables.',
+      timeout: 'Database connection timeout, please check your network or try again later.',
+      loadFail: 'Failed to load, please check your network connection.',
+      reload: 'Reload',
+      noBooks: 'No books available, or database not configured.'
+    };
 
   useEffect(() => {
     // 1. Load from cache immediately for instant display

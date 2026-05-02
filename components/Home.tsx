@@ -88,6 +88,13 @@ export const Home: React.FC = () => {
       ai: { title: "KI-Agent", desc: "Ihr persönlicher Assistent", tag: "COMING SOON" },
       chat: { title: "Instant Messaging", desc: "Chinesisches Telegram. Sichere App", tag: "BETA" },
       pansouDisabled: 'Dienst ausgesetzt'
+    },
+    el: {
+      pansou: { title: "Αναζήτηση Cloud", desc: "Συγκέντρωση πόρων cloud", tag: "HOT TOOL" },
+      readingPro: { title: "Reading Pro", desc: "Ερμηνεία κορυφαίων δημοσιεύσεων", tag: "PREMIUM" },
+      ai: { title: "Agent AI", desc: "Ο προσωπικός σας βοηθός", tag: "COMING SOON" },
+      chat: { title: "Άμεση συνομιλία", desc: "Κινεζικό Telegram. Ασφαλής εφαρμογή", tag: "BETA" },
+      pansouDisabled: 'Η υπηρεσία έχει ανασταλεί'
     }
   };
 

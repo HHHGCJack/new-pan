@@ -51,7 +51,7 @@ export const Card: React.FC<ProductCardProps> = ({
 
   const ctaText = href === '#' 
     ? appTranslations[language].comingSoon 
-    : (language === 'zh' ? '立即访问' : 'Visit Now');
+    : appTranslations[language].visitNow;
 
   return (
     <a 
