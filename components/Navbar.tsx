@@ -44,6 +44,81 @@ export const Navbar: React.FC = () => {
       pansouDisabled: 'Service suspended due to policy',
       comingSoon: 'Coming Soon',
       selectLang: 'Premium Resources',
+    },
+    ja: {
+      brand: 'GongPan',
+      nav: { learn: '学習', entertainment: 'エンターテイメント', tech: 'テクノロジー' },
+      items: {
+        readingPro: { title: 'Reading Pro', desc: '国際的なジャーナルの深い解釈' },
+        pansou: { title: 'クラウド検索', desc: '映画リソースの集約' },
+        chat: { title: 'インスタントチャット', desc: '中国のTelegram' },
+        ai: { title: 'AIエージェント', desc: 'パーソナルデジタルアシスタント' },
+      },
+      support: 'サポート',
+      supportThanks: 'サポートありがとうございます',
+      pansouDisabled: '制限によりサービス停止中',
+      comingSoon: '近日公開',
+      selectLang: 'プレミアムリソース',
+    },
+    ko: {
+      brand: 'GongPan',
+      nav: { learn: '학습', entertainment: '엔터테인먼트', tech: '기술' },
+      items: {
+        readingPro: { title: 'Reading Pro', desc: '국제 저널 심층 해석' },
+        pansou: { title: '클라우드 검색', desc: '영화 리소스 통합' },
+        chat: { title: '인스턴트 채팅', desc: '중국의 Telegram' },
+        ai: { title: 'AI 에이전트', desc: '개인 디지털 비서' },
+      },
+      support: '지원하기',
+      supportThanks: '지원해 주셔서 감사합니다',
+      pansouDisabled: '정책으로 인해 서비스 중지',
+      comingSoon: '출시 예정',
+      selectLang: '프리미엄 리소스',
+    },
+    es: {
+      brand: 'GongPan',
+      nav: { learn: 'Aprender', entertainment: 'Entretenimiento', tech: 'Tecnología' },
+      items: {
+        readingPro: { title: 'Reading Pro', desc: 'Revistas internacionales' },
+        pansou: { title: 'Nube de Películas', desc: 'Agregación de recursos' },
+        chat: { title: 'Chat Instantáneo', desc: 'Telegram chino' },
+        ai: { title: 'Agente AI', desc: 'Asistente digital' },
+      },
+      support: 'Apóyame',
+      supportThanks: 'Gracias por tu apoyo',
+      pansouDisabled: 'Servicio suspendido',
+      comingSoon: 'Próximamente',
+      selectLang: 'Recursos Premium',
+    },
+    fr: {
+      brand: 'GongPan',
+      nav: { learn: 'Apprendre', entertainment: 'Divertissement', tech: 'Technologie' },
+      items: {
+        readingPro: { title: 'Reading Pro', desc: 'Revues internationales' },
+        pansou: { title: 'Recherche Cloud', desc: 'Ressources de films' },
+        chat: { title: 'Chat Instantané', desc: 'Telegram chinois' },
+        ai: { title: 'Agent IA', desc: 'Assistant numérique' },
+      },
+      support: 'Soutenez-moi',
+      supportThanks: 'Merci pour votre soutien',
+      pansouDisabled: 'Service suspendu',
+      comingSoon: 'Bientôt disponible',
+      selectLang: 'Ressources Premium',
+    },
+    de: {
+      brand: 'GongPan',
+      nav: { learn: 'Lernen', entertainment: 'Unterhaltung', tech: 'Technologie' },
+      items: {
+        readingPro: { title: 'Reading Pro', desc: 'Internationale Zeitschriften' },
+        pansou: { title: 'Cloud-Suche', desc: 'Filmressourcen' },
+        chat: { title: 'Instant Chat', desc: 'Chinesisches Telegram' },
+        ai: { title: 'KI-Agent', desc: 'Persönlicher Assistent' },
+      },
+      support: 'Unterstütze mich',
+      supportThanks: 'Danke für die Unterstützung',
+      pansouDisabled: 'Dienst ausgesetzt',
+      comingSoon: 'Demnächst',
+      selectLang: 'Premium-Ressourcen',
     }
   };
 
@@ -435,7 +510,7 @@ export const Navbar: React.FC = () => {
           showSupportModal ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
       >
-        <div className="absolute inset-0 bg-black/40" onClick={() => setShowSupportModal(false)} />
+        <div className="absolute inset-0 bg-transparent" onClick={() => setShowSupportModal(false)} />
         <div className={`relative w-full max-w-xl rounded-[2rem] p-8 text-center transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] transform ${modalStyle} ${showSupportModal ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-4 opacity-0'}`}>
            <button onClick={() => setShowSupportModal(false)} className={`absolute top-4 right-4 p-2 rounded-full ${themeMode === 'dark' ? 'bg-white/10 hover:bg-white/20' : 'bg-black/5 hover:bg-black/10'}`}>
              <X size={18} />

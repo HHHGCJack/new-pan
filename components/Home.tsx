@@ -53,6 +53,41 @@ export const Home: React.FC = () => {
         tag: "BETA"
       },
       pansouDisabled: 'Service suspended due to policy'
+    },
+    ja: {
+      pansou: { title: "クラウド検索", desc: "情報のサイロを打破するネットワークリソースの集約", tag: "HOT TOOL" },
+      readingPro: { title: "Reading Pro", desc: "The Economistなどのトップ出版物の深い解釈", tag: "PREMIUM" },
+      ai: { title: "AIエージェント", desc: "あなたのパーソナルデジタルアシスタント", tag: "COMING SOON" },
+      chat: { title: "インスタントメッセージ", desc: "中国版Telegram。安全で高速なアプリ", tag: "BETA" },
+      pansouDisabled: 'ポリシーによりサービス一時停止'
+    },
+    ko: {
+      pansou: { title: "클라우드 검색", desc: "네트워크 리소스 통합 및 정보 사일로 타파", tag: "HOT TOOL" },
+      readingPro: { title: "Reading Pro", desc: "이코노미스트 등 শীর্ষ 간행물 심층 해석", tag: "PREMIUM" },
+      ai: { title: "AI 에이전트", desc: "개인 디지털 비서", tag: "COMING SOON" },
+      chat: { title: "인스턴트 메시징", desc: "중국어 텔레그램. 안전하고 빠른 앱", tag: "BETA" },
+      pansouDisabled: '정책으로 인해 서비스 중단됨'
+    },
+    es: {
+      pansou: { title: "Búsqueda en la Nube", desc: "Agregación de recursos y ruptura de silos de información", tag: "HOT TOOL" },
+      readingPro: { title: "Reading Pro", desc: "Interpretación profunda de publicaciones principales", tag: "PREMIUM" },
+      ai: { title: "Agente AI", desc: "Tu asistente digital personal", tag: "COMING SOON" },
+      chat: { title: "Mensajería Instantánea", desc: "El Telegram chino. Aplicación segura", tag: "BETA" },
+      pansouDisabled: 'Servicio suspendido por política'
+    },
+    fr: {
+      pansou: { title: "Recherche Cloud", desc: "Agrégation de ressources cloud", tag: "HOT TOOL" },
+      readingPro: { title: "Reading Pro", desc: "Interprétation de revues principales", tag: "PREMIUM" },
+      ai: { title: "Agent IA", desc: "Votre assistant numérique personnel", tag: "COMING SOON" },
+      chat: { title: "Messagerie Instantanée", desc: "Le Telegram chinois. Application sécurisée", tag: "BETA" },
+      pansouDisabled: 'Service suspendu'
+    },
+    de: {
+      pansou: { title: "Cloud-Suche", desc: "Aggregation von Cloud-Ressourcen", tag: "HOT TOOL" },
+      readingPro: { title: "Reading Pro", desc: "Interpretation von Top-Publikationen", tag: "PREMIUM" },
+      ai: { title: "KI-Agent", desc: "Ihr persönlicher Assistent", tag: "COMING SOON" },
+      chat: { title: "Instant Messaging", desc: "Chinesisches Telegram. Sichere App", tag: "BETA" },
+      pansouDisabled: 'Dienst ausgesetzt'
     }
   };
 

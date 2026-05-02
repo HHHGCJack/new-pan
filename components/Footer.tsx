@@ -48,6 +48,101 @@ export const Footer: React.FC = () => {
         '2. Usage Rules: You agree to use this site only for lawful purposes.',
         '3. Ownership: The UI style designed here belongs to Pan Studio.'
       ]
+    },
+    ja: {
+      copyright: '© 2026 Designed for Simplicity.',
+      privacy: 'プライバシー',
+      terms: '利用規約',
+      contact: 'コンタクト',
+      contactDesc: 'フィードバックとコミュニケーションはいつでも歓迎します',
+      privacyContent: [
+        '当社はあなたのプライバシーを重視しています。このウェブサイトは現在、個人を特定できる情報を収集していません。',
+        '1. データ収集: 個人の行動を追跡するためのCookieは使用しておらず、IPも保存していません。',
+        '2. 第三者リンク: このウェブサイトには第三者のウェブサイトへのリンクが含まれています。その内容について当社は責任を負いません。',
+        '3. 変更: このプライバシーポリシーを随時更新することがあります。'
+      ],
+      termsContent: [
+        'GongPanへようこそ。',
+        '1. 免責事項: リソースは学習と交流のみを目的としており、商業利用は厳禁です。',
+        '2. 利用規則: 本サイトは合法的な目的でのみ使用することに同意するものとします。',
+        '3. 所有権: ここでデザインされたUIスタイルはPan Studioに帰属します。'
+      ]
+    },
+    ko: {
+      copyright: '© 2026 Designed for Simplicity.',
+      privacy: '개인정보 보호',
+      terms: '서비스 약관',
+      contact: '연락처',
+      contactDesc: '의견 및 문의는 언제나 환영합니다',
+      privacyContent: [
+        '당사는 귀하의 개인정보를 소중하게 생각합니다. 본 웹사이트는 현재 개인 식별 정보를 수집하지 않습니다.',
+        '1. 데이터 수집: 개인 행동을 추적하기 위해 쿠키를 사용하지 않으며 IP를 저장하지 않습니다.',
+        '2. 타사 링크: 본 웹사이트에는 타사 웹사이트에 대한 링크가 포함되어 있습니다. 당사는 해당 콘텐츠에 대해 책임지지 않습니다.',
+        '3. 변경 사항: 본 개인정보 보호 정책은 수시로 업데이트될 수 있습니다.'
+      ],
+      termsContent: [
+        'GongPan에 오신 것을 환영합니다.',
+        '1. 면책 조항: 자료는 학습 및 교류만을 위한 것이며 상업적 이용은 엄격히 금지됩니다.',
+        '2. 이용 규칙: 귀하는 합법적인 목적으로만 이 사이트를 이용하는 것에 동의합니다.',
+        '3. 소유권: 본 사이트에 디자인된 UI 스타일의 소유권은 Pan Studio에 있습니다.'
+      ]
+    },
+    es: {
+      copyright: '© 2026 Designed for Simplicity.',
+      privacy: 'Privacidad',
+      terms: 'Términos',
+      contact: 'Contacto',
+      contactDesc: 'Los comentarios y la comunicación siempre son bienvenidos',
+      privacyContent: [
+        'Valoramos su privacidad. Actualmente, este sitio web no recopila información de identidad personal.',
+        '1. Recopilación de datos: No usamos Cookies para rastrear el comportamiento personal, ni almacenamos su IP.',
+        '2. Enlaces de terceros: Este sitio web contiene enlaces a sitios de terceros. No somos responsables de su contenido.',
+        '3. Cambios: Podemos actualizar esta política de privacidad ocasionalmente.'
+      ],
+      termsContent: [
+        'Bienvenido a GongPan.',
+        '1. Descargo de responsabilidad: Los recursos son solo para aprendizaje e intercambio, estrictamente prohibido el uso comercial.',
+        '2. Reglas de uso: Usted acepta usar este sitio solo para fines legales.',
+        '3. Propiedad: El estilo de UI diseñado aquí pertenece a Pan Studio.'
+      ]
+    },
+    fr: {
+      copyright: '© 2026 Designed for Simplicity.',
+      privacy: 'Confidentialité',
+      terms: 'Termes',
+      contact: 'Contact',
+      contactDesc: 'Les commentaires et la communication sont toujours les bienvenus',
+      privacyContent: [
+        'Nous attachons de l\'importance à votre vie privée. Ce site web ne collecte actuellement aucune information d\'identité personnelle.',
+        '1. Collecte de données: Nous n\'utilisons pas de Cookies pour suivre le comportement personnel, et nous ne stockons pas votre IP.',
+        '2. Liens tiers: Ce site web contient des liens vers des sites tiers. Nous ne sommes pas responsables de leur contenu.',
+        '3. Modifications: Nous pouvons mettre à jour cette politique de confidentialité de temps en temps.'
+      ],
+      termsContent: [
+        'Bienvenue sur GongPan.',
+        '1. Clause de non-responsabilité: Les ressources sont uniquement à des fins d\'apprentissage et d\'échange, strictement interdites à un usage commercial.',
+        '2. Règles d\'utilisation: Vous acceptez d\'utiliser ce site uniquement à des fins légales.',
+        '3. Propriété: Le style d\'interface utilisateur conçu ici appartient à Pan Studio.'
+      ]
+    },
+    de: {
+      copyright: '© 2026 Designed for Simplicity.',
+      privacy: 'Datenschutz',
+      terms: 'Bedingungen',
+      contact: 'Kontakt',
+      contactDesc: 'Feedback und Kommunikation sind immer willkommen',
+      privacyContent: [
+        'Wir legen großen Wert auf Ihre Privatsphäre. Diese Website sammelt derzeit keine personenbezogenen Daten.',
+        '1. Datenerhebung: Wir verwenden keine Cookies, um das persönliche Verhalten zu verfolgen, und wir speichern nicht Ihre IP.',
+        '2. Links von Dritten: Diese Website enthält Links zu Websites von Dritten. Wir sind nicht für deren Inhalt verantwortlich.',
+        '3. Änderungen: Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren.'
+      ],
+      termsContent: [
+        'Willkommen bei GongPan.',
+        '1. Haftungsausschluss: Ressourcen dienen nur dem Lernen und dem Austausch, kommerzielle Nutzung ist strengstens untersagt.',
+        '2. Nutzungsregeln: Sie erklären sich damit einverstanden, diese Seite nur für legale Zwecke zu nutzen.',
+        '3. Eigentum: Der hier entworfene UI-Stil gehört Pan Studio.'
+      ]
     }
   };
 
@@ -81,7 +176,7 @@ export const Footer: React.FC = () => {
           activeModal ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
       >
-        <div className="absolute inset-0 bg-black/40" onClick={closeModal} />
+        <div className="absolute inset-0 bg-transparent" onClick={closeModal} />
         
         <div 
           className={`relative w-full max-w-md rounded-[2.5rem] p-8 md:p-10 transform transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${modalStyle} ${

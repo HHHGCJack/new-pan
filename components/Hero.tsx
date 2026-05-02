@@ -20,9 +20,12 @@ export const Hero: React.FC = () => {
     zh: {
       slogan: 'Simple . Pure . Powerful'
     },
-    en: {
-      slogan: 'Simple . Pure . Powerful'
-    }
+    en: { slogan: 'Simple . Pure . Powerful' },
+    ja: { slogan: 'Simple . Pure . Powerful' },
+    ko: { slogan: 'Simple . Pure . Powerful' },
+    es: { slogan: 'Simple . Pure . Powerful' },
+    fr: { slogan: 'Simple . Pure . Powerful' },
+    de: { slogan: 'Simple . Pure . Powerful' }
   };
 
   const t = (translations as any)[language] || translations.en;
