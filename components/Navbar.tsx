@@ -173,6 +173,31 @@ export const Navbar: React.FC = () => {
   const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
+  const langTimeoutRef = React.useRef<any>(null);
+
+  const handleLangMouseEnter = () => {
+    if (langTimeoutRef.current) {
+      clearTimeout(langTimeoutRef.current);
+      langTimeoutRef.current = null;
+    }
+    setLangDropdownOpen(true);
+  };
+
+  const handleLangMouseLeave = () => {
+    langTimeoutRef.current = setTimeout(() => {
+      setLangDropdownOpen(false);
+    }, 400);
+  };
+
+  const handleLangClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (langTimeoutRef.current) {
+      clearTimeout(langTimeoutRef.current);
+      langTimeoutRef.current = null;
+    }
+    setLangDropdownOpen(!langDropdownOpen);
+  };
+
   const isDropdownOpen = activeDropdown !== null;
 
   const languages = [
@@ -190,6 +215,19 @@ export const Navbar: React.FC = () => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      setLangDropdownOpen(false);
+    };
+    window.addEventListener('click', handleOutsideClick);
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+      if (langTimeoutRef.current) {
+        clearTimeout(langTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -315,10 +353,14 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center space-x-2 ml-4">
               <div 
                 className="relative flex items-center"
-                onMouseEnter={() => setLangDropdownOpen(true)}
-                onMouseLeave={() => setLangDropdownOpen(false)}
+                onMouseEnter={handleLangMouseEnter}
+                onMouseLeave={handleLangMouseLeave}
               >
-                <button className={`px-3 py-2 rounded-full transition-all flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换语言 / Switch Language">
+                <button 
+                  onClick={handleLangClick}
+                  className={`px-3 py-2 rounded-full transition-all flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} 
+                  title="切换语言 / Switch Language"
+                >
                   <Globe size={18} />
                   <span className="text-xs font-semibold uppercase">{languages.find((l: any) => l.code === language)?.label || 'EN'}</span>
                 </button>
@@ -329,14 +371,15 @@ export const Navbar: React.FC = () => {
                     langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
                   } ${
                     themeMode === 'dark' 
-                      ? 'bg-[#1a1a1c]/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] text-white' 
-                      : 'bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
+                       ? 'bg-[#1a1a1c]/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] text-white' 
+                       : 'bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
                   }`}
                 >
                   {languages.map((l: any) => (
                     <button
                       key={l.code}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setLanguage(l.code as any);
                         setLangDropdownOpen(false);
                       }}
