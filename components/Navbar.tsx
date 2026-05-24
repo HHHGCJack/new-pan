@@ -15,7 +15,7 @@ export const Navbar: React.FC = () => {
         tech: '科技',
       },
       items: {
-        readingPro: { title: '外刊精读 Pro', desc: '深度解析国际刊物' },
+        readingPro: { title: '外刊精读', desc: '深度解析国际刊物' },
         pansou: { title: '网盘资源搜', desc: '全网影视资源聚合' },
         chat: { title: '即时聊天软件', desc: '中国人自己的Telegram' },
         ai: { title: 'AI 智能体', desc: '私人数字助手' },
@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
         tech: 'Tech',
       },
       items: {
-        readingPro: { title: 'Reading Pro', desc: 'In-depth international journals' },
+        readingPro: { title: 'Journal Reading', desc: 'In-depth international journals' },
         pansou: { title: 'Cloud Search', desc: 'Movie resource aggregation' },
         chat: { title: 'Instant Chat', desc: 'Chinese own Telegram' },
         ai: { title: 'AI Agent', desc: 'Personal digital assistant' },
@@ -49,7 +49,7 @@ export const Navbar: React.FC = () => {
       brand: 'GongPan',
       nav: { learn: '学習', entertainment: 'エンターテイメント', tech: 'テクノロジー' },
       items: {
-        readingPro: { title: 'Reading Pro', desc: '国際的なジャーナルの深い解釈' },
+        readingPro: { title: 'ジャーナル精読', desc: '国際的なジャーナルの深い解釈' },
         pansou: { title: 'クラウド検索', desc: '映画リソースの集約' },
         chat: { title: 'インスタントチャット', desc: '中国のTelegram' },
         ai: { title: 'AIエージェント', desc: 'パーソナルデジタルアシスタント' },
@@ -64,7 +64,7 @@ export const Navbar: React.FC = () => {
       brand: 'GongPan',
       nav: { learn: '학습', entertainment: '엔터테인먼트', tech: '기술' },
       items: {
-        readingPro: { title: 'Reading Pro', desc: '국제 저널 심층 해석' },
+        readingPro: { title: '저널 정독', desc: '국제 저널 심층 해석' },
         pansou: { title: '클라우드 검색', desc: '영화 리소스 통합' },
         chat: { title: '인스턴트 채팅', desc: '중국의 Telegram' },
         ai: { title: 'AI 에이전트', desc: '개인 디지털 비서' },
@@ -79,7 +79,7 @@ export const Navbar: React.FC = () => {
       brand: 'GongPan',
       nav: { learn: 'Aprender', entertainment: 'Entretenimiento', tech: 'Tecnología' },
       items: {
-        readingPro: { title: 'Reading Pro', desc: 'Revistas internacionales' },
+        readingPro: { title: 'Lectura de Revistas', desc: 'Revistas internacionales' },
         pansou: { title: 'Nube de Películas', desc: 'Agregación de recursos' },
         chat: { title: 'Chat Instantáneo', desc: 'Telegram chino' },
         ai: { title: 'Agente AI', desc: 'Asistente digital' },
@@ -94,7 +94,7 @@ export const Navbar: React.FC = () => {
       brand: 'GongPan',
       nav: { learn: 'Apprendre', entertainment: 'Divertissement', tech: 'Technologie' },
       items: {
-        readingPro: { title: 'Reading Pro', desc: 'Revues internationales' },
+        readingPro: { title: 'Lecture de Revues', desc: 'Revues internationales' },
         pansou: { title: 'Recherche Cloud', desc: 'Ressources de films' },
         chat: { title: 'Chat Instantané', desc: 'Telegram chinois' },
         ai: { title: 'Agent IA', desc: 'Assistant numérique' },
@@ -109,7 +109,7 @@ export const Navbar: React.FC = () => {
       brand: 'GongPan',
       nav: { learn: 'Lernen', entertainment: 'Unterhaltung', tech: 'Technologie' },
       items: {
-        readingPro: { title: 'Reading Pro', desc: 'Internationale Zeitschriften' },
+        readingPro: { title: 'Zeitschriften-Lektüre', desc: 'Internationale Zeitschriften' },
         pansou: { title: 'Cloud-Suche', desc: 'Filmressourcen' },
         chat: { title: 'Instant Chat', desc: 'Chinesisches Telegram' },
         ai: { title: 'KI-Agent', desc: 'Persönlicher Assistent' },
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
       brand: 'GongPan',
       nav: { learn: 'Μαθαίνω', entertainment: 'Ψυχαγωγία', tech: 'Τεχνολογία' },
       items: {
-        readingPro: { title: 'Reading Pro', desc: 'Διεθνή περιοδικά' },
+        readingPro: { title: 'Μελέτη Περιοδικών', desc: 'Διεθνή περιοδικά' },
         pansou: { title: 'Αναζήτηση Cloud', desc: 'Πόροι ταινιών' },
         chat: { title: 'Instant Chat', desc: 'Κινεζικό Telegram' },
         ai: { title: 'Agent AI', desc: 'Προσωπικός βοηθός' },

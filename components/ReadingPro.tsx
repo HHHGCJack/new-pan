@@ -29,7 +29,7 @@ export const ReadingPro: React.FC = () => {
   const t = {
     zh: {
       returnHome: '返回主页',
-      title: '外刊精读 Pro',
+      title: '外刊精读',
       syncing: '正在同步最新数据...',
       desc: '深度解析国际顶级刊物，在线沉浸式阅读。',
       loading: '加载中...',
@@ -41,7 +41,7 @@ export const ReadingPro: React.FC = () => {
     },
     en: {
       returnHome: 'Return to Home',
-      title: 'Journals Pro',
+      title: 'Journal Reading',
       syncing: 'Syncing latest data...',
       desc: 'In-depth analysis of top international international journals, immersive online reading.',
       loading: 'Loading...',
@@ -53,7 +53,7 @@ export const ReadingPro: React.FC = () => {
     },
     ja: {
       returnHome: 'ホームに戻る',
-      title: 'ジャーナル Pro',
+      title: 'ジャーナル精読',
       syncing: 'データを同期中...',
       desc: 'トップ国際ジャーナルの詳細な分析と没入型オンライン読書。',
       loading: '読み込み中...',
@@ -65,7 +65,7 @@ export const ReadingPro: React.FC = () => {
     },
     ko: {
       returnHome: '홈으로 이동',
-      title: '저널 Pro',
+      title: '저널 정독',
       syncing: '데이터 동기화 중...',
       desc: 'Top 국제 저널 심층 분석 및 몰입형 온라인 독서.',
       loading: '로딩 중...',
@@ -77,7 +77,7 @@ export const ReadingPro: React.FC = () => {
     },
     es: {
       returnHome: 'Volver al Inicio',
-      title: 'Revistas Pro',
+      title: 'Lectura de Revistas',
       syncing: 'Sincronizando datos...',
       desc: 'Análisis profundo de revistas internacionales, lectura en línea.',
       loading: 'Cargando...',
@@ -89,7 +89,7 @@ export const ReadingPro: React.FC = () => {
     },
     fr: {
       returnHome: 'Retour à l\'accueil',
-      title: 'Revues Pro',
+      title: 'Lecture de Revues',
       syncing: 'Synchronisation des données...',
       desc: 'Analyse approfondie des revues internationales de haut niveau.',
       loading: 'Chargement...',
@@ -101,7 +101,7 @@ export const ReadingPro: React.FC = () => {
     },
     de: {
       returnHome: 'Zurück zur Startseite',
-      title: 'Journals Pro',
+      title: 'Zeitschriften-Lektüre',
       syncing: 'Daten synchronisieren...',
       desc: 'Eingehende Analyse von internationalen Top-Zeitschriften.',
       loading: 'Wird geladen...',
@@ -113,7 +113,7 @@ export const ReadingPro: React.FC = () => {
     },
     el: {
       returnHome: 'Επιστροφή στην Αρχική',
-      title: 'Περιοδικά Pro',
+      title: 'Μελέτη Περιοδικών',
       syncing: 'Συγχρονισμός...',
       desc: 'Σε βάθος ανάλυση διεθνών περιοδικών.',
       loading: 'Φόρτωση...',
@@ -125,7 +125,7 @@ export const ReadingPro: React.FC = () => {
     }
   }[language] || {
       returnHome: 'Return to Home',
-      title: 'Journals Pro',
+      title: 'Journal Reading',
       syncing: 'Syncing latest data...',
       desc: 'In-depth analysis of top international international journals, immersive online reading.',
       loading: 'Loading...',
