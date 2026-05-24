@@ -413,7 +413,10 @@ export const Navbar: React.FC = () => {
           <div className="md:hidden flex items-center justify-center -mr-2 space-x-1">
             <div className="relative">
               <button 
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLangDropdownOpen(!langDropdownOpen);
+                }}
                 className={`px-3 py-2 rounded-full active:bg-black/5 flex items-center space-x-1 ${themeMode === 'dark' ? 'text-white' : 'text-gray-800'}`}
               >
                 <Globe size={18} />
