@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../App';
-import { Search, Copy, Check, Code, Terminal, BookOpen, AlertCircle, ArrowLeft, Layers } from 'lucide-react';
+import { Search, Copy, Check, Code, Terminal, BookOpen, AlertCircle, ArrowLeft, Layers, Download, FileText, FileCode } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Problem {
@@ -242,6 +242,54 @@ export const Laboratory: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProblem, setSelectedProblem] = useState<Problem>(PROBLEMS[0]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const downloadAllAsPy = () => {
+    let fileContent = `"""\n信息期末考试 - Python 标准解答集\n创建时间: ${new Date().toLocaleDateString()}\n极客专属创新实验室 (GongPan Laboratory)\n"""\n\n`;
+    PROBLEMS.forEach((problem) => {
+      fileContent += `# =========================================================\n`;
+      fileContent += `# 题目 ID: ${problem.id}\n`;
+      fileContent += `# 题目名称: ${problem.title}\n`;
+      fileContent += `# =========================================================\n\n`;
+      fileContent += `${problem.code}\n\n\n`;
+    });
+
+    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'GongPan_IT_Exam_Python_Codes.py';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(language === 'zh' ? 'Python 题解下载成功' : 'Python code downloaded!');
+  };
+
+  const downloadAllAsTxt = () => {
+    let fileContent = `=========================================================\n`;
+    fileContent += `              信息期末考试 - Python 必备题解合集\n`;
+    fileContent += `=========================================================\n`;
+    fileContent += `生成时间: ${new Date().toLocaleDateString()}\n`;
+    fileContent += `由 GongPan Laboratory 在线提供支持\n\n`;
+    
+    PROBLEMS.forEach((problem, index) => {
+      fileContent += `${index + 1}. [${problem.id}] ${problem.title}\n`;
+      fileContent += `---------------------------------------------------------\n`;
+      fileContent += `${problem.code}\n`;
+      fileContent += `=========================================================\n\n`;
+    });
+
+    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'GongPan_IT_Exam_Python_Format_Full.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(language === 'zh' ? '文本题解下载成功' : 'Plain text downloaded!');
+  };
 
   const t = {
     zh: {
@@ -651,6 +699,54 @@ export const Laboratory: React.FC = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Download Area Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className={`mt-10 rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative`}
+      >
+        <div className="absolute right-0 bottom-0 transform translate-x-12 translate-y-12 opacity-5 select-none pointer-events-none text-gray-500">
+          <Download size={220} />
+        </div>
+        
+        <div className="flex-1 text-center md:text-left z-10">
+          <h2 className="text-xl md:text-2xl font-black mb-2 flex items-center justify-center md:justify-start gap-3">
+            <Download className="text-blue-500 animate-bounce" size={24} />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">
+              {language === 'zh' ? '期末冲刺资料一键下载' : 'Final Exam Solution Download'}
+            </span>
+          </h2>
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-xl leading-relaxed`}>
+            {language === 'zh' 
+              ? '支持一键将上方完美的 20 道 Python 核心信息技术考试原题及参考答案打包下载到本地。支持标准脚本（.py）或全中文格式化纯文本（.txt），方便导入编辑器运行或打印背诵。' 
+              : 'Download all 20 Python IT exam problems with original source codes in a single click. Available in standalone script (.py) or fully structured textual format (.txt) for offline reference.'}
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto z-10 shrink-0">
+          <button
+            onClick={downloadAllAsPy}
+            className="flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500 active:scale-95 transition-all text-center"
+          >
+            <FileCode size={18} />
+            <span>{language === 'zh' ? '下载 Python 脚本 (.py)' : 'Download Script (.py)'}</span>
+          </button>
+          
+          <button
+            onClick={downloadAllAsTxt}
+            className={`flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl border font-bold text-sm tracking-wide active:scale-95 transition-all text-center ${
+              isDark 
+                ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' 
+                : 'bg-black/5 border-black/10 text-gray-700 hover:bg-black/10 hover:text-black'
+            }`}
+          >
+            <FileText size={18} />
+            <span>{language === 'zh' ? '下载打印版文本 (.txt)' : 'Download Doc Text (.txt)'}</span>
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 };
