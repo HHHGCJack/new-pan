@@ -5,6 +5,7 @@ import { Footer } from './components/Footer';
 import { Home } from './components/Home';
 import { ReadingPro } from './components/ReadingPro';
 import { Admin } from './components/Admin';
+import { Laboratory } from './components/Laboratory';
 import { ThemeContextType, ThemeMode, Language } from './types';
 import { supabase } from './src/lib/supabase';
 
@@ -116,6 +117,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/reading-pro" element={<ReadingPro />} />
+            <Route path="/laboratory" element={<Laboratory />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
 
