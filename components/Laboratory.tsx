@@ -223,16 +223,29 @@ for i in s:
     print(i[0],i[1])`
   },
   {
-    id: "1047",
-    title: "计算并集",
-    code: `while True:
-    try:
-        input()
-        a = set(map(int, input().split()))
-        b = set(map(int, input().split()))
-        print(' '.join(map(str, sorted(a | b))))
-    except EOFError:
-        break`
+    id: "5276",
+    title: "赛马",
+    code: `n = int(input())
+a = list(map(int, input().split()))
+b = list(map(int, input().split()))
+ord1 = list(map(int, input().split()))
+ord2 = list(map(int, input().split()))
+
+win = 0
+draw = 0
+lose = 0
+
+for i in range(n):
+    x = a[ord1[i] - 1]
+    y = b[ord2[i] - 1]
+    if x > y:
+        win += 1
+    elif x == y:
+        draw += 1
+    else:
+        lose += 1
+
+print(win, draw, lose)`
   }
 ];
 
@@ -564,120 +577,170 @@ export const Laboratory: React.FC = () => {
         <div className="lg:col-span-9 w-full">
           <AnimatePresence mode="wait">
             {activeTab === 'exam' ? (
-              <motion.div
-                key="exam"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
-                className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col`}
-              >
-                {/* Exam Board Layout: Inside Exam we have Side Filter Index and Main Highlight Code Area */}
-                <div className="flex flex-col md:flex-row gap-6 h-full min-h-[600px]">
-                  {/* Left Side: Search + Filter List */}
-                  <div className="w-full md:w-[320px] flex flex-col border-b md:border-b-0 md:border-r border-white/10 md:pr-6 pb-6 md:pb-0 h-full">
-                    <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
-                      <Code size={18} className="text-blue-500" />
-                      <span>{t.problemList}</span>
-                      <span className="text-xs bg-blue-500/20 text-blue-500 border border-blue-500/20 px-2.0 py-0.5 rounded-full font-bold ml-auto select-none">{filteredProblems.length}</span>
-                    </h3>
+              <div key="exam-tab-wrapper" className="space-y-8">
+                <motion.div
+                  key="exam"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.3 }}
+                  className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col`}
+                >
+                  {/* Exam Board Layout: Inside Exam we have Side Filter Index and Main Highlight Code Area */}
+                  <div className="flex flex-col md:flex-row gap-6 h-full min-h-[600px]">
+                    {/* Left Side: Search + Filter List */}
+                    <div className="w-full md:w-[320px] flex flex-col border-b md:border-b-0 md:border-r border-white/10 md:pr-6 pb-6 md:pb-0 h-full">
+                      <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
+                        <Code size={18} className="text-blue-500" />
+                        <span>{t.problemList}</span>
+                        <span className="text-xs bg-blue-500/20 text-blue-500 border border-blue-500/20 px-2.0 py-0.5 rounded-full font-bold ml-auto select-none">{filteredProblems.length}</span>
+                      </h3>
 
-                    <div className="relative mb-4">
-                      <Search size={16} className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                      <input
-                        type="text"
-                        placeholder={t.searchPlace}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={`w-full pl-10 pr-4 py-3 rounded-2xl text-sm border focus:outline-none transition-all ${
-                          isDark 
-                            ? 'bg-black/30 border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' 
-                            : 'bg-white/85 border-gray-200 text-black placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-inner'
-                        }`}
-                      />
+                      <div className="relative mb-4">
+                        <Search size={16} className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                        <input
+                          type="text"
+                          placeholder={t.searchPlace}
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className={`w-full pl-10 pr-4 py-3 rounded-2xl text-sm border focus:outline-none transition-all ${
+                            isDark 
+                              ? 'bg-black/30 border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' 
+                              : 'bg-white/85 border-gray-200 text-black placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-inner'
+                          }`}
+                        />
+                      </div>
+
+                      {/* Overflowing Index list */}
+                      <div className="overflow-y-auto max-h-[450px] pr-1 space-y-2 flex-grow scrollbar-thin scrollbar-thumb-white/10">
+                        {filteredProblems.length > 0 ? (
+                          filteredProblems.map((prob) => (
+                            <button
+                              key={prob.id}
+                              onClick={() => setSelectedProblem(prob)}
+                              className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between group ${
+                                selectedProblem.id === prob.id
+                                  ? (isDark ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' : 'bg-blue-500/10 border-blue-500/40 text-blue-600 font-semibold')
+                                  : (isDark ? 'border-transparent text-gray-300 hover:bg-white/5' : 'border-transparent text-gray-700 hover:bg-black/5')
+                              }`}
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">{prob.id}</span>
+                                <span className="text-sm font-medium mt-0.5 group-hover:translate-x-1 transition-transform truncate max-w-[210px]">{prob.title}</span>
+                              </div>
+                              <div className={`w-2 h-2 rounded-full transition-transform scale-0 group-hover:scale-100 ${
+                                selectedProblem.id === prob.id ? 'scale-100 bg-blue-500' : 'bg-gray-400'
+                              }`} />
+                            </button>
+                          ))
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-10 text-gray-500 text-center">
+                            <AlertCircle size={32} className="mb-2 opacity-40" />
+                            <p className="text-sm">{t.noResults}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Overflowing Index list */}
-                    <div className="overflow-y-auto max-h-[450px] pr-1 space-y-2 flex-grow scrollbar-thin scrollbar-thumb-white/10">
-                      {filteredProblems.length > 0 ? (
-                        filteredProblems.map((prob) => (
+                    {/* Right Side: Detailed Code Block Display */}
+                    <div className="flex-1 flex flex-col h-full pl-0 md:pl-2">
+                      <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-xl md:text-2xl font-black font-mono bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">{selectedProblem.id}</span>
+                          <h2 className="text-lg md:text-xl font-bold tracking-tight">{selectedProblem.title}</h2>
+                        </div>
+                        <span className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-[#1e1e24] text-amber-500 border border-amber-500/20 shadow-md">
+                          Python 3
+                        </span>
+                      </div>
+
+                      {/* Beautified Code Panel */}
+                      <div className="rounded-[1.5rem] bg-[#0d0d11] text-gray-300 border border-white/10 shadow-2xl overflow-hidden flex flex-col flex-grow relative group/code">
+                        {/* Code Header Bar */}
+                        <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 bg-[#14141a]">
+                          <div className="flex space-x-1.5">
+                            <span className="w-3" />
+                            <span className="w-3 h-3 rounded-full bg-red-500/80" />
+                            <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                            <span className="w-3 h-3 rounded-full bg-green-500/80" />
+                          </div>
                           <button
-                            key={prob.id}
-                            onClick={() => setSelectedProblem(prob)}
-                            className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between group ${
-                              selectedProblem.id === prob.id
-                                ? (isDark ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' : 'bg-blue-500/10 border-blue-500/40 text-blue-600 font-semibold')
-                                : (isDark ? 'border-transparent text-gray-300 hover:bg-white/5' : 'border-transparent text-gray-700 hover:bg-black/5')
-                            }`}
+                            onClick={() => handleCopy(selectedProblem.code, selectedProblem.id)}
+                            className="flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-white transition-all border border-white/5"
                           >
-                            <div className="flex flex-col">
-                              <span className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">{prob.id}</span>
-                              <span className="text-sm font-medium mt-0.5 group-hover:translate-x-1 transition-transform truncate max-w-[210px]">{prob.title}</span>
-                            </div>
-                            <div className={`w-2 h-2 rounded-full transition-transform scale-0 group-hover:scale-100 ${
-                              selectedProblem.id === prob.id ? 'scale-100 bg-blue-500' : 'bg-gray-400'
-                            }`} />
+                            {copiedId === selectedProblem.id ? (
+                              <>
+                                <Check size={13} className="text-green-500 animate-pulse" />
+                                <span className="text-green-500">{t.copied}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={13} />
+                                <span>{t.copyCode}</span>
+                              </>
+                            )}
                           </button>
-                        ))
-                      ) : (
-                        <div className="flex flex-col items-center justify-center py-10 text-gray-500 text-center">
-                          <AlertCircle size={32} className="mb-2 opacity-40" />
-                          <p className="text-sm">{t.noResults}</p>
                         </div>
-                      )}
+
+                        {/* Display Editor lines */}
+                        <div className="py-6 overflow-x-auto min-h-[300px] select-all scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                          <code className="block w-full min-w-max">
+                            {highlightPython(selectedProblem.code)}
+                          </code>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </motion.div>
 
-                  {/* Right Side: Detailed Code Block Display */}
-                  <div className="flex-1 flex flex-col h-full pl-0 md:pl-2">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-                      <div className="flex items-center space-x-3">
-                        <span className="text-xl md:text-2xl font-black font-mono bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">{selectedProblem.id}</span>
-                        <h2 className="text-lg md:text-xl font-bold tracking-tight">{selectedProblem.title}</h2>
-                      </div>
-                      <span className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-[#1e1e24] text-amber-500 border border-amber-500/20 shadow-md">
-                        Python 3
+                {/* Download Area Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative`}
+                >
+                  <div className="absolute right-0 bottom-0 transform translate-x-12 translate-y-12 opacity-5 select-none pointer-events-none text-gray-500">
+                    <Download size={220} />
+                  </div>
+                  
+                  <div className="flex-1 text-center md:text-left z-10">
+                    <h2 className="text-xl md:text-2xl font-black mb-2 flex items-center justify-center md:justify-start gap-3">
+                      <Download className="text-blue-500 animate-bounce" size={24} />
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">
+                        {language === 'zh' ? '期末冲刺资料一键下载' : 'Final Exam Solution Download'}
                       </span>
-                    </div>
-
-                    {/* Beautified Code Panel */}
-                    <div className="rounded-[1.5rem] bg-[#0d0d11] text-gray-300 border border-white/10 shadow-2xl overflow-hidden flex flex-col flex-grow relative group/code">
-                      {/* Code Header Bar */}
-                      <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 bg-[#14141a]">
-                        <div className="flex space-x-1.5">
-                          <span className="w-3" />
-                          <span className="w-3 h-3 rounded-full bg-red-500/80" />
-                          <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                          <span className="w-3 h-3 rounded-full bg-green-500/80" />
-                        </div>
-                        <button
-                          onClick={() => handleCopy(selectedProblem.code, selectedProblem.id)}
-                          className="flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-white transition-all border border-white/5"
-                        >
-                          {copiedId === selectedProblem.id ? (
-                            <>
-                              <Check size={13} className="text-green-500 animate-pulse" />
-                              <span className="text-green-500">{t.copied}</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy size={13} />
-                              <span>{t.copyCode}</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-
-                      {/* Display Editor lines */}
-                      <div className="py-6 overflow-x-auto min-h-[300px] select-all scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                        <code className="block w-full min-w-max">
-                          {highlightPython(selectedProblem.code)}
-                        </code>
-                      </div>
-                    </div>
+                    </h2>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-xl leading-relaxed`}>
+                      {language === 'zh' 
+                        ? '支持一键将上方完美的 20 道 Python 核心信息技术考试原题及参考答案打包下载到本地。支持标准脚本（.py）或全中文格式化纯文本（.txt），方便导入编辑器运行或打印背诵。' 
+                        : 'Download all 20 Python IT exam problems with original source codes in a single click. Available in standalone script (.py) or fully structured textual format (.txt) for offline reference.'}
+                    </p>
                   </div>
-                </div>
-              </motion.div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto z-10 shrink-0">
+                    <button
+                      onClick={downloadAllAsPy}
+                      className="flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500 active:scale-95 transition-all text-center"
+                    >
+                      <FileCode size={18} />
+                      <span>{language === 'zh' ? '下载 Python 脚本 (.py)' : 'Download Script (.py)'}</span>
+                    </button>
+                    
+                    <button
+                      onClick={downloadAllAsTxt}
+                      className={`flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl border font-bold text-sm tracking-wide active:scale-95 transition-all text-center ${
+                        isDark 
+                          ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' 
+                          : 'bg-black/5 border-black/10 text-gray-700 hover:bg-black/10 hover:text-black'
+                      }`}
+                    >
+                      <FileText size={18} />
+                      <span>{language === 'zh' ? '下载打印版文本 (.txt)' : 'Download Doc Text (.txt)'}</span>
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
             ) : (
               <motion.div
                 key="info"
@@ -699,54 +762,6 @@ export const Laboratory: React.FC = () => {
           </AnimatePresence>
         </div>
       </div>
-
-      {/* Download Area Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className={`mt-10 rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative`}
-      >
-        <div className="absolute right-0 bottom-0 transform translate-x-12 translate-y-12 opacity-5 select-none pointer-events-none text-gray-500">
-          <Download size={220} />
-        </div>
-        
-        <div className="flex-1 text-center md:text-left z-10">
-          <h2 className="text-xl md:text-2xl font-black mb-2 flex items-center justify-center md:justify-start gap-3">
-            <Download className="text-blue-500 animate-bounce" size={24} />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">
-              {language === 'zh' ? '期末冲刺资料一键下载' : 'Final Exam Solution Download'}
-            </span>
-          </h2>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-xl leading-relaxed`}>
-            {language === 'zh' 
-              ? '支持一键将上方完美的 20 道 Python 核心信息技术考试原题及参考答案打包下载到本地。支持标准脚本（.py）或全中文格式化纯文本（.txt），方便导入编辑器运行或打印背诵。' 
-              : 'Download all 20 Python IT exam problems with original source codes in a single click. Available in standalone script (.py) or fully structured textual format (.txt) for offline reference.'}
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto z-10 shrink-0">
-          <button
-            onClick={downloadAllAsPy}
-            className="flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500 active:scale-95 transition-all text-center"
-          >
-            <FileCode size={18} />
-            <span>{language === 'zh' ? '下载 Python 脚本 (.py)' : 'Download Script (.py)'}</span>
-          </button>
-          
-          <button
-            onClick={downloadAllAsTxt}
-            className={`flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl border font-bold text-sm tracking-wide active:scale-95 transition-all text-center ${
-              isDark 
-                ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' 
-                : 'bg-black/5 border-black/10 text-gray-700 hover:bg-black/10 hover:text-black'
-            }`}
-          >
-            <FileText size={18} />
-            <span>{language === 'zh' ? '下载打印版文本 (.txt)' : 'Download Doc Text (.txt)'}</span>
-          </button>
-        </div>
-      </motion.div>
     </div>
   );
 };
