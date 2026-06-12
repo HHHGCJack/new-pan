@@ -1,530 +1,341 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../App';
-import { Search, Copy, Check, Code, Terminal, BookOpen, AlertCircle, ArrowLeft, Layers, Download, FileText, FileCode } from 'lucide-react';
+import { Copy, Check, Code, Terminal, ArrowLeft, Layers, FileText, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-interface Problem {
-  id: string;
-  title: string;
-  code: string;
-}
-
-const PROBLEMS: Problem[] = [
-  {
-    id: "5114",
-    title: "倒序输出一个四位整数",
-    code: "s=input().strip()\nprint(int(s[::-1]))"
-  },
-  {
-    id: "5111",
-    title: "分糖果",
-    code: `a,b,c,d,e=map(int,input().split())
-t=a//3
-a=t
-b+=t
-e+=t
-t=b//3
-b=t
-a+=t
-c+=t
-t=c//3
-c=t
-b+=t
-d+=t
-t=d//3
-d=t
-c+=t
-e+=t
-t=e//3
-e=t
-d+=t
-a+=t
-print(a,b,c,d,e)`
-  },
-  {
-    id: "5101",
-    title: "魔方",
-    code: `n=int(input())
-print(8)
-print(12*(n-2))
-print(6*(n-2)*(n-2))`
-  },
-  {
-    id: "5129",
-    title: "判断成绩等级",
-    code: `s=int(input())
-if s>=86:
-    print("VERY GOOD")
-elif s>=60:
-    print("GOOD")
-else:
-    print("BAD")`
-  },
-  {
-    id: "5136",
-    title: "判断某年某月的天数",
-    code: `y,m=map(int,input().split())
-if m in [1,3,5,7,8,10,12]:
-    print(31)
-elif m in [4,6,9,11]:
-    print(30)
-else:
-    if y%400==0 or y%4==0 and y%100!=0:
-        print(29)
-    else:
-        print(28)`
-  },
-  {
-    id: "5226",
-    title: "数数小木块",
-    code: `n=int(input())
-print(n*(n+1)*(n+2)//6)`
-  },
-  {
-    id: "5222",
-    title: "寻找雷劈数",
-    code: `for n in range(1000,10000):
-    a=n//100
-    b=n%100
-    if (a+b)**2==n:
-        print(n)`
-  },
-  {
-    id: "5249",
-    title: "判断素数",
-    code: `import math
-n=int(input())
-if n<2:
-    print('F')
-else:
-    f=1
-    for i in range(2,int(math.isqrt(n))+1):
-        if n%i==0:
-            f=0
-            break
-    print('T'if f else 'F')`
-  },
-  {
-    id: "5322",
-    title: "角谷猜想",
-    code: `n,c=int(input()),0
-while n>1:n=n//2if n%2==0else n*3+1;c+=1
-print(c)`
-  },
-  {
-    id: "5216",
-    title: "打折优惠",
-    code: `n=int(input())
-s=sum(map(int,input().split()))
-if s>100:s=100+(s-100)*0.9
-print("{0:.2f}".format(s))`
-  },
-  {
-    id: "5258",
-    title: "列表元素的移动",
-    code: `n=int(input())
-a=list(map(int,input().split()))
-x=int(input())
-t=a.pop(x-1)
-a.append(t)
-print(' '.join(map(str,a)))`
-  },
-  {
-    id: "5296",
-    title: "校门外的树",
-    code: `L,M=map(int,input().split())
-tree=[1]*(L+1)
-for _ in range(M):
-    s,e=map(int,input().split())
-    for i in range(s,e+1):
-        tree[i]=0
-print(sum(tree))`
-  },
-  {
-    id: "5281",
-    title: "数字环",
-    code: `n=int(input())
-a=list(map(int,input().split()))
-arr=a+a
-maxs=-1
-pos=0
-for i in range(n):
-    s=sum(arr[i:i+4])
-    if s>maxs:
-        maxs=s
-        pos=i+1
-print(maxs,pos)`
-  },
-  {
-    id: "5507",
-    title: "大小写转换",
-    code: `s=input()
-print(s.swapcase())`
-  },
-  {
-    id: "5525",
-    title: "判断是否构成回文",
-    code: `s=input().strip()
-t=s[:-1]
-print("TRUE"if t==t[::-1]else"FALSE")`
-  },
-  {
-    id: "9717",
-    title: "统计气球",
-    code: `from collections import Counter
-n=int(input())
-lst=[input().strip()for _ in range(n)]
-cnt=Counter(lst)
-res=sorted(cnt.items(),key=lambda x:(-x[1],x[0]))
-print(res[0][0])`
-  },
-  {
-    id: "5805",
-    title: "哥德巴赫猜想",
-    code: `import math
-def is_prime(x):
-    if x<2:
-        return False
-    for i in range(2,int(math.isqrt(x))+1):
-        if x%i==0:
-            return False
-    return True
-for n in range(6,101,2):
-    for a in range(2,n):
-        b=n-a
-        if is_prime(a) and is_prime(b):
-            print(f"{n}={a}+{b}")
-            break`
-  },
-  {
-    id: "5804",
-    title: "回文三位素数",
-    code: `import math
-def isprime(x):
-    if x<2:return False
-    for i in range(2,int(math.isqrt(x))+1):
-        if x%i==0:return False
-    return True
-for n in range(100,1000):
-    s=str(n)
-    if s==s[::-1] and isprime(n):
-        print(n)`
-  },
-  {
-    id: "40016",
-    title: "成绩排序",
-    code: `s=[]
-for _ in range(10):
-    n,sc=input().split()
-    s.append([n,int(sc)])
-s.sort(key=lambda x:-x[1])
-for i in s:
-    print(i[0],i[1])`
-  },
-  {
-    id: "5276",
-    title: "赛马",
-    code: `n = int(input())
-a = list(map(int, input().split()))
-b = list(map(int, input().split()))
-ord1 = list(map(int, input().split()))
-ord2 = list(map(int, input().split()))
-
-win = 0
-draw = 0
-lose = 0
-
-for i in range(n):
-    x = a[ord1[i] - 1]
-    y = b[ord2[i] - 1]
-    if x > y:
-        win += 1
-    elif x == y:
-        draw += 1
-    else:
-        lose += 1
-
-print(win, draw, lose)`
-  }
-];
 
 export const Laboratory: React.FC = () => {
   const { themeMode, language, showToast } = useTheme();
-  const [activeTab, setActiveTab] = useState<'exam' | 'info'>('exam');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProblem, setSelectedProblem] = useState<Problem>(PROBLEMS[0]);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  
+  // UI Tab Active State
+  const [activeTab, setActiveTab] = useState<'glass' | 'json' | 'codec' | 'token'>('glass');
+  const isDark = themeMode === 'dark';
 
-  const downloadAllAsPy = () => {
-    let fileContent = `"""\n信息期末考试 - Python 标准解答集\n创建时间: ${new Date().toLocaleDateString()}\n极客专属创新实验室 (GongPan Laboratory)\n"""\n\n`;
-    PROBLEMS.forEach((problem) => {
-      fileContent += `# =========================================================\n`;
-      fileContent += `# 题目 ID: ${problem.id}\n`;
-      fileContent += `# 题目名称: ${problem.title}\n`;
-      fileContent += `# =========================================================\n\n`;
-      fileContent += `${problem.code}\n\n\n`;
-    });
+  // State: Common copied indicator
+  const [copiedText, setCopiedText] = useState<string | null>(null);
 
-    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'GongPan_IT_Exam_Python_Codes.py';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showToast(language === 'zh' ? 'Python 题解下载成功' : 'Python code downloaded!');
+  // States: Glassmorphism designer
+  const [glassBlur, setGlassBlur] = useState<number>(16);
+  const [glassOpacity, setGlassOpacity] = useState<number>(25);
+  const [glassSaturation, setGlassSaturation] = useState<number>(140);
+  const [glassBorderOpacity, setGlassBorderOpacity] = useState<number>(15);
+
+  // States: JSON validation & formatter
+  const [jsonInput, setJsonInput] = useState<string>('');
+  const [jsonOutput, setJsonOutput] = useState<string>('');
+  const [jsonIndent, setJsonIndent] = useState<number>(2);
+  const [jsonIsValid, setJsonIsValid] = useState<boolean | null>(null);
+  const [jsonError, setJsonError] = useState<string>('');
+
+  // States: Codec (Base64 & URL)
+  const [codecInput, setCodecInput] = useState<string>('');
+  const [codecOutput, setCodecOutput] = useState<string>('');
+  const [codecError, setCodecError] = useState<string>('');
+
+  // States: Strong key generator
+  const [tokenLength, setTokenLength] = useState<number>(16);
+  const [tokenUpper, setTokenUpper] = useState<boolean>(true);
+  const [tokenLower, setTokenLower] = useState<boolean>(true);
+  const [tokenNumbers, setTokenNumbers] = useState<boolean>(true);
+  const [tokenSymbols, setTokenSymbols] = useState<boolean>(true);
+  const [generatedToken, setGeneratedToken] = useState<string>('');
+  const [tokenStrength, setTokenStrength] = useState<'weak' | 'medium' | 'strong'>('strong');
+
+  // Trigger copy tool
+  const triggerCopy = (text: string, label: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedText(label);
+    showToast(language === 'zh' ? '复制成功！' : 'Copied successfully!');
+    setTimeout(() => setCopiedText(null), 2000);
   };
 
-  const downloadAllAsTxt = () => {
-    let fileContent = `=========================================================\n`;
-    fileContent += `              信息期末考试 - Python 必备题解合集\n`;
-    fileContent += `=========================================================\n`;
-    fileContent += `生成时间: ${new Date().toLocaleDateString()}\n`;
-    fileContent += `由 GongPan Laboratory 在线提供支持\n\n`;
-    
-    PROBLEMS.forEach((problem, index) => {
-      fileContent += `${index + 1}. [${problem.id}] ${problem.title}\n`;
-      fileContent += `---------------------------------------------------------\n`;
-      fileContent += `${problem.code}\n`;
-      fileContent += `=========================================================\n\n`;
-    });
-
-    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'GongPan_IT_Exam_Python_Format_Full.txt';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showToast(language === 'zh' ? '文本题解下载成功' : 'Plain text downloaded!');
+  // Trigger base64 / URL encoding-decoding
+  const runCodec = (action: 'b64-encode' | 'b64-decode' | 'url-encode' | 'url-decode') => {
+    setCodecError('');
+    if (!codecInput) {
+      setCodecOutput('');
+      return;
+    }
+    try {
+      if (action === 'b64-encode') {
+        // Safe standard unicode Base64 encoding
+        const encoder = new TextEncoder();
+        const data = encoder.encode(codecInput);
+        let binString = "";
+        data.forEach((byte) => {
+          binString += String.fromCharCode(byte);
+        });
+        setCodecOutput(btoa(binString));
+      } else if (action === 'b64-decode') {
+        try {
+          const binString = atob(codecInput);
+          const uint8Array = Uint8Array.from(binString, (m) => m.codePointAt(0) || 0);
+          const decoder = new TextDecoder();
+          setCodecOutput(decoder.decode(uint8Array));
+        } catch {
+          throw new Error(language === 'zh' ? '无效的 Base64 编码格式' : 'Invalid Base64 format');
+        }
+      } else if (action === 'url-encode') {
+        setCodecOutput(encodeURIComponent(codecInput));
+      } else if (action === 'url-decode') {
+        try {
+          setCodecOutput(decodeURIComponent(codecInput));
+        } catch {
+          throw new Error(language === 'zh' ? '无效的 URL 编码格式' : 'Invalid URL encoded format');
+        }
+      }
+    } catch (err: any) {
+      setCodecError(err.message || 'Error occurred');
+      setCodecOutput('');
+    }
   };
 
-  const t = {
+  // Format or format minified JSON
+  const processJson = (mode: 'beautify' | 'minify') => {
+    setJsonError('');
+    setJsonIsValid(null);
+    if (!jsonInput.trim()) {
+      setJsonOutput('');
+      return;
+    }
+    try {
+      const parsed = JSON.parse(jsonInput);
+      setJsonIsValid(true);
+      if (mode === 'beautify') {
+        setJsonOutput(JSON.stringify(parsed, null, jsonIndent));
+      } else {
+        setJsonOutput(JSON.stringify(parsed));
+      }
+    } catch (err: any) {
+      setJsonIsValid(false);
+      setJsonError(err.message || 'JSON parsing error');
+      setJsonOutput('');
+    }
+  };
+
+  // Generate ultra high entropy keys
+  const generateTokenNow = () => {
+    const uppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowers = 'abcdefghijklmnopqrstuvwxyz';
+    const nums = '0123456789';
+    const syms = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    let allowedChars = '';
+    if (tokenUpper) allowedChars += uppers;
+    if (tokenLower) allowedChars += lowers;
+    if (tokenNumbers) allowedChars += nums;
+    if (tokenSymbols) allowedChars += syms;
+
+    if (!allowedChars) {
+      setGeneratedToken('');
+      return;
+    }
+
+    let result = '';
+    const length = tokenLength;
+    const randomArray = new Uint32Array(length);
+    window.crypto.getRandomValues(randomArray);
+
+    for (let i = 0; i < length; i++) {
+      result += allowedChars[randomArray[i] % allowedChars.length];
+    }
+
+    setGeneratedToken(result);
+
+    // Dynamic strength scoring
+    let checkedCount = 0;
+    if (tokenUpper) checkedCount++;
+    if (tokenLower) checkedCount++;
+    if (tokenNumbers) checkedCount++;
+    if (tokenSymbols) checkedCount++;
+
+    if (length < 8 || checkedCount <= 1) {
+      setTokenStrength('weak');
+    } else if (length < 12 || checkedCount <= 2) {
+      setTokenStrength('medium');
+    } else {
+      setTokenStrength('strong');
+    }
+  };
+
+  // Generate password on mount and option toggles
+  useEffect(() => {
+    generateTokenNow();
+  }, [tokenLength, tokenUpper, tokenLower, tokenNumbers, tokenSymbols]);
+
+  // Multilanguage Translations setup
+  const translations = {
     zh: {
       labTitle: "创新实验室",
-      labSub: "极客专属的实验性功能与期末考参考资料汇编。",
+      labSub: "极客专属的前沿实验性交互工具箱与在线沙盒。所有数据就地即时运算，确保纯粹的隐私与安全。",
       tabs: {
-        exam: "信息期末考试",
-        explore: "实验工具箱"
+        glass: "磨砂玻璃卡片生成器",
+        json: "JSON 格式化校验",
+        codec: "Base64 & URL 编解码",
+        token: "安全随机密钥生成器"
       },
-      searchPlace: "搜索题目编号或名称...",
-      copyCode: "复制代码",
-      copied: "复制成功！",
-      langBadge: "Python 代码",
-      noResults: "未找到相关题目",
-      problemList: "题目列表",
-      codePreview: "代码预览及精读",
-      comingSoon: "敬请期待更多实验工具..."
+      glass: {
+        title: "Liquid Glassmorphism 磨砂玻璃预设面板",
+        subtitle: "交互式调整高斯模糊与色彩深度，实时复制 Tailwind 或纯 CSS 类名。",
+        blur: "高斯模糊度",
+        opacity: "背景透明度",
+        saturation: "色彩饱和度",
+        border: "边缘线条不透明",
+        preview: "玻璃效果实时演示",
+        cardTitle: "探索未知边界",
+        cardDesc: "GongPan Laboratory 引领极简流动的透明高精视觉美感。",
+        copyCss: "复制 CSS 纯样式",
+        copyTw: "复制 Tailwind 类名",
+      },
+      json: {
+        title: "JSON 深度格式化与合规校验",
+        subtitle: "粘贴或键入任意 JSON 内容，支持一键进行压缩或标准化美化缩进。",
+        inputLabel: "原始 JSON 输入",
+        outputLabel: "格式化输出结果",
+        btnBeautify: "美化排版",
+        btnMinify: "紧凑压缩",
+        indent2: "2 空格缩进",
+        indent4: "4 空格缩进",
+        valid: "合规 JSON 数据格式！",
+        invalid: "语法错误:"
+      },
+      codec: {
+        title: "Base64 与 URL 安全高效安全编解码",
+        subtitle: "秒级将文本与代码在标准 Base64 或 URL 格式之间流畅转换。",
+        inputLabel: "待处理文本",
+        outputLabel: "编解码结果",
+        btnB64Enc: "Base64 编码",
+        btnB64Dec: "Base64 解码",
+        btnUrlEnc: "URL 编码",
+        btnUrlDec: "URL 解码",
+        error: "格式解析失败:"
+      },
+      token: {
+        title: "工业级高熵密钥 / 强密码安全生成器",
+        subtitle: "采用浏览器底层安全随机数（webcrypto），保障生成的口令具备极高不可破解度。",
+        length: "密钥生成长度",
+        opts: "字符组成规则",
+        upper: "大写字母 (A-Z)",
+        lower: "小写字母 (a-z)",
+        num: "独立数字 (0-9)",
+        sym: "特殊字符 (!@#...)",
+        strength: "密钥破译安全级",
+        weak: "【偏弱】建议延长位数或勾选多元字符",
+        medium: "【中等安全】适用于一般网站账户",
+        strong: "【极高安全】不可破解，支持现代高防护口令",
+        btnRefresh: "新生成一组",
+        copyBtn: "复制安全密钥"
+      }
     },
     en: {
       labTitle: "Inno Laboratory",
-      labSub: "Experimental toolbox and final exam database for tech geeks.",
+      labSub: "An interactive utility toolbox & playground built specifically for web geeks and developers. Run locally instantly.",
       tabs: {
-        exam: "IT General Exam",
-        explore: "Lab Toolbox"
+        glass: "Glassmorphism Designer",
+        json: "JSON Validator & Beautifier",
+        codec: "Base64 & URL Codec",
+        token: "High-Entropy Password Generator"
       },
-      searchPlace: "Search ID or title...",
-      copyCode: "Copy Code",
-      copied: "Copied!",
-      langBadge: "Python Code",
-      noResults: "No problems found",
-      problemList: "Problems Index",
-      codePreview: "Code Analysis & Preview",
-      comingSoon: "More experimental tools coming soon..."
-    },
-    ja: {
-      labTitle: "革新ラボ",
-      labSub: "テックマニア向けの実験的ツールと期末試験データベース。",
-      tabs: {
-        exam: "情報期末試験",
-        explore: "ラボツール"
+      glass: {
+        title: "Liquid Glassmorphism Interface Designer",
+        subtitle: "Adjust backdrop filters, blur, and opacity settings interactively to copy CSS or Tailwind recipes.",
+        blur: "Backdrop Blur Radius",
+        opacity: "Backdrop Opacity",
+        saturation: "Color Saturation",
+        border: "Border Line Opacity",
+        preview: "Live Sandbox Preview",
+        cardTitle: "Explore the Unknown",
+        cardDesc: "Leading highly minimalistic fluid visuals and modern aesthetics by GongPan.",
+        copyCss: "Copy CSS Rules",
+        copyTw: "Copy Tailwind Classes",
       },
-      searchPlace: "IDやタイトルで検索...",
-      copyCode: "コピーする",
-      copied: "コピーしました！",
-      langBadge: "Python コード",
-      noResults: "該当する問題が見つかりません",
-      problemList: "問題インデックス",
-      codePreview: "コードプレビュー",
-      comingSoon: "さらに多くの実験機能が近日追加予定..."
-    },
-    ko: {
-      labTitle: "이노 실험실",
-      labSub: "실험적 도구 및 정보 기말고사 데이터베이스.",
-      tabs: {
-        exam: "정보 기말고사",
-        explore: "실험실 박스"
+      json: {
+        title: "Strict JSON Validation & Code Styler",
+        subtitle: "Paste messy JSON payload to beautify with dynamic spacing, validate schemas, or compress syntax.",
+        inputLabel: "Source JSON Payload",
+        outputLabel: "Beautified / Minified Results",
+        btnBeautify: "Format JSON",
+        btnMinify: "Minify Raw",
+        indent2: "2 Spaces Tab",
+        indent4: "4 Spaces Tab",
+        valid: "Valid JSON schema recognized!",
+        invalid: "Parsing error:"
       },
-      searchPlace: "ID 또는 제목 검색...",
-      copyCode: "코드 복사",
-      copied: "복사됨!",
-      langBadge: "Python 코드",
-      noResults: "일치하는 문제가 없습니다",
-      problemList: "문제 색인",
-      codePreview: "코드 미리보기",
-      comingSoon: "더 많은 실험적 도구가 곧 추가됩니다..."
-    },
-    es: {
-      labTitle: "Laboratorio",
-      labSub: "Caja de herramientas y base de datos para geeks de la tecnología.",
-      tabs: {
-        exam: "Examen de Informática",
-        explore: "Herramientas"
+      codec: {
+        title: "Symmetric Base64 & Safe URL Encoder / Decoder",
+        subtitle: "Fast unicode string processing system to swap between standard base64 and web URI encodings.",
+        inputLabel: "Source String Content",
+        outputLabel: "Processed Codec Results",
+        btnB64Enc: "B64 Encode",
+        btnB64Dec: "B64 Decode",
+        btnUrlEnc: "URL Encode",
+        btnUrlDec: "URL Decode",
+        error: "Codec error:"
       },
-      searchPlace: "Buscar ID o título...",
-      copyCode: "Copiar Código",
-      copied: "¡Copiado!",
-      langBadge: "Código Python",
-      noResults: "No se encontraron problemas",
-      problemList: "Lista de Problemas",
-      codePreview: "Vista de Código",
-      comingSoon: "Más herramientas de laboratorio próximamente..."
-    },
-    fr: {
-      labTitle: "Laboratoire",
-      labSub: "Base de données d'examen et boîte à outils pour les geeks du web.",
-      tabs: {
-        exam: "Examen Informatique",
-        explore: "Boîte à Outils"
-      },
-      searchPlace: "Rechercher un ID ou titre...",
-      copyCode: "Copier le code",
-      copied: "Copié !",
-      langBadge: "Code Python",
-      noResults: "Aucun problème trouvé",
-      problemList: "Index des problèmes",
-      codePreview: "Visualisation du code",
-      comingSoon: "Bientôt plus d'outils disponibles..."
-    },
-    de: {
-      labTitle: "Laboratorium",
-      labSub: "Experimentelle Tools und Prüfungsdatenbank für Tech-Geeks.",
-      tabs: {
-        exam: "Informatik-Prüfung",
-        explore: "Werkzeuge"
-      },
-      searchPlace: "Suche ID oder Titel...",
-      copyCode: "Code kopieren",
-      copied: "Kopiert!",
-      langBadge: "Python Code",
-      noResults: "Keine Aufgaben gefunden",
-      problemList: "Aufgabenverzeichnis",
-      codePreview: "Code-Ansicht",
-      comingSoon: "Weitere Labor-Tools in Kürze..."
-    },
-    el: {
-      labTitle: "Εργαστήριο",
-      labSub: "Πειραματική εργαλειοθήκη και βάση δεδομένων πληροφορικής.",
-      tabs: {
-        exam: "Εξετάσεις Πληροφορικής",
-        explore: "Εργαλεία"
-      },
-      searchPlace: "Αναζήτηση ID ή τίτλου...",
-      copyCode: "Αντιγραφή Κώδικα",
-      copied: "Αντιγράφηκε!",
-      langBadge: "Κώδικας Python",
-      noResults: "Δεν βρέθηκαν ασκήσεις",
-      problemList: "Ευρετήριο Ασκήσεων",
-      codePreview: "Προεπισκόπηση Κώδικα",
-      comingSoon: "Περισσότερα εργαλεία σύντομα..."
+      token: {
+        title: "High-Entropy Secure Password Generator",
+        subtitle: "Powered by cryptographic secure random numbers (Web Crypto API) for robust password strength.",
+        length: "Password Length",
+        opts: "String Content Filters",
+        upper: "Uppercase A-Z",
+        lower: "Lowercase a-z",
+        num: "Numerical 0-9",
+        sym: "Special characters (!@#...)",
+        strength: "Security Rating",
+        weak: "Weak - Increase length or include extra flags",
+        medium: "Medium - Good for normal website registry requirements",
+        strong: "Strong - Industrial protection against brute force attacks",
+        btnRefresh: "Regenerate Key",
+        copyBtn: "Copy Password"
+      }
     }
-  }[language] || {
-    labTitle: "创新实验室",
-    labSub: "极客专属的实验性功能与期末考参考资料汇编。",
-    tabs: { exam: "信息期末考试", explore: "实验工具箱" },
-    searchPlace: "搜索题目编号或名称...",
-    copyCode: "复制代码",
-    copied: "复制成功！",
-    langBadge: "Python 代码",
-    noResults: "未找到相关题目",
-    problemList: "题目列表",
-    codePreview: "代码预览及精读",
-    comingSoon: "敬请期待更多实验工具..."
-  };
+  }[language === 'zh' ? 'zh' : 'en'];
 
-  const filteredProblems = PROBLEMS.filter(p => 
-    p.id.includes(searchTerm) || p.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleCopy = (code: string, id: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedId(id);
-    showToast(t.copied);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  // Simplistic Highlight syntax logic
-  const highlightPython = (code: string) => {
-    const lines = code.split('\n');
-    return lines.map((line, idx) => {
-      // Very basic keyword coloring
-      const tokens = line.split(/(\s+|=|\(|\)|\[|\]|,|\+|-|\*|\/\/|:|\.|\{|\})/);
-      const elements = tokens.map((token, tIdx) => {
-        const pythonKeywords = [
-          'import', 'from', 'def', 'return', 'if', 'elif', 'else', 
-          'for', 'in', 'while', 'print', 'input', 'strip', 'split', 
-          'int', 'map', 'list', 'append', 'pop', 'sum', 'sorted', 'str', 
-          'join', 'set', 'try', 'except', 'EOFError', 'break', 'False', 'True'
-        ];
-        
-        if (pythonKeywords.includes(token)) {
-          // Purple/Orange colors depending on keyword types
-          if (['if', 'elif', 'else', 'for', 'in', 'while', 'try', 'except', 'break', 'return', 'def'].includes(token)) {
-            return <span key={tIdx} className="text-[#c792ea] font-semibold">{token}</span>;
-          }
-          if (['print', 'input', 'strip', 'split', 'map', 'list', 'append', 'pop', 'sum', 'sorted', 'str', 'join', 'set', 'int'].includes(token)) {
-            return <span key={tIdx} className="text-[#82aaff] font-medium">{token}</span>;
-          }
-          return <span key={tIdx} className="text-[#f78c6c]">{token}</span>;
-        }
-        
-        // Match numbers
-        if (/^\d+$/.test(token)) {
-          return <span key={tIdx} className="text-[#f78c6c]">{token}</span>;
-        }
-
-        // Match string literals
-        if (token.startsWith('"') || token.startsWith("'")) {
-          return <span key={tIdx} className="text-[#c3e88d]">{token}</span>;
-        }
-
-        return <span key={tIdx}>{token}</span>;
-      });
-
-      return (
-        <div key={idx} className="flex hover:bg-white/5 px-4 py-0.5 rounded transition-colors font-mono text-sm leading-6">
-          <span className="w-8 select-none text-gray-600 border-r border-gray-800 mr-4 text-right pr-2">{idx + 1}</span>
-          <span className="flex-1 whitespace-pre">{elements}</span>
-        </div>
-      );
-    });
-  };
-
-  const isDark = themeMode === 'dark';
-
+  // Reactive classes for glass effects
   const liquidGlassClass = isDark
     ? 'bg-black/20 backdrop-blur-[20px] backdrop-saturate-[180%] border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),_0_20px_50px_rgba(0,0,0,0.4)]'
     : 'bg-white/40 backdrop-blur-[20px] backdrop-saturate-[180%] border-white/40 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),_0_20px_50px_rgba(0,0,0,0.05)]';
 
-  const sidebarItemClass = (active: boolean) => {
-    if (active) {
-      return isDark 
-        ? 'bg-white/10 border-white/20 text-white shadow-[0_4px_12px_rgba(0,0,0,0.3)]'
-        : 'bg-white/80 border-white/70 text-black shadow-[0_4px_12px_rgba(0,0,0,0.05)]';
+  const tabItemClass = (tab: typeof activeTab) => {
+    const isSelected = activeTab === tab;
+    if (isSelected) {
+      return isDark
+        ? 'bg-white/15 border-white/20 text-blue-400 shadow-[0_4px_16px_rgba(59,130,246,0.15)] font-black'
+        : 'bg-white/90 border-blue-500/30 text-blue-600 shadow-[0_4px_16px_rgba(0,0,0,0.05)] font-black';
     }
     return isDark
       ? 'border-transparent text-gray-400 hover:text-white hover:bg-white/5'
-      : 'border-transparent text-gray-600 hover:text-black hover:bg-white/20';
+      : 'border-transparent text-gray-600 hover:text-black hover:bg-black/5';
+  };
+
+  // Glassmorphism dynamic custom styles
+  const previewCardStyle = {
+    backdropFilter: `blur(${glassBlur}px) saturate(${glassSaturation}%)`,
+    WebkitBackdropFilter: `blur(${glassBlur}px) saturate(${glassSaturation}%)`,
+    backgroundColor: isDark ? `rgba(0, 0, 0, ${glassOpacity / 100})` : `rgba(255, 255, 255, ${glassOpacity / 100})`,
+    borderColor: isDark ? `rgba(255, 255, 255, ${glassBorderOpacity / 100})` : `rgba(0, 0, 0, ${glassBorderOpacity / 100})`,
+  };
+
+  const getGlassStyleString = () => {
+    return `backdrop-filter: blur(${glassBlur}px) saturate(${glassSaturation}%);\nbackground-color: ${
+      isDark ? `rgba(0, 0, 0, ${glassOpacity / 100})` : `rgba(255, 255, 255, ${glassOpacity / 100})`
+    };\nborder: 1px solid ${
+      isDark ? `rgba(255, 255, 255, ${glassBorderOpacity / 100})` : `rgba(0, 0, 0, ${glassBorderOpacity / 100})`
+    };`;
+  };
+
+  const getGlassTailwindString = () => {
+    const bgOpacityStr = Math.round(glassOpacity);
+    const borderOpacityStr = Math.round(glassBorderOpacity);
+    return `bg-${isDark ? 'black' : 'white'}/${bgOpacityStr} backdrop-blur-[${glassBlur}px] backdrop-saturate-[${glassSaturation}%] border border-${
+      isDark ? 'white' : 'black'
+    }/${borderOpacityStr}`;
   };
 
   return (
     <div className="flex-grow pt-24 md:pt-28 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
-      {/* Back Button */}
+      {/* Return home link */}
       <div className="flex items-center mb-6">
         <Link 
           to="/" 
@@ -539,226 +350,514 @@ export const Laboratory: React.FC = () => {
         </Link>
       </div>
 
-      {/* Hero Header */}
-      <div className="mb-12 text-center md:text-left">
+      {/* Hero Header Area */}
+      <div className="mb-10 text-center md:text-left">
         <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
           <Terminal size={14} />
           <span>GongPan Laboratory</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-3">
-          {t.labTitle}
+          {translations.labTitle}
         </h1>
-        <p className={`text-base md:text-lg max-w-2xl ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          {t.labSub}
+        <p className={`text-base md:text-lg max-w-2xl ${isDark ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
+          {translations.labSub}
         </p>
       </div>
 
-      {/* Main Container Layout */}
+      {/* Laboratory main Grid container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Navigation Sidebar Col */}
-        <div className="lg:col-span-3 flex flex-row lg:flex-col gap-2 p-1.5 rounded-3xl border border-white/20 backdrop-blur-md bg-white/5 overflow-x-auto lg:overflow-visible shrink-0">
+        {/* Navigation selection rail */}
+        <div className="lg:col-span-3 flex flex-row lg:flex-col gap-2 p-1.5 rounded-3xl border border-white/20 backdrop-blur-md bg-white/5 overflow-x-auto lg:overflow-visible shrink-0 scrollbar-none">
           <button
-            onClick={() => setActiveTab('exam')}
-            className={`flex items-center justify-center lg:justify-start space-x-3 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all flex-1 lg:flex-initial whitespace-nowrap ${sidebarItemClass(activeTab === 'exam')}`}
-          >
-            <BookOpen size={18} />
-            <span>{t.tabs.exam}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('info')}
-            className={`flex items-center justify-center lg:justify-start space-x-3 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all flex-1 lg:flex-initial whitespace-nowrap ${sidebarItemClass(activeTab === 'info')}`}
+            onClick={() => setActiveTab('glass')}
+            className={`flex items-center justify-center lg:justify-start space-x-3 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all flex-1 lg:flex-initial whitespace-nowrap ${tabItemClass('glass')}`}
           >
             <Layers size={18} />
-            <span>{t.tabs.explore}</span>
+            <span>{translations.tabs.glass}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('json')}
+            className={`flex items-center justify-center lg:justify-start space-x-3 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all flex-1 lg:flex-initial whitespace-nowrap ${tabItemClass('json')}`}
+          >
+            <Code size={18} />
+            <span>{translations.tabs.json}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('codec')}
+            className={`flex items-center justify-center lg:justify-start space-x-3 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all flex-1 lg:flex-initial whitespace-nowrap ${tabItemClass('codec')}`}
+          >
+            <FileText size={18} />
+            <span>{translations.tabs.codec}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('token')}
+            className={`flex items-center justify-center lg:justify-start space-x-3 px-5 py-3.5 rounded-2xl border text-sm font-bold transition-all flex-1 lg:flex-initial whitespace-nowrap ${tabItemClass('token')}`}
+          >
+            <Terminal size={18} />
+            <span>{translations.tabs.token}</span>
           </button>
         </div>
 
-        {/* Content Box Area */}
+        {/* Dynamic Display Area */}
         <div className="lg:col-span-9 w-full">
           <AnimatePresence mode="wait">
-            {activeTab === 'exam' ? (
-              <div key="exam-tab-wrapper" className="space-y-8">
-                <motion.div
-                  key="exam"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.3 }}
-                  className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col`}
-                >
-                  {/* Exam Board Layout: Inside Exam we have Side Filter Index and Main Highlight Code Area */}
-                  <div className="flex flex-col md:flex-row gap-6 h-full min-h-[600px]">
-                    {/* Left Side: Search + Filter List */}
-                    <div className="w-full md:w-[320px] flex flex-col border-b md:border-b-0 md:border-r border-white/10 md:pr-6 pb-6 md:pb-0 h-full">
-                      <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
-                        <Code size={18} className="text-blue-500" />
-                        <span>{t.problemList}</span>
-                        <span className="text-xs bg-blue-500/20 text-blue-500 border border-blue-500/20 px-2.0 py-0.5 rounded-full font-bold ml-auto select-none">{filteredProblems.length}</span>
-                      </h3>
-
-                      <div className="relative mb-4">
-                        <Search size={16} className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                        <input
-                          type="text"
-                          placeholder={t.searchPlace}
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className={`w-full pl-10 pr-4 py-3 rounded-2xl text-sm border focus:outline-none transition-all ${
-                            isDark 
-                              ? 'bg-black/30 border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500' 
-                              : 'bg-white/85 border-gray-200 text-black placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-inner'
-                          }`}
-                        />
-                      </div>
-
-                      {/* Overflowing Index list */}
-                      <div className="overflow-y-auto max-h-[450px] pr-1 space-y-2 flex-grow scrollbar-thin scrollbar-thumb-white/10">
-                        {filteredProblems.length > 0 ? (
-                          filteredProblems.map((prob) => (
-                            <button
-                              key={prob.id}
-                              onClick={() => setSelectedProblem(prob)}
-                              className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between group ${
-                                selectedProblem.id === prob.id
-                                  ? (isDark ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' : 'bg-blue-500/10 border-blue-500/40 text-blue-600 font-semibold')
-                                  : (isDark ? 'border-transparent text-gray-300 hover:bg-white/5' : 'border-transparent text-gray-700 hover:bg-black/5')
-                              }`}
-                            >
-                              <div className="flex flex-col">
-                                <span className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">{prob.id}</span>
-                                <span className="text-sm font-medium mt-0.5 group-hover:translate-x-1 transition-transform truncate max-w-[210px]">{prob.title}</span>
-                              </div>
-                              <div className={`w-2 h-2 rounded-full transition-transform scale-0 group-hover:scale-100 ${
-                                selectedProblem.id === prob.id ? 'scale-100 bg-blue-500' : 'bg-gray-400'
-                              }`} />
-                            </button>
-                          ))
-                        ) : (
-                          <div className="flex flex-col items-center justify-center py-10 text-gray-500 text-center">
-                            <AlertCircle size={32} className="mb-2 opacity-40" />
-                            <p className="text-sm">{t.noResults}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Right Side: Detailed Code Block Display */}
-                    <div className="flex-1 flex flex-col h-full pl-0 md:pl-2">
-                      <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-xl md:text-2xl font-black font-mono bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">{selectedProblem.id}</span>
-                          <h2 className="text-lg md:text-xl font-bold tracking-tight">{selectedProblem.title}</h2>
-                        </div>
-                        <span className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-[#1e1e24] text-amber-500 border border-amber-500/20 shadow-md">
-                          Python 3
-                        </span>
-                      </div>
-
-                      {/* Beautified Code Panel */}
-                      <div className="rounded-[1.5rem] bg-[#0d0d11] text-gray-300 border border-white/10 shadow-2xl overflow-hidden flex flex-col flex-grow relative group/code">
-                        {/* Code Header Bar */}
-                        <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 bg-[#14141a]">
-                          <div className="flex space-x-1.5">
-                            <span className="w-3" />
-                            <span className="w-3 h-3 rounded-full bg-red-500/80" />
-                            <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                            <span className="w-3 h-3 rounded-full bg-green-500/80" />
-                          </div>
-                          <button
-                            onClick={() => handleCopy(selectedProblem.code, selectedProblem.id)}
-                            className="flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-white transition-all border border-white/5"
-                          >
-                            {copiedId === selectedProblem.id ? (
-                              <>
-                                <Check size={13} className="text-green-500 animate-pulse" />
-                                <span className="text-green-500">{t.copied}</span>
-                              </>
-                            ) : (
-                              <>
-                                <Copy size={13} />
-                                <span>{t.copyCode}</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-
-                        {/* Display Editor lines */}
-                        <div className="py-6 overflow-x-auto min-h-[300px] select-all scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                          <code className="block w-full min-w-max">
-                            {highlightPython(selectedProblem.code)}
-                          </code>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Download Area Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass} flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative`}
-                >
-                  <div className="absolute right-0 bottom-0 transform translate-x-12 translate-y-12 opacity-5 select-none pointer-events-none text-gray-500">
-                    <Download size={220} />
-                  </div>
-                  
-                  <div className="flex-1 text-center md:text-left z-10">
-                    <h2 className="text-xl md:text-2xl font-black mb-2 flex items-center justify-center md:justify-start gap-3">
-                      <Download className="text-blue-500 animate-bounce" size={24} />
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">
-                        {language === 'zh' ? '期末冲刺资料一键下载' : 'Final Exam Solution Download'}
-                      </span>
-                    </h2>
-                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-xl leading-relaxed`}>
-                      {language === 'zh' 
-                        ? '支持一键将上方完美的 20 道 Python 核心信息技术考试原题及参考答案打包下载到本地。支持标准脚本（.py）或全中文格式化纯文本（.txt），方便导入编辑器运行或打印背诵。' 
-                        : 'Download all 20 Python IT exam problems with original source codes in a single click. Available in standalone script (.py) or fully structured textual format (.txt) for offline reference.'}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto z-10 shrink-0">
-                    <button
-                      onClick={downloadAllAsPy}
-                      className="flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500 active:scale-95 transition-all text-center"
-                    >
-                      <FileCode size={18} />
-                      <span>{language === 'zh' ? '下载 Python 脚本 (.py)' : 'Download Script (.py)'}</span>
-                    </button>
-                    
-                    <button
-                      onClick={downloadAllAsTxt}
-                      className={`flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl border font-bold text-sm tracking-wide active:scale-95 transition-all text-center ${
-                        isDark 
-                          ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white' 
-                          : 'bg-black/5 border-black/10 text-gray-700 hover:bg-black/10 hover:text-black'
-                      }`}
-                    >
-                      <FileText size={18} />
-                      <span>{language === 'zh' ? '下载打印版文本 (.txt)' : 'Download Doc Text (.txt)'}</span>
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            ) : (
+            
+            {/* TAB: GLASSMORPHISM */}
+            {activeTab === 'glass' && (
               <motion.div
-                key="info"
+                key="glass-designer"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
-                className={`rounded-[2.5rem] p-12 border ${liquidGlassClass} flex flex-col items-center justify-center min-h-[500px] text-center`}
+                transition={{ duration: 0.25 }}
+                className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass}`}
               >
-                <div className="w-20 h-20 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500 mb-6 shadow-[inset_0_0_20px_rgba(59,130,246,0.15)]">
-                  <Terminal size={40} className="animate-pulse" />
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold tracking-tight mb-1">{translations.glass.title}</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{translations.glass.subtitle}</p>
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{t.tabs.explore}</h3>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} max-w-sm`}>
-                  {t.comingSoon}
-                </p>
+
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-stretch pt-2">
+                  {/* Slider controls block */}
+                  <div className="space-y-6 flex flex-col justify-center">
+                    {/* Gaussian Blur slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span>{translations.glass.blur}</span>
+                        <span className="font-mono text-blue-500">{glassBlur}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="40"
+                        value={glassBlur}
+                        onChange={(e) => setGlassBlur(Number(e.target.value))}
+                        className="w-full h-2 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+
+                    {/* Opacity slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span>{translations.glass.opacity}</span>
+                        <span className="font-mono text-blue-500">{glassOpacity}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={glassOpacity}
+                        onChange={(e) => setGlassOpacity(Number(e.target.value))}
+                        className="w-full h-2 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+
+                    {/* Saturation slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span>{translations.glass.saturation}</span>
+                        <span className="font-mono text-blue-500">{glassSaturation}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="100"
+                        max="200"
+                        value={glassSaturation}
+                        onChange={(e) => setGlassSaturation(Number(e.target.value))}
+                        className="w-full h-2 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+
+                    {/* Border Opacity slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span>{translations.glass.border}</span>
+                        <span className="font-mono text-blue-500">{glassBorderOpacity}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="5"
+                        max="80"
+                        value={glassBorderOpacity}
+                        onChange={(e) => setGlassBorderOpacity(Number(e.target.value))}
+                        className="w-full h-2 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Sandbox preview column */}
+                  <div className="flex flex-col justify-between rounded-[2rem] p-6 bg-gradient-to-tr from-indigo-500/15 via-purple-500/10 to-blue-500/15 border border-white/5 shadow-inner overflow-hidden relative min-h-[300px]">
+                    <span className="text-xs font-mono font-bold tracking-widest text-[#82aaff] uppercase mb-4 z-10">{translations.glass.preview}</span>
+                    
+                    {/* Animated color globes underneath mockup card */}
+                    <div className="absolute -left-12 -top-12 w-40 h-40 bg-gradient-to-tr from-pink-500 to-red-500 rounded-full blur-[40px] opacity-40 animate-pulse pointer-events-none" />
+                    <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-gradient-to-tr from-blue-500 to-emerald-500 rounded-full blur-[40px] opacity-40 animate-pulse delay-700 pointer-events-none" />
+
+                    {/* Glass card object container */}
+                    <div className="flex-grow flex items-center justify-center py-6 z-10">
+                      <div style={previewCardStyle} className="rounded-3xl p-6 border max-w-[320px] shadow-2xl transition-all duration-150">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 border border-blue-500/30">
+                            <Layers size={18} />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-black truncate">{translations.glass.cardTitle}</h4>
+                            <p className="text-[10px] font-mono tracking-wider opacity-60">ID: GP-LAB-BOX</p>
+                          </div>
+                        </div>
+                        <p className="text-xs leading-relaxed opacity-80">{translations.glass.cardDesc}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Formatted Code copy cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pt-4 border-t border-white/5">
+                  <div className="p-4 rounded-2xl bg-black/25 border border-white/5 relative group">
+                    <span className="text-xs font-mono font-bold text-gray-500 block mb-2">{translations.glass.cssCode}</span>
+                    <pre className="font-mono text-xs text-[#82aaff] overflow-x-auto whitespace-pre-wrap select-all leading-relaxed">
+                      {getGlassStyleString()}
+                    </pre>
+                    <button
+                      onClick={() => triggerCopy(getGlassStyleString(), 'css')}
+                      className="absolute right-3 top-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 text-gray-400 hover:text-white transition-all border border-white/5"
+                    >
+                      {copiedText === 'css' ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-black/25 border border-white/5 relative group">
+                    <span className="text-xs font-mono font-bold text-gray-500 block mb-2">{translations.glass.twCode}</span>
+                    <pre className="font-mono text-xs text-amber-500 overflow-x-auto whitespace-pre-wrap select-all leading-relaxed">
+                      {getGlassTailwindString()}
+                    </pre>
+                    <button
+                      onClick={() => triggerCopy(getGlassTailwindString(), 'tw')}
+                      className="absolute right-3 top-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 text-gray-400 hover:text-white transition-all border border-white/5"
+                    >
+                      {copiedText === 'tw' ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             )}
+
+            {/* TAB: JSON STYLER */}
+            {activeTab === 'json' && (
+              <motion.div
+                key="json-styler"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass}`}
+              >
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold tracking-tight mb-1">{translations.json.title}</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{translations.json.subtitle}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left input */}
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500">{translations.json.inputLabel}</label>
+                    <textarea
+                      value={jsonInput}
+                      onChange={(e) => setJsonInput(e.target.value)}
+                      placeholder={translations.json.placeholder}
+                      className="w-full h-80 p-4 font-mono text-xs rounded-2xl border focus:outline-none transition-all resize-none bg-black/35 border-white/5 text-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  {/* Right formatted output */}
+                  <div className="flex flex-col space-y-2 relative">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-gray-500">{translations.json.outputLabel}</label>
+                      {jsonOutput && (
+                        <button
+                          onClick={() => triggerCopy(jsonOutput, 'json-out')}
+                          className="flex items-center space-x-1 px-2.0 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono text-gray-300 border border-white/5"
+                        >
+                          {copiedText === 'json-out' ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                          <span>{copiedText === 'json-out' ? 'Copied' : 'Copy'}</span>
+                        </button>
+                      )}
+                    </div>
+                    <pre className="w-full h-80 p-4 font-mono text-xs rounded-2xl border bg-[#0d0d11] border-white/10 text-emerald-400 overflow-y-auto whitespace-pre-wrap leading-relaxed select-all">
+                      {jsonOutput || '{...}'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Validation Status message */}
+                {jsonIsValid !== null && (
+                  <div className={`mt-4 p-4 rounded-xl flex items-center space-x-3 text-sm font-bold border ${
+                    jsonIsValid 
+                      ? 'bg-green-500/10 border-green-500/25 text-green-500' 
+                      : 'bg-red-500/10 border-red-500/25 text-red-500'
+                  }`}>
+                    <AlertCircle size={18} />
+                    <span>{jsonIsValid ? translations.json.valid : `${translations.json.invalid} ${jsonError}`}</span>
+                  </div>
+                )}
+
+                {/* Toolbar actions bar */}
+                <div className="mt-6 pt-4 border-t border-white/5 flex flex-wrap gap-4 items-center justify-between">
+                  {/* Indentation configuration selectors */}
+                  <div className="flex bg-black/20 rounded-xl p-1 border border-white/5">
+                    <button
+                      onClick={() => setJsonIndent(2)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${jsonIndent === 2 ? 'bg-white/10 text-white' : 'text-gray-400'}`}
+                    >
+                      {translations.json.indent2}
+                    </button>
+                    <button
+                      onClick={() => setJsonIndent(4)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${jsonIndent === 4 ? 'bg-white/10 text-white' : 'text-gray-400'}`}
+                    >
+                      {translations.json.indent4}
+                    </button>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => processJson('beauty')}
+                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs"
+                    >
+                      {translations.json.btnBeautify}
+                    </button>
+                    <button
+                      onClick={() => processJson('minify')}
+                      className="px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-gray-300 font-bold text-xs"
+                    >
+                      {translations.json.btnMinify}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* TAB: CODEC (Base64) */}
+            {activeTab === 'codec' && (
+              <motion.div
+                key="codec-coder"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass}`}
+              >
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold tracking-tight mb-1">{translations.codec.title}</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{translations.codec.subtitle}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left String input */}
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500">{translations.codec.inputLabel}</label>
+                    <textarea
+                      value={codecInput}
+                      onChange={(e) => setCodecInput(e.target.value)}
+                      placeholder={translations.codec.placeholder}
+                      className="w-full h-80 p-4 font-mono text-xs rounded-2xl border focus:outline-none transition-all resize-none bg-black/35 border-white/5 text-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  {/* Right codec output */}
+                  <div className="flex flex-col space-y-2 relative">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-gray-500">{translations.codec.outputLabel}</label>
+                      {codecOutput && (
+                        <button
+                          onClick={() => triggerCopy(codecOutput, 'codec-out')}
+                          className="flex items-center space-x-1 px-2.0 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-mono text-gray-300 border border-white/5"
+                        >
+                          {copiedText === 'codec-out' ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                          <span>{copiedText === 'codec-out' ? 'Copied' : 'Copy'}</span>
+                        </button>
+                      )}
+                    </div>
+                    <pre className="w-full h-80 p-4 font-mono text-xs rounded-2xl border bg-[#0d0d11] border-white/10 text-amber-500 overflow-y-auto whitespace-pre-wrap leading-relaxed select-all">
+                      {codecOutput || '...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Parsing decode standard errors */}
+                {codecError && (
+                  <div className="mt-4 p-4 rounded-xl flex items-center space-x-3 text-sm font-bold border bg-red-500/10 border-red-500/25 text-red-500">
+                    <AlertCircle size={18} />
+                    <span>{translations.codec.error} {codecError}</span>
+                  </div>
+                )}
+
+                {/* Multi-Trigger button bar */}
+                <div className="mt-6 pt-4 border-t border-white/5 flex flex-wrap gap-3 justify-end">
+                  <button
+                    onClick={() => runCodec('b64-encode')}
+                    className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs"
+                  >
+                    {translations.codec.btnB64Enc}
+                  </button>
+                  <button
+                    onClick={() => runCodec('b64-decode')}
+                    className="px-4 py-2.5 rounded-xl bg-black/35 hover:bg-black/50 border border-white/10 text-gray-200 font-bold text-xs"
+                  >
+                    {translations.codec.btnB64Dec}
+                  </button>
+                  <button
+                    onClick={() => runCodec('url-encode')}
+                    className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs"
+                  >
+                    {translations.codec.btnUrlEnc}
+                  </button>
+                  <button
+                    onClick={() => runCodec('url-decode')}
+                    className="px-4 py-2.5 rounded-xl bg-black/35 hover:bg-black/50 border border-white/10 text-gray-200 font-bold text-xs"
+                  >
+                    {translations.codec.btnUrlDec}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* TAB: SECURE KEY GENERATOR */}
+            {activeTab === 'token' && (
+              <motion.div
+                key="secure-keygen"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                className={`rounded-[2.5rem] p-6 md:p-8 border ${liquidGlassClass}`}
+              >
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold tracking-tight mb-1">{translations.token.title}</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{translations.token.subtitle}</p>
+                </div>
+
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 pt-2">
+                  {/* Slider and Filter Options Column */}
+                  <div className="xl:col-span-7 space-y-6">
+                    {/* Size Selector slider */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span>{translations.token.length}</span>
+                        <span className="font-mono text-blue-500">{tokenLength} chars</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="6"
+                        max="64"
+                        value={tokenLength}
+                        onChange={(e) => setTokenLength(Number(e.target.value))}
+                        className="w-full h-2 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+
+                    {/* Filter flag check blocks */}
+                    <div className="space-y-3">
+                      <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">{translations.token.opts}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label className="flex items-center space-x-3 p-3 rounded-xl border border-white/5 bg-black/10 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={tokenUpper}
+                            onChange={(e) => setTokenUpper(e.target.checked)}
+                            className="rounded text-blue-500 focus:ring-0 w-4 h-4 bg-transparent border-white/20"
+                          />
+                          <span className="text-sm font-medium">{translations.token.upper}</span>
+                        </label>
+                        <label className="flex items-center space-x-3 p-3 rounded-xl border border-white/5 bg-black/10 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={tokenLower}
+                            onChange={(e) => setTokenLower(e.target.checked)}
+                            className="rounded text-blue-500 focus:ring-0 w-4 h-4 bg-transparent border-white/20"
+                          />
+                          <span className="text-sm font-medium">{translations.token.lower}</span>
+                        </label>
+                        <label className="flex items-center space-x-3 p-3 rounded-xl border border-white/5 bg-black/10 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={tokenNumbers}
+                            onChange={(e) => setTokenNumbers(e.target.checked)}
+                            className="rounded text-blue-500 focus:ring-0 w-4 h-4 bg-transparent border-white/20"
+                          />
+                          <span className="text-sm font-medium">{translations.token.num}</span>
+                        </label>
+                        <label className="flex items-center space-x-3 p-3 rounded-xl border border-white/5 bg-black/10 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={tokenSymbols}
+                            onChange={(e) => setTokenSymbols(e.target.checked)}
+                            className="rounded text-blue-500 focus:ring-0 w-4 h-4 bg-transparent border-white/20"
+                          />
+                          <span className="text-sm font-medium">{translations.token.sym}</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Output Generated String and rating Column */}
+                  <div className="xl:col-span-5 flex flex-col justify-between p-6 rounded-3xl bg-black/25 border border-white/5">
+                    {/* Live styled Output viewer block */}
+                    <div className="space-y-4">
+                      <div className="p-4 rounded-2xl bg-[#0d0d11] border border-white/10 select-all font-mono text-sm break-all text-center text-teal-400 font-bold min-h-[72px] flex items-center justify-center">
+                        {generatedToken || 'Select options...'}
+                      </div>
+
+                      {/* Score Indicator details block */}
+                      {generatedToken && (
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between text-xs font-bold">
+                            <span>{translations.token.strength}</span>
+                            <span className={
+                              tokenStrength === 'strong' ? 'text-green-500' : tokenStrength === 'medium' ? 'text-[#f78c6c]' : 'text-red-500'
+                            }>
+                              {tokenStrength.toUpperCase()}
+                            </span>
+                          </div>
+                          
+                          {/* Colored dynamic progress indicators */}
+                          <div className="h-1.5 w-full rounded-full bg-white/5 overflow-hidden flex">
+                            <div className={`h-full transition-all duration-300 ${
+                              tokenStrength === 'strong' 
+                                ? 'bg-green-500 w-full' 
+                                : tokenStrength === 'medium' 
+                                  ? 'bg-[#f78c6c] w-2/3' 
+                                  : 'bg-red-500 w-1/3'
+                            }`} />
+                          </div>
+                          
+                          <p className="text-[10px] text-gray-500 leading-normal">
+                            {translations.token[tokenStrength]}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Trigger Generate & Copy blocks */}
+                    <div className="grid grid-cols-2 gap-3 mt-6">
+                      <button
+                        onClick={generateTokenNow}
+                        className="px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 font-bold text-xs"
+                      >
+                        {translations.token.btnRefresh}
+                      </button>
+                      <button
+                        onClick={() => triggerCopy(generatedToken, 'pass-copy')}
+                        className="px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-blue-500/10"
+                      >
+                        {translations.token.copyBtn}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
           </AnimatePresence>
         </div>
       </div>
