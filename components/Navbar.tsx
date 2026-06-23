@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
+import { Logo } from './Logo';
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
@@ -342,8 +343,11 @@ export const Navbar: React.FC = () => {
         onMouseLeave={() => setActiveDropdown(null)}
       >
         <div className="max-w-7xl mx-auto px-6 h-14 md:h-16 flex items-center justify-between relative z-50">
-          <Link to="/" className={`text-xl font-bold tracking-tight relative ${getTextEffect()} ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            {t.brand}
+          <Link to="/" className="flex items-center space-x-3 group z-50">
+            <Logo size={36} className="group-hover:scale-115 transition-transform" />
+            <span className={`text-xl font-bold tracking-tight relative ${getTextEffect()} ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {t.brand}
+            </span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-2 h-full">
