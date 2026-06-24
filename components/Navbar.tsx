@@ -332,7 +332,7 @@ export const Navbar: React.FC = () => {
       >
         {/* Unified Glass Background for Desktop */}
         <div 
-          className={`absolute top-0 left-0 w-full ease-in-out pointer-events-none -z-20 transform-gpu backface-hidden ${
+          className={`absolute top-0 left-0 w-full ease-in-out -z-20 transform-gpu backface-hidden ${
              mobileMenuOpen ? 'opacity-0' : 'opacity-100'
           } ${
              themeMode === 'dark' 
@@ -346,12 +346,12 @@ export const Navbar: React.FC = () => {
              isScrolled && activeDropdown === null 
                 ? (themeMode === 'dark' ? 'border-b border-white/10 shadow-sm' : 'border-b border-white/30 shadow-sm')
                 : 'border-b border-transparent'
-          } ${activeDropdown !== null ? 'h-[360px]' : 'h-14 md:h-16'}`}
+          } ${activeDropdown !== null ? 'h-[360px] pointer-events-auto' : 'h-14 md:h-16 pointer-events-none'}`}
           style={{ 
              transitionProperty: 'height, opacity, box-shadow, background-color, border-color',
              transitionDuration: '300ms',
-             WebkitMaskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'none',
-             maskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'none'
+             WebkitMaskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)',
+             maskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)'
           }}
         />
 
@@ -397,8 +397,8 @@ export const Navbar: React.FC = () => {
                     langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
                   } ${
                     themeMode === 'dark' 
-                       ? 'bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
-                       : 'bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border border-white/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
+                       ? 'bg-black/40 backdrop-blur-[25px] backdrop-saturate-[150%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
+                       : 'glass-liquid text-gray-900'
                   }`}
                 >
                   {languages.map((l: any) => (
@@ -455,8 +455,8 @@ export const Navbar: React.FC = () => {
                   langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
                 } ${
                   themeMode === 'dark' 
-                    ? 'bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
-                    : 'bg-gradient-to-br from-white/40 via-white/5 to-white/20 backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border border-white/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
+                    ? 'bg-black/40 backdrop-blur-[25px] backdrop-saturate-[150%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
+                    : 'glass-liquid text-gray-900'
                 }`}
               >
                 {languages.map((l: any) => (
@@ -499,15 +499,26 @@ export const Navbar: React.FC = () => {
             activeDropdown !== null ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4 pointer-events-none'
           }`}
         >
-          <div className="max-w-7xl mx-auto px-6 py-10">
-            {activeDropdown !== null && (
-              <div className="grid grid-cols-3 gap-12 animate-fade-in">
+          <div className="max-w-7xl mx-auto px-6 py-10 relative h-[280px]">
+            {navData.map((data, idx) => (
+              <div 
+                key={idx}
+                className={`grid grid-cols-3 gap-12 absolute top-10 left-6 right-6 transition-all duration-300 ease-in-out ${
+                  activeDropdown === idx 
+                    ? 'opacity-100 visible translate-x-0 pointer-events-auto' 
+                    : 'opacity-0 invisible pointer-events-none'
+                } ${
+                  activeDropdown !== null && activeDropdown > idx ? '-translate-x-4' : ''
+                } ${
+                  activeDropdown !== null && activeDropdown < idx ? 'translate-x-4' : ''
+                }`}
+              >
                   <div className={`col-span-1 border-r pr-8 ${themeMode === 'dark' ? 'border-white/10' : 'border-gray-200/20'}`}>
-                    <h3 className={`text-2xl font-bold mb-2 ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>{navData[activeDropdown].name}</h3>
+                    <h3 className={`text-2xl font-bold mb-2 ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>{data.name}</h3>
                     <p className={`text-sm ${themeMode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{t.selectLang}</p>
                   </div>
                   <div className="col-span-2 grid grid-cols-2 gap-6">
-                    {navData[activeDropdown].items.map((subItem) => (
+                    {data.items.map((subItem) => (
                       <a 
                         key={subItem.title} 
                         href={subItem.href}
@@ -528,7 +539,7 @@ export const Navbar: React.FC = () => {
                     ))}
                   </div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </nav>
