@@ -286,26 +286,39 @@ export const Navbar: React.FC = () => {
     const isDark = themeMode === 'dark';
     const bgNav = isDark ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20' : 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20';
     const bgBlur = isDark ? 'backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' : 'backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]';
-    const shadow = isDark 
-      ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]' 
-      : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
     
-    const liquidStyle = `${bgNav} ${bgBlur} ${shadow} ${gpuFix}`;
-
     const borderColor = isDark ? 'border-white/10' : 'border-white/30';
 
     if (type === 'nav') {
-      if (isDropdownOpen) return `${liquidStyle} border-b border-transparent shadow-none`;
+      if (isDropdownOpen) {
+        // Seamless connection: remove bottom shadow and bottom border
+        const openShadow = isDark 
+          ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]' 
+          : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
+        return `${bgNav} ${bgBlur} ${openShadow} ${gpuFix} border-b-0 border-transparent`;
+      }
+      
+      const shadow = isDark 
+        ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]' 
+        : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
+      
+      const liquidStyle = `${bgNav} ${bgBlur} ${shadow} ${gpuFix}`;
+
       if (isScrolled) return `${liquidStyle} border-b ${borderColor} shadow-sm`;
       return `border-b border-transparent`;
     }
+    
     if (type === 'dropdown') {
-      // Deeper shadow for dropdown
+      // For the dropdown container, just outer shadow. The fade and blur are handled by the inner div.
       const dShadow = isDark ? 'shadow-[0_50px_100px_rgba(0,0,0,0.5)]' : 'shadow-[0_50px_100px_rgba(0,0,0,0.2)]';
-      return `${liquidStyle} border-t ${borderColor} ${dShadow}`;
+      return `${dShadow} border-0 border-transparent`;
     }
+
     if (type === 'mobile') {
-      return `${liquidStyle} border-b ${borderColor}`;
+      const shadow = isDark 
+        ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]' 
+        : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
+      return `${bgNav} ${bgBlur} ${shadow} ${gpuFix} border-b ${borderColor}`;
     }
     return '';
   };
@@ -486,7 +499,11 @@ export const Navbar: React.FC = () => {
             activeDropdown !== null ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 border-none'
           }`}
         >
-          <div className={`absolute inset-0 w-full h-full -z-10 ${themeMode === 'dark' ? 'bg-black/20 backdrop-blur-[30px]' : 'bg-white/10 backdrop-blur-[30px]'}`} />
+          <div className={`absolute inset-0 w-full h-full -z-10 ${
+            themeMode === 'dark' 
+              ? 'bg-gradient-to-b from-black/20 to-transparent backdrop-blur-[25px] backdrop-saturate-[150%]' 
+              : 'bg-gradient-to-b from-white/20 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-brightness-[110%]'
+          }`} style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)' }} />
 
           <div className="max-w-7xl mx-auto px-6 py-10">
             {activeDropdown !== null && (
