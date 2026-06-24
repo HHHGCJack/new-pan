@@ -280,7 +280,7 @@ export const Navbar: React.FC = () => {
   };
 
   // Liquid Glass Logic combined with Light/Dark Theme
-  const getGlassStyle = (type: 'dropdown' | 'mobile') => {
+  const getGlassStyle = (type: 'mobile') => {
     const gpuFix = 'transform-gpu backface-hidden';
     
     const isDark = themeMode === 'dark';
@@ -289,11 +289,6 @@ export const Navbar: React.FC = () => {
     
     const borderColor = isDark ? 'border-white/10' : 'border-white/30';
     
-    if (type === 'dropdown') {
-      const dShadow = isDark ? 'shadow-[0_50px_100px_rgba(0,0,0,0.5)]' : 'shadow-[0_50px_100px_rgba(0,0,0,0.2)]';
-      return `${dShadow} border-0 border-transparent`;
-    }
-
     if (type === 'mobile') {
       const shadow = isDark 
         ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]' 
@@ -345,8 +340,8 @@ export const Navbar: React.FC = () => {
                 : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]'
           } ${
              themeMode === 'dark'
-                ? (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]')
-                : (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]')
+                ? (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.5)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]')
+                : (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3),_0_30px_60px_rgba(0,0,0,0.15)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]')
           } ${
              isScrolled && activeDropdown === null 
                 ? (themeMode === 'dark' ? 'border-b border-white/10 shadow-sm' : 'border-b border-white/30 shadow-sm')
@@ -354,8 +349,8 @@ export const Navbar: React.FC = () => {
           }`}
           style={{ 
              height: activeDropdown !== null ? '360px' : '100%',
-             WebkitMaskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : 'none',
-             maskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : 'none'
+             WebkitMaskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'none',
+             maskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'none'
           }}
         />
 
@@ -499,8 +494,8 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Dropdown */}
         <div 
-          className={`absolute top-full left-0 w-full overflow-hidden transition-all duration-300 z-10 ${getGlassStyle('dropdown')} ${
-            activeDropdown !== null ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 border-none'
+          className={`absolute top-full left-0 w-full transition-all duration-300 z-10 ${
+            activeDropdown !== null ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4 pointer-events-none'
           }`}
         >
           <div className="max-w-7xl mx-auto px-6 py-10">
