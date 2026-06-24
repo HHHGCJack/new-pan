@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
 import { Logo } from './Logo';
-import qrImage from '../src/assets/images/payment_qr_1782278877960.jpg';
+import qrImage from '../src/assets/images/payment_qr_1782280062256.jpg';
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
