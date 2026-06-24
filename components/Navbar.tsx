@@ -308,7 +308,7 @@ export const Navbar: React.FC = () => {
       : 'text-black bg-white/20 border border-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.08)]';
   };
 
-  const getTextEffect = () => themeMode === 'dark' ? 'drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' : 'drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]';
+  const getTextEffect = () => themeMode === 'dark' ? '[text-shadow:0_1px_2px_rgba(0,0,0,0.8)]' : '[text-shadow:0_1px_2px_rgba(255,255,255,0.8)]';
 
   const modalStyle = themeMode === 'dark'
     ? 'bg-black/40 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.5),_inset_0_1px_1px_rgba(255,255,255,0.1),_inset_0_-1px_1px_rgba(0,0,0,0.5)] border border-white/10 will-change-[backdrop-filter,transform,opacity] text-white'
@@ -330,26 +330,35 @@ export const Navbar: React.FC = () => {
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${mobileMenuOpen ? 'bg-transparent' : ''}`}
         onMouseLeave={() => setActiveDropdown(null)}
       >
-        {/* Unified Glass Background for Desktop */}
+        {/* Base Nav Glass */}
         <div 
-          className={`absolute top-0 left-0 w-full ease-in-out -z-20 transform-gpu backface-hidden ${
-             mobileMenuOpen ? 'opacity-0' : 'opacity-100'
+          className={`absolute top-0 left-0 w-full h-full ease-in-out -z-20 transform-gpu backface-hidden transition-all duration-300 ${
+             mobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
           } ${
              themeMode === 'dark' 
-                ? 'bg-gradient-to-b from-black/40 via-black/20 to-transparent backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' 
+                ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' 
                 : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]'
           } ${
              themeMode === 'dark'
-                ? (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.5)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]')
-                : (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3),_0_30px_60px_rgba(0,0,0,0.15)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]')
+                ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]'
+                : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]'
           } ${
              isScrolled && activeDropdown === null 
                 ? (themeMode === 'dark' ? 'border-b border-white/10 shadow-sm' : 'border-b border-white/30 shadow-sm')
                 : 'border-b border-transparent'
-          } ${activeDropdown !== null ? 'h-[360px] pointer-events-auto' : 'h-14 md:h-16 pointer-events-none'}`}
+          }`}
+        />
+
+        {/* Dropdown Glass (Fades in) */}
+        <div 
+          className={`absolute top-0 left-0 w-full h-[360px] ease-in-out pointer-events-none -z-10 transform-gpu backface-hidden transition-opacity duration-300 ${
+             activeDropdown !== null && !mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          } ${
+             themeMode === 'dark' 
+                ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%] shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.5)]' 
+                : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3),_0_30px_60px_rgba(0,0,0,0.15)]'
+          }`}
           style={{ 
-             transitionProperty: 'height, opacity, box-shadow, background-color, border-color',
-             transitionDuration: '300ms',
              WebkitMaskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)',
              maskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)'
           }}
