@@ -301,11 +301,11 @@ export const Navbar: React.FC = () => {
   const getNavPillStyle = (isActive: boolean) => {
     const isDark = themeMode === 'dark';
     if (!isActive) {
-      return isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black';
+      return isDark ? 'text-gray-300 hover:text-white border border-transparent' : 'text-gray-600 hover:text-black border border-transparent';
     }
     return isDark 
-      ? 'text-white bg-white/10 backdrop-blur-md border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.4)]'
-      : 'text-black bg-white/20 backdrop-blur-md border border-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.08)]';
+      ? 'text-white bg-white/10 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.4)]'
+      : 'text-black bg-white/20 border border-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.08)]';
   };
 
   const getTextEffect = () => themeMode === 'dark' ? 'drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' : 'drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]';
