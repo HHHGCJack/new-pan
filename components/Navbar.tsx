@@ -355,9 +355,13 @@ export const Navbar: React.FC = () => {
              activeDropdown !== null && !mobileMenuOpen ? 'opacity-100' : 'opacity-0'
           } ${
              themeMode === 'dark' 
-                ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%] border-b border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.5)]' 
-                : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] border-b border-white/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3),_0_30px_60px_rgba(0,0,0,0.15)]'
+                ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%] shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.5)]' 
+                : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3),_0_30px_60px_rgba(0,0,0,0.15)]'
           }`}
+          style={{ 
+             WebkitMaskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)',
+             maskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)'
+          }}
         />
 
         <div className="max-w-7xl mx-auto px-6 h-14 md:h-16 flex items-center justify-between relative z-50">
