@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
 import { Logo } from './Logo';
+import qrImage from '../src/assets/images/payment_qr_1782278877960.jpg';
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
@@ -592,9 +593,8 @@ export const Navbar: React.FC = () => {
            </button>
            <h3 className={`text-2xl font-bold mb-2`}>{t.supportThanks}</h3>
            <div className={`bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full ${themeMode === 'dark' ? 'opacity-90' : ''}`}>
-              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-auto rounded-lg" alt="QR" />
+              <img src={qrImage} loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-auto rounded-lg" alt="QR" />
            </div>
-           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">WeChat Pay</p>
         </div>
       </div>
     </>
