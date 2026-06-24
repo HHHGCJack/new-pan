@@ -280,7 +280,7 @@ export const Navbar: React.FC = () => {
   };
 
   // Liquid Glass Logic combined with Light/Dark Theme
-  const getGlassStyle = (type: 'nav' | 'dropdown' | 'mobile') => {
+  const getGlassStyle = (type: 'dropdown' | 'mobile') => {
     const gpuFix = 'transform-gpu backface-hidden';
     
     const isDark = themeMode === 'dark';
@@ -288,28 +288,8 @@ export const Navbar: React.FC = () => {
     const bgBlur = isDark ? 'backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' : 'backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]';
     
     const borderColor = isDark ? 'border-white/10' : 'border-white/30';
-
-    if (type === 'nav') {
-      if (isDropdownOpen) {
-        // Seamless connection: remove bottom shadow and bottom border
-        const openShadow = isDark 
-          ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]' 
-          : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
-        return `${bgNav} ${bgBlur} ${openShadow} ${gpuFix} border-b-0 border-transparent`;
-      }
-      
-      const shadow = isDark 
-        ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]' 
-        : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
-      
-      const liquidStyle = `${bgNav} ${bgBlur} ${shadow} ${gpuFix}`;
-
-      if (isScrolled) return `${liquidStyle} border-b ${borderColor} shadow-sm`;
-      return `border-b border-transparent`;
-    }
     
     if (type === 'dropdown') {
-      // For the dropdown container, just outer shadow. The fade and blur are handled by the inner div.
       const dShadow = isDark ? 'shadow-[0_50px_100px_rgba(0,0,0,0.5)]' : 'shadow-[0_50px_100px_rgba(0,0,0,0.2)]';
       return `${dShadow} border-0 border-transparent`;
     }
@@ -352,9 +332,33 @@ export const Navbar: React.FC = () => {
       />
 
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${mobileMenuOpen ? 'bg-transparent' : getGlassStyle('nav')}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${mobileMenuOpen ? 'bg-transparent' : ''}`}
         onMouseLeave={() => setActiveDropdown(null)}
       >
+        {/* Unified Glass Background for Desktop */}
+        <div 
+          className={`absolute top-0 left-0 w-full transition-all duration-300 ease-in-out pointer-events-none -z-20 transform-gpu backface-hidden ${
+             mobileMenuOpen ? 'opacity-0' : 'opacity-100'
+          } ${
+             themeMode === 'dark' 
+                ? 'bg-gradient-to-b from-black/40 via-black/20 to-transparent backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' 
+                : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]'
+          } ${
+             themeMode === 'dark'
+                ? (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]')
+                : (activeDropdown !== null ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3)]' : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]')
+          } ${
+             isScrolled && activeDropdown === null 
+                ? (themeMode === 'dark' ? 'border-b border-white/10 shadow-sm' : 'border-b border-white/30 shadow-sm')
+                : 'border-b border-transparent'
+          }`}
+          style={{ 
+             height: activeDropdown !== null ? '360px' : '100%',
+             WebkitMaskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : 'none',
+             maskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : 'none'
+          }}
+        />
+
         <div className="max-w-7xl mx-auto px-6 h-14 md:h-16 flex items-center justify-between relative z-50">
           <Link to="/" className="flex items-center space-x-3 group z-50">
             <Logo size={36} className="group-hover:scale-115 transition-transform" />
@@ -499,12 +503,6 @@ export const Navbar: React.FC = () => {
             activeDropdown !== null ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 border-none'
           }`}
         >
-          <div className={`absolute inset-0 w-full h-full -z-10 ${
-            themeMode === 'dark' 
-              ? 'bg-gradient-to-b from-black/20 to-transparent backdrop-blur-[25px] backdrop-saturate-[150%]' 
-              : 'bg-gradient-to-b from-white/20 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-brightness-[110%]'
-          }`} style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)' }} />
-
           <div className="max-w-7xl mx-auto px-6 py-10">
             {activeDropdown !== null && (
               <div className="grid grid-cols-3 gap-12 animate-fade-in">
