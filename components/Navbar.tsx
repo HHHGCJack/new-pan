@@ -348,9 +348,9 @@ export const Navbar: React.FC = () => {
                 : 'border-b border-transparent'
           }`}
           style={{ 
-             height: activeDropdown !== null ? '360px' : '100%',
-             WebkitMaskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'none',
-             maskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'none'
+             height: activeDropdown !== null ? '360px' : '64px',
+             WebkitMaskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'linear-gradient(to bottom, black 100%, transparent 100%)',
+             maskImage: activeDropdown !== null ? 'linear-gradient(to bottom, black 80%, transparent 100%)' : 'linear-gradient(to bottom, black 100%, transparent 100%)'
           }}
         />
 
@@ -396,8 +396,8 @@ export const Navbar: React.FC = () => {
                     langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
                   } ${
                     themeMode === 'dark' 
-                       ? 'bg-[#1a1a1c]/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] text-white' 
-                       : 'bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
+                       ? 'bg-black/40 backdrop-blur-[25px] backdrop-saturate-[150%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
+                       : 'bg-white/40 backdrop-blur-[25px] backdrop-saturate-[200%] border border-white/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_0_10px_40px_rgba(0,0,0,0.1)] text-gray-900'
                   }`}
                 >
                   {languages.map((l: any) => (
