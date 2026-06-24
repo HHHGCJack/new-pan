@@ -592,7 +592,7 @@ export const Navbar: React.FC = () => {
            </button>
            <h3 className={`text-2xl font-bold mb-2`}>{t.supportThanks}</h3>
            <div className={`bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full ${themeMode === 'dark' ? 'opacity-90' : ''}`}>
-              <img src="/qr_code.jpg" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-auto rounded-lg" alt="QR" />
+              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-auto rounded-lg" alt="QR" />
            </div>
 
         </div>
