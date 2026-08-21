@@ -20,9 +20,9 @@ export const Home: React.FC = () => {
         tag: "PREMIUM"
       },
       ai: {
-        title: "AI 智能体",
-        desc: "您的私人数字助手。具备深度推理与上下文理解能力，即刻开启未来对话。",
-        tag: "COMING SOON"
+        title: "AI 投资智能体",
+        desc: "AI驱动的智能投资分析与财富决策助手，赋能个人与机构投资洞察。",
+        tag: "AI PRO"
       },
       chat: {
         title: "即时聊天软件",
@@ -43,9 +43,9 @@ export const Home: React.FC = () => {
         tag: "PREMIUM"
       },
       ai: {
-        title: "AI Agent",
-        desc: "Your personal digital assistant. Equipped with deep reasoning and contextual understanding.",
-        tag: "COMING SOON"
+        title: "AI Investment Agent",
+        desc: "AI-driven investment intelligence and wealth decision assistant for modern investors.",
+        tag: "AI PRO"
       },
       chat: {
         title: "Instant Messaging",
@@ -57,42 +57,42 @@ export const Home: React.FC = () => {
     ja: {
       pansou: { title: "クラウド検索", desc: "情報のサイロを打破するネットワークリソースの集約", tag: "HOT TOOL" },
       readingPro: { title: "ジャーナル精読", desc: "The Economistなどのトップ出版物の深い解釈", tag: "PREMIUM" },
-      ai: { title: "AIエージェント", desc: "あなたのパーソナルデジタルアシスタント", tag: "COMING SOON" },
+      ai: { title: "AI投資エージェント", desc: "AI主導のスマート投資分析および資産意思決定アシスタント", tag: "AI PRO" },
       chat: { title: "インスタントメッセージ", desc: "中国版Telegram。安全で高速なアプリ", tag: "BETA" },
       pansouDisabled: 'ポリシーによりサービス一時停止'
     },
     ko: {
       pansou: { title: "클라우드 검색", desc: "네트워크 리소스 통합 및 정보 사일로 타파", tag: "HOT TOOL" },
       readingPro: { title: "저널 정독", desc: "이코노미스트 등 핵심 간행물 심층 해석", tag: "PREMIUM" },
-      ai: { title: "AI 에이전트", desc: "개인 디지털 비서", tag: "COMING SOON" },
+      ai: { title: "AI 투자 에이전트", desc: "AI 기반 스마트 투자 분석 및 자산 의사결정 비서", tag: "AI PRO" },
       chat: { title: "인스턴트 메시징", desc: "중국어 텔레그램. 안전하고 빠른 앱", tag: "BETA" },
       pansouDisabled: '정책으로 인해 서비스 중단됨'
     },
     es: {
       pansou: { title: "Búsqueda en la Nube", desc: "Agregación de recursos y ruptura de silos de información", tag: "HOT TOOL" },
       readingPro: { title: "Lectura de Revistas", desc: "Interpretación profunda de publicaciones principales", tag: "PREMIUM" },
-      ai: { title: "Agente AI", desc: "Tu asistente digital personal", tag: "COMING SOON" },
+      ai: { title: "Agente de Inversión IA", desc: "Asistente inteligente de análisis de inversiones y decisiones financieras", tag: "AI PRO" },
       chat: { title: "Mensajería Instantánea", desc: "El Telegram chino. Aplicación segura", tag: "BETA" },
       pansouDisabled: 'Servicio suspendido por política'
     },
     fr: {
       pansou: { title: "Recherche Cloud", desc: "Agrégation de ressources cloud", tag: "HOT TOOL" },
       readingPro: { title: "Lecture de Revues", desc: "Interprétation de revues principales", tag: "PREMIUM" },
-      ai: { title: "Agent IA", desc: "Votre assistant numérique personnel", tag: "COMING SOON" },
+      ai: { title: "Agent d'Investissement IA", desc: "Assistant d'analyse d'investissement intelligent et d'aide à la décision", tag: "AI PRO" },
       chat: { title: "Messagerie Instantanée", desc: "Le Telegram chinois. Application sécurisée", tag: "BETA" },
       pansouDisabled: 'Service suspendu'
     },
     de: {
       pansou: { title: "Cloud-Suche", desc: "Aggregation von Cloud-Ressourcen", tag: "HOT TOOL" },
       readingPro: { title: "Zeitschriften-Lektüre", desc: "Interpretation von Top-Publikationen", tag: "PREMIUM" },
-      ai: { title: "KI-Agent", desc: "Ihr persönlicher Assistent", tag: "COMING SOON" },
+      ai: { title: "KI-Agent", desc: "KI-gestützter Assistent für intelligente Anlageanalyse und Vermögensentscheidungen", tag: "AI PRO" },
       chat: { title: "Instant Messaging", desc: "Chinesisches Telegram. Sichere App", tag: "BETA" },
       pansouDisabled: 'Dienst ausgesetzt'
     },
     el: {
       pansou: { title: "Αναζήτηση Cloud", desc: "Συγκέντρωση πόρων cloud", tag: "HOT TOOL" },
       readingPro: { title: "Μελέτη Περιοδικών", desc: "Ερμηνεία κορυφαίων δημοσιεύσεων", tag: "PREMIUM" },
-      ai: { title: "Agent AI", desc: "Ο προσωπικός σας βοηθός", tag: "COMING SOON" },
+      ai: { title: "Agent Επενδύσεων AI", desc: "Βοηθός ανάλυσης επενδύσεων και λήψης οικονομικών αποφάσεων με AI", tag: "AI PRO" },
       chat: { title: "Άμεση συνομιλία", desc: "Κινεζικό Telegram. Ασφαλής εφαρμογή", tag: "BETA" },
       pansouDisabled: 'Η υπηρεσία έχει ανασταλεί'
     }
@@ -150,17 +150,16 @@ export const Home: React.FC = () => {
             />
           </motion.div>
 
-          {/* 3. AI Agent - Dark Theme Card - Dark Neural Abstract */}
+          {/* 3. AI Investment Agent - Dark Theme Card - Financial Investment & Market Analytics */}
           <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}>
             <Card
               title={t.ai.title}
               description={t.ai.desc}
-              imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1677442136019-21780ecad995&w=500&q=50&output=webp"
-              href="#"
+              imageUrl="https://wsrv.nl/?url=images.unsplash.com/photo-1611974789855-9c2a0a7236a3&w=800&q=60&output=webp"
+              href="https://cash.gongpan.org"
               tag={t.ai.tag}
               size="normal"
               theme="dark"
-              onToast={handleCardToast}
             />
           </motion.div>
 

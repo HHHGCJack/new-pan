@@ -56,8 +56,6 @@ export const Card: React.FC<ProductCardProps> = ({
   return (
     <a 
       href={href} 
-      target={href === '#' ? undefined : "_blank"}
-      rel="noopener noreferrer"
       onClick={handleClick}
       onContextMenu={(e) => e.preventDefault()}
       draggable="false"

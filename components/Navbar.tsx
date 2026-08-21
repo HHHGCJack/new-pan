@@ -3,9 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
 import { Logo } from './Logo';
+import { SUPPORT_QR_IMAGE } from '../src/assets/support_qr_base64';
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
+  const [qrImage, setQrImage] = useState<string>(() => {
+    return localStorage.getItem('custom_support_qr') || SUPPORT_QR_IMAGE;
+  });
 
   const translations = {
     zh: {
@@ -19,7 +23,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: '外刊精读', desc: '深度解析国际刊物' },
         pansou: { title: '网盘资源搜', desc: '全网影视资源聚合' },
         chat: { title: '即时聊天软件', desc: '中国人自己的Telegram' },
-        ai: { title: 'AI 智能体', desc: '私人数字助手' },
+        ai: { title: 'AI 投资智能体', desc: 'AI驱动的智能投资决策' },
         lab: { title: '实验室', desc: '极客实验性工具箱' },
       },
       support: '支持我',
@@ -39,7 +43,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: 'Journal Reading', desc: 'In-depth international journals' },
         pansou: { title: 'Cloud Search', desc: 'Movie resource aggregation' },
         chat: { title: 'Instant Chat', desc: 'Chinese own Telegram' },
-        ai: { title: 'AI Agent', desc: 'Personal digital assistant' },
+        ai: { title: 'AI Investment Agent', desc: 'AI-driven investment intelligence' },
         lab: { title: 'Laboratory', desc: 'Experimental Sandbox' },
       },
       support: 'Support Me',
@@ -55,7 +59,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: 'ジャーナル精読', desc: '国際的なジャーナルの深い解釈' },
         pansou: { title: 'クラウド検索', desc: '映画リソースの集約' },
         chat: { title: 'インスタントチャット', desc: '中国のTelegram' },
-        ai: { title: 'AIエージェント', desc: 'パーソナルデジタルアシスタント' },
+        ai: { title: 'AI投資エージェント', desc: 'AIによる投資インテリジェンス' },
         lab: { title: '研究室', desc: '実験的機能とツール' },
       },
       support: 'サポート',
@@ -71,7 +75,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: '저널 정독', desc: '국제 저널 심층 해석' },
         pansou: { title: '클라우드 검색', desc: '영화 리소스 통합' },
         chat: { title: '인스턴트 채팅', desc: '중국의 Telegram' },
-        ai: { title: 'AI 에이전트', desc: '개인 디지털 비서' },
+        ai: { title: 'AI 투자 에이전트', desc: 'AI 기반 투자 인텔리전스' },
         lab: { title: '실험실', desc: '실험적 기능 및 제어' },
       },
       support: '지원하기',
@@ -87,7 +91,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: 'Lectura de Revistas', desc: 'Revistas internacionales' },
         pansou: { title: 'Nube de Películas', desc: 'Agregación de recursos' },
         chat: { title: 'Chat Instantáneo', desc: 'Telegram chino' },
-        ai: { title: 'Agente AI', desc: 'Asistente digital' },
+        ai: { title: 'Agente de Inversión IA', desc: 'Inteligencia de inversión con IA' },
         lab: { title: 'Laboratorio', desc: 'Herramientas y sandbox' },
       },
       support: 'Apóyame',
@@ -103,7 +107,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: 'Lecture de Revues', desc: 'Revues internationales' },
         pansou: { title: 'Recherche Cloud', desc: 'Ressources de films' },
         chat: { title: 'Chat Instantané', desc: 'Telegram chinois' },
-        ai: { title: 'Agent IA', desc: 'Assistant numérique' },
+        ai: { title: 'Agent d\'Investissement IA', desc: 'Intelligence d\'investissement IA' },
         lab: { title: 'Laboratoire', desc: 'Outils Expérimentaux' },
       },
       support: 'Soutenez-moi',
@@ -119,7 +123,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: 'Zeitschriften-Lektüre', desc: 'Internationale Zeitschriften' },
         pansou: { title: 'Cloud-Suche', desc: 'Filmressourcen' },
         chat: { title: 'Instant Chat', desc: 'Chinesisches Telegram' },
-        ai: { title: 'KI-Agent', desc: 'Persönlicher Assistent' },
+        ai: { title: 'KI-Investment-Agent', desc: 'KI-gestützte Anlageintelligenz' },
         lab: { title: 'Laboratorium', desc: 'Experimentelle Tools' },
       },
       support: 'Unterstütze mich',
@@ -135,7 +139,7 @@ export const Navbar: React.FC = () => {
         readingPro: { title: 'Μελέτη Περιοδικών', desc: 'Διεθνή περιοδικά' },
         pansou: { title: 'Αναζήτηση Cloud', desc: 'Πόροι ταινιών' },
         chat: { title: 'Instant Chat', desc: 'Κινεζικό Telegram' },
-        ai: { title: 'Agent AI', desc: 'Προσωπικός βοηθός' },
+        ai: { title: 'Agent Επενδύσεων AI', desc: 'Επενδυτική ευφυΐα AI' },
         lab: { title: 'Εργαστήριο', desc: 'Πειραματικά Εργαλεία' },
       },
       support: 'Υποστήριξη',
@@ -170,7 +174,7 @@ export const Navbar: React.FC = () => {
     { 
       name: t.nav.tech, 
       items: [
-        { title: t.items.ai.title, desc: t.items.ai.desc, href: '#' },
+        { title: t.items.ai.title, desc: t.items.ai.desc, href: 'https://cash.gongpan.org' },
         { title: t.items.lab.title, desc: t.items.lab.desc, href: '/laboratory' }
       ] 
     }
@@ -246,6 +250,23 @@ export const Navbar: React.FC = () => {
     return () => { document.body.style.overflow = ''; };
   }, [mobileMenuOpen, showSupportModal]);
 
+  useEffect(() => {
+    // Check if server or storage has an updated QR code
+    fetch('/api/support-qr')
+      .then(res => {
+        if (res.ok) return res.blob();
+        throw new Error('No custom server qr');
+      })
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        setQrImage(url);
+      })
+      .catch(() => {
+        const saved = localStorage.getItem('custom_support_qr');
+        if (saved) setQrImage(saved);
+      });
+  }, []);
+
   const toggleMobileItem = (index: number) => {
     setMobileExpandedIndex(mobileExpandedIndex === index ? null : index);
   };
@@ -277,6 +298,9 @@ export const Navbar: React.FC = () => {
       setActiveDropdown(null);
       return;
     }
+
+    setMobileMenuOpen(false);
+    setActiveDropdown(null);
   };
 
   // Liquid Glass Logic combined with Light/Dark Theme
@@ -531,7 +555,6 @@ export const Navbar: React.FC = () => {
                       <a 
                         key={subItem.title} 
                         href={subItem.href}
-                        target={subItem.href.startsWith('http') ? "_blank" : undefined}
                         onClick={(e) => handleItemClick(e, subItem.title, subItem.href, subItem)}
                         className={`group block p-4 rounded-2xl transition-all duration-200 ${
                           themeMode === 'dark'
@@ -581,7 +604,6 @@ export const Navbar: React.FC = () => {
                       <a 
                         key={sub.title} 
                         href={sub.href}
-                        target={sub.href.startsWith('http') ? "_blank" : undefined}
                         onClick={(e) => handleItemClick(e, sub.title, sub.href, sub)}
                         className={`block p-4 rounded-2xl transition-all duration-300 ${
                           themeMode === 'dark'
@@ -622,10 +644,15 @@ export const Navbar: React.FC = () => {
              <X size={18} />
            </button>
            <h3 className={`text-2xl font-bold mb-2`}>{t.supportThanks}</h3>
-           <div className={`bg-white p-2 rounded-xl shadow-inner mb-4 mx-auto w-full ${themeMode === 'dark' ? 'opacity-90' : ''}`}>
-              <img src="https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg" loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-full h-auto rounded-lg" alt="QR" />
+           <div className={`bg-white p-2 rounded-xl shadow-inner mb-2 mx-auto w-full ${themeMode === 'dark' ? 'opacity-95' : ''}`}>
+              <img 
+                src={qrImage} 
+                loading="eager" 
+                decoding="async" 
+                className="w-full h-auto rounded-lg shadow-sm" 
+                alt="WeChat and Alipay Support QR Code" 
+              />
            </div>
-
         </div>
       </div>
     </>

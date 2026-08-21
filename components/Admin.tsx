@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../App';
-import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal } from 'lucide-react';
+import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal, ArrowLeft, QrCode, RefreshCw } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
+import { SUPPORT_QR_IMAGE } from '../src/assets/support_qr_base64';
 import {
   DndContext,
   closestCenter,
@@ -168,6 +170,56 @@ export const Admin: React.FC = () => {
   const [editDescription, setEditDescription] = useState('');
   const [hasOrderChanged, setHasOrderChanged] = useState(false);
   const [isSavingOrder, setIsSavingOrder] = useState(false);
+
+  // QR Code State
+  const [adminQrImage, setAdminQrImage] = useState<string>(() => {
+    return localStorage.getItem('custom_support_qr') || SUPPORT_QR_IMAGE;
+  });
+
+  useEffect(() => {
+    fetch('/api/support-qr')
+      .then(res => {
+        if (res.ok) return res.blob();
+        throw new Error('No custom server qr');
+      })
+      .then(blob => {
+        setAdminQrImage(URL.createObjectURL(blob));
+      })
+      .catch(() => {
+        const saved = localStorage.getItem('custom_support_qr');
+        if (saved) setAdminQrImage(saved);
+      });
+  }, []);
+
+  const handleAdminQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        setAdminQrImage(base64);
+        localStorage.setItem('custom_support_qr', base64);
+        try {
+          await fetch('/api/support-qr', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: base64 })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+        setMessage('赞赏收款码原图已成功上传并生效！');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAdminResetQr = () => {
+    localStorage.removeItem('custom_support_qr');
+    setAdminQrImage(SUPPORT_QR_IMAGE);
+    setMessage('已重置为默认收款码');
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -456,6 +508,20 @@ export const Admin: React.FC = () => {
 
   return (
     <main className="flex-grow pt-24 pb-32 px-6 max-w-4xl mx-auto w-full relative z-10">
+      <div className="flex items-center mb-6">
+        <Link 
+          to="/" 
+          className={`flex items-center space-x-2 text-sm font-semibold transition-all px-4 py-2 rounded-full border ${
+            isDark 
+              ? 'border-white/10 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10' 
+              : 'border-gray-200 bg-white/50 text-gray-600 hover:text-black hover:bg-white'
+          }`}
+        >
+          <ArrowLeft size={16} />
+          <span>返回主页</span>
+        </Link>
+      </div>
+
       <div className={`rounded-[2.5rem] p-8 md:p-12 ${getGlassClasses()}`}>
         <h1 className={`text-3xl font-bold mb-8 text-center ${isDark ? 'text-white' : 'text-gray-900'}`}>后台管理</h1>
         
@@ -716,6 +782,67 @@ export const Admin: React.FC = () => {
                       }`}
                     />
                   </button>
+                </div>
+
+                {/* Support QR Code Management */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark 
+                    ? 'bg-white/5 border-white/20' 
+                    : 'bg-white/50 border-gray-100'
+                }`}>
+                  <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                    <div>
+                      <h3 className={`font-semibold text-lg flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        <QrCode className="w-5 h-5 text-blue-500" />
+                        <span>“支持我”赞赏收款码管理</span>
+                      </h3>
+                      <p className={`text-sm mt-1 max-w-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        上传您保存的原始真实收款码高清图片（微信/支付宝双拼码）。系统将原样存储并供全站用户扫码支持，杜绝加载失败。
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <label className={`cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm ${
+                        isDark 
+                          ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20' 
+                          : 'bg-black hover:bg-gray-800 text-white'
+                      }`}>
+                        <Upload size={16} />
+                        <span>上传/更换收款码原图</span>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={handleAdminQrUpload} 
+                        />
+                      </label>
+                      {localStorage.getItem('custom_support_qr') && (
+                        <button 
+                          onClick={handleAdminResetQr}
+                          className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm border transition-all ${
+                            isDark 
+                              ? 'border-white/20 text-gray-300 hover:bg-white/10 hover:text-white' 
+                              : 'border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-black'
+                          }`}
+                        >
+                          <RefreshCw size={14} />
+                          <span>重置</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Current QR Preview */}
+                  <div className="mt-6 pt-6 border-t border-white/10">
+                    <p className={`text-xs font-semibold mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>当前生效的收款码预览：</p>
+                    <div className="max-w-md bg-white p-2 rounded-2xl shadow-md border border-gray-200/50">
+                      <img 
+                        src={adminQrImage} 
+                        alt="Current Support QR Code" 
+                        className="w-full h-auto rounded-xl object-contain"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

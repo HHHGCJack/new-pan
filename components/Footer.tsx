@@ -225,7 +225,7 @@ export const Footer: React.FC = () => {
                   </div>
                 </a>
 
-                <a href="https://github.com/gongpan" target="_blank" rel="noopener noreferrer" className={`flex items-center p-4 rounded-2xl transition-colors border shadow-sm group ${isDark ? 'bg-white/5 hover:bg-white/10 border-white/10' : 'bg-white/50 hover:bg-white/80 border-white/40'}`}>
+                <a href="https://github.com/gongpan" className={`flex items-center p-4 rounded-2xl transition-colors border shadow-sm group ${isDark ? 'bg-white/5 hover:bg-white/10 border-white/10' : 'bg-white/50 hover:bg-white/80 border-white/40'}`}>
                    <div className={`p-3 rounded-full mr-4 group-hover:scale-110 transition-transform ${isDark ? 'bg-white/10 text-white' : 'bg-gray-100 text-gray-900'}`}>
                     <Github size={20} />
                   </div>
