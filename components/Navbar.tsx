@@ -3,12 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
 import { Logo } from './Logo';
-import { SUPPORT_QR_IMAGE } from '../src/assets/support_qr_base64';
+
+export const DEFAULT_SUPPORT_QR = "https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg";
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
   const [qrImage, setQrImage] = useState<string>(() => {
-    return localStorage.getItem('custom_support_qr') || SUPPORT_QR_IMAGE;
+    return localStorage.getItem('custom_support_qr') || DEFAULT_SUPPORT_QR;
   });
 
   const translations = {
@@ -647,10 +648,11 @@ export const Navbar: React.FC = () => {
            <div className={`bg-white p-2 rounded-xl shadow-inner mb-2 mx-auto w-full ${themeMode === 'dark' ? 'opacity-95' : ''}`}>
               <img 
                 src={qrImage} 
-                loading="eager" 
+                loading="lazy" 
                 decoding="async" 
+                referrerPolicy="no-referrer"
                 className="w-full h-auto rounded-lg shadow-sm" 
-                alt="WeChat and Alipay Support QR Code" 
+                alt="QR" 
               />
            </div>
         </div>

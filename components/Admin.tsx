@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../App';
 import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal, ArrowLeft, QrCode, RefreshCw } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
-import { SUPPORT_QR_IMAGE } from '../src/assets/support_qr_base64';
+import { DEFAULT_SUPPORT_QR } from './Navbar';
 import {
   DndContext,
   closestCenter,
@@ -173,7 +173,7 @@ export const Admin: React.FC = () => {
 
   // QR Code State
   const [adminQrImage, setAdminQrImage] = useState<string>(() => {
-    return localStorage.getItem('custom_support_qr') || SUPPORT_QR_IMAGE;
+    return localStorage.getItem('custom_support_qr') || DEFAULT_SUPPORT_QR;
   });
 
   useEffect(() => {
@@ -217,7 +217,7 @@ export const Admin: React.FC = () => {
 
   const handleAdminResetQr = () => {
     localStorage.removeItem('custom_support_qr');
-    setAdminQrImage(SUPPORT_QR_IMAGE);
+    setAdminQrImage(DEFAULT_SUPPORT_QR);
     setMessage('已重置为默认收款码');
   };
 
