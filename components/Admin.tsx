@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../App';
 import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal, QrCode, RefreshCw } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
-import { DEFAULT_SUPPORT_QR } from './Navbar';
-import { SUPPORT_QR_BASE64, SUPPORT_QR_CDN, SUPPORT_QR_LOCAL } from '../src/assets/support_qr_base64';
+import { 
+  DEFAULT_SUPPORT_QR, 
+  SUPPORT_QR_IMGDB, 
+  SUPPORT_QR_FREEIMAGE, 
+  SUPPORT_QR_LOCAL, 
+  SUPPORT_QR_BASE64, 
+  SUPPORT_QR_SOURCES 
+} from '../src/assets/support_qr_base64';
 import { BackButton } from './BackButton';
 import {
   DndContext,
@@ -175,11 +181,11 @@ export const Admin: React.FC = () => {
   // QR Code State
   const [adminQrImage, setAdminQrImage] = useState<string>(() => {
     const saved = localStorage.getItem('custom_support_qr');
-    if (saved && (saved.includes('nloln.de') || saved.includes('img2.'))) {
+    if (saved && (saved.includes('nloln.de') || saved.includes('img2.') || saved.includes('support_qr_code_1787368553422'))) {
       localStorage.removeItem('custom_support_qr');
-      return SUPPORT_QR_LOCAL;
+      return DEFAULT_SUPPORT_QR;
     }
-    return saved || SUPPORT_QR_LOCAL;
+    return saved || DEFAULT_SUPPORT_QR;
   });
 
   useEffect(() => {
@@ -837,9 +843,11 @@ export const Admin: React.FC = () => {
                         alt="Current Support QR Code" 
                         onError={(e) => {
                           const target = e.currentTarget;
-                          if (target.src !== SUPPORT_QR_CDN && target.src.indexOf('iili.io') === -1) {
-                            target.src = SUPPORT_QR_CDN;
-                          } else if (target.src !== SUPPORT_QR_BASE64) {
+                          const currentSrc = target.src;
+                          const currentIndex = SUPPORT_QR_SOURCES.findIndex(s => currentSrc.includes(s) || currentSrc === s);
+                          if (currentIndex !== -1 && currentIndex + 1 < SUPPORT_QR_SOURCES.length) {
+                            target.src = SUPPORT_QR_SOURCES[currentIndex + 1];
+                          } else {
                             target.src = SUPPORT_QR_BASE64;
                           }
                         }}

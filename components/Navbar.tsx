@@ -3,20 +3,27 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
 import { Logo } from './Logo';
-import { SUPPORT_QR_BASE64, SUPPORT_QR_CDN, SUPPORT_QR_LOCAL } from '../src/assets/support_qr_base64';
+import { 
+  DEFAULT_SUPPORT_QR, 
+  SUPPORT_QR_IMGDB, 
+  SUPPORT_QR_FREEIMAGE, 
+  SUPPORT_QR_LOCAL, 
+  SUPPORT_QR_BASE64, 
+  SUPPORT_QR_SOURCES 
+} from '../src/assets/support_qr_base64';
 
-export const DEFAULT_SUPPORT_QR = SUPPORT_QR_LOCAL;
+export { DEFAULT_SUPPORT_QR };
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
   const [qrImage, setQrImage] = useState<string>(() => {
     const saved = localStorage.getItem('custom_support_qr');
     // If user has old broken telegram/nloln url, reset to new high-speed source
-    if (saved && (saved.includes('nloln.de') || saved.includes('img2.'))) {
+    if (saved && (saved.includes('nloln.de') || saved.includes('img2.') || saved.includes('support_qr_code_1787368553422'))) {
       localStorage.removeItem('custom_support_qr');
-      return SUPPORT_QR_LOCAL;
+      return DEFAULT_SUPPORT_QR;
     }
-    return saved || SUPPORT_QR_LOCAL;
+    return saved || DEFAULT_SUPPORT_QR;
   });
 
   const translations = {
@@ -696,9 +703,11 @@ export const Navbar: React.FC = () => {
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   const target = e.currentTarget;
-                  if (target.src !== SUPPORT_QR_CDN && target.src.indexOf('iili.io') === -1) {
-                    target.src = SUPPORT_QR_CDN;
-                  } else if (target.src !== SUPPORT_QR_BASE64) {
+                  const currentSrc = target.src;
+                  const currentIndex = SUPPORT_QR_SOURCES.findIndex(s => currentSrc.includes(s) || currentSrc === s);
+                  if (currentIndex !== -1 && currentIndex + 1 < SUPPORT_QR_SOURCES.length) {
+                    target.src = SUPPORT_QR_SOURCES[currentIndex + 1];
+                  } else {
                     target.src = SUPPORT_QR_BASE64;
                   }
                 }}

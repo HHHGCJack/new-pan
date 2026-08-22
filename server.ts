@@ -53,10 +53,19 @@ async function startServer() {
       }
       fs.writeFileSync(
         path.join(assetsDir, "support_qr_base64.ts"),
+        `export const SUPPORT_QR_IMGDB = "https://pic1.imgdb.cn/i/034BLlXycinjzppzDQlRoC.jpg";\n` +
+        `export const SUPPORT_QR_FREEIMAGE = "https://iili.io/CZNy2mF.jpg";\n` +
+        `export const SUPPORT_QR_LOCAL = "/support-qr.jpg";\n` +
+        `export const SUPPORT_QR_API = "/api/support-qr";\n` +
         `export const SUPPORT_QR_BASE64 = "data:image/jpeg;base64,${base64Data}";\n` +
-        `export const SUPPORT_QR_IMAGE = "data:image/jpeg;base64,${base64Data}";\n` +
-        `export const SUPPORT_QR_CDN = "https://iili.io/CZNw8ba.jpg";\n` +
-        `export const SUPPORT_QR_LOCAL = "/support-qr.jpg";\n`
+        `export const SUPPORT_QR_SOURCES = [\n` +
+        `  "/support-qr.jpg",\n` +
+        `  "https://pic1.imgdb.cn/i/034BLlXycinjzppzDQlRoC.jpg",\n` +
+        `  "https://iili.io/CZNy2mF.jpg",\n` +
+        `  "/api/support-qr",\n` +
+        `  "data:image/jpeg;base64,${base64Data}"\n` +
+        `];\n` +
+        `export const DEFAULT_SUPPORT_QR = "/support-qr.jpg";\n`
       );
 
       res.json({ success: true, url: "/support-qr.jpg?t=" + Date.now() });
