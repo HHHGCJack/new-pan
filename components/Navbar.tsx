@@ -3,13 +3,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronRight, ExternalLink, Moon, Sun, Globe } from 'lucide-react';
 import { useTheme } from '../App';
 import { Logo } from './Logo';
+import { SUPPORT_QR_BASE64, SUPPORT_QR_CDN, SUPPORT_QR_LOCAL } from '../src/assets/support_qr_base64';
 
-export const DEFAULT_SUPPORT_QR = "https://img2.nloln.de/file/BQACAgUAAyEGAASLVN5eAAICk2mN45AwGUskAt-IElNLMd01oxSKAAKkHAACodFxVE4r2ioOGqDxOgQ.jpg";
+export const DEFAULT_SUPPORT_QR = SUPPORT_QR_LOCAL;
 
 export const Navbar: React.FC = () => {
   const { themeMode, setThemeMode, language, setLanguage, showToast, pansouEnabled } = useTheme();
   const [qrImage, setQrImage] = useState<string>(() => {
-    return localStorage.getItem('custom_support_qr') || DEFAULT_SUPPORT_QR;
+    const saved = localStorage.getItem('custom_support_qr');
+    // If user has old broken telegram/nloln url, reset to new high-speed source
+    if (saved && (saved.includes('nloln.de') || saved.includes('img2.'))) {
+      localStorage.removeItem('custom_support_qr');
+      return SUPPORT_QR_LOCAL;
+    }
+    return saved || SUPPORT_QR_LOCAL;
   });
 
   const translations = {
@@ -189,6 +196,24 @@ export const Navbar: React.FC = () => {
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   const langTimeoutRef = React.useRef<any>(null);
+  const navTimeoutRef = React.useRef<any>(null);
+
+  const handleNavTabEnter = (idx: number) => {
+    if (navTimeoutRef.current) {
+      clearTimeout(navTimeoutRef.current);
+      navTimeoutRef.current = null;
+    }
+    setActiveDropdown(idx);
+  };
+
+  const handleNavLeave = () => {
+    if (navTimeoutRef.current) {
+      clearTimeout(navTimeoutRef.current);
+    }
+    navTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
 
   const handleLangMouseEnter = () => {
     if (langTimeoutRef.current) {
@@ -201,7 +226,7 @@ export const Navbar: React.FC = () => {
   const handleLangMouseLeave = () => {
     langTimeoutRef.current = setTimeout(() => {
       setLangDropdownOpen(false);
-    }, 400);
+    }, 250);
   };
 
   const handleLangClick = (e: React.MouseEvent) => {
@@ -306,19 +331,21 @@ export const Navbar: React.FC = () => {
 
   // Liquid Glass Logic combined with Light/Dark Theme
   const getGlassStyle = (type: 'mobile') => {
-    const gpuFix = 'transform-gpu backface-hidden';
-    
     const isDark = themeMode === 'dark';
-    const bgNav = isDark ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20' : 'bg-white/10 bg-gradient-to-br from-white/40 via-white/5 to-white/20';
-    const bgBlur = isDark ? 'backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' : 'backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]';
+    const bgNav = isDark 
+      ? 'bg-black/30 bg-gradient-to-b from-black/50 via-black/20 to-black/30' 
+      : 'bg-white/15 bg-gradient-to-b from-white/40 via-white/10 to-white/15';
+    const bgBlur = isDark 
+      ? 'backdrop-blur-[22px] backdrop-saturate-[140%]' 
+      : 'backdrop-blur-[22px] backdrop-saturate-[160%]';
     
-    const borderColor = isDark ? 'border-white/10' : 'border-white/30';
+    const borderColor = isDark ? 'border-white/10' : 'border-white/20';
     
     if (type === 'mobile') {
       const shadow = isDark 
-        ? 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(255,255,255,0.02)]' 
-        : 'shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-1px_2px_rgba(255,255,255,0.2),_inset_1px_0_2px_rgba(255,255,255,0.3)]';
-      return `${bgNav} ${bgBlur} ${shadow} ${gpuFix} border-b ${borderColor}`;
+        ? 'shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]' 
+        : 'shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]';
+      return `${bgNav} ${bgBlur} ${shadow} border-b ${borderColor}`;
     }
     return '';
   };
@@ -336,8 +363,8 @@ export const Navbar: React.FC = () => {
   const getTextEffect = () => themeMode === 'dark' ? '[text-shadow:0_1px_2px_rgba(0,0,0,0.8)]' : '[text-shadow:0_1px_2px_rgba(255,255,255,0.8)]';
 
   const modalStyle = themeMode === 'dark'
-    ? 'bg-black/40 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.5),_inset_0_1px_1px_rgba(255,255,255,0.1),_inset_0_-1px_1px_rgba(0,0,0,0.5)] border border-white/10 will-change-[backdrop-filter,transform,opacity] text-white'
-    : 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 will-change-[backdrop-filter,transform,opacity] text-gray-900';
+    ? 'bg-black/40 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.5),_inset_0_1px_1px_rgba(255,255,255,0.1),_inset_0_-1px_1px_rgba(0,0,0,0.5)] border border-white/10 text-white'
+    : 'bg-white/10 backdrop-blur-[30px] backdrop-saturate-[220%] shadow-[0_50px_100px_rgba(0,0,0,0.2),_inset_0_1px_1px_rgba(255,255,255,0.8),_inset_0_-1px_1px_rgba(255,255,255,0.1)] border border-white/30 text-gray-900';
 
   const toggleTheme = () => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
@@ -345,19 +372,28 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
+      {/* Background Dimmer */}
       <div 
-        className={`fixed inset-0 z-40 transition-all duration-500 pointer-events-none bg-black/20 backdrop-blur-sm ${
-          activeDropdown !== null || mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        className={`fixed inset-0 z-40 transition-opacity duration-300 pointer-events-none ${
+          themeMode === 'dark' ? 'bg-black/20' : 'bg-black/10'
+        } ${
+          activeDropdown !== null || mobileMenuOpen ? 'opacity-100' : 'opacity-0'
         }`}
       />
 
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${mobileMenuOpen ? 'bg-transparent' : ''}`}
-        onMouseLeave={() => setActiveDropdown(null)}
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${mobileMenuOpen ? 'bg-transparent' : ''}`}
+        onMouseLeave={handleNavLeave}
+        onMouseEnter={() => {
+          if (navTimeoutRef.current) {
+            clearTimeout(navTimeoutRef.current);
+            navTimeoutRef.current = null;
+          }
+        }}
       >
         {/* Base Nav Glass */}
         <div 
-          className={`absolute top-0 left-0 w-full h-full ease-in-out -z-20 transform-gpu backface-hidden transition-all duration-300 ${
+          className={`absolute top-0 left-0 w-full h-full -z-20 transition-all duration-300 ${
              mobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
           } ${
              themeMode === 'dark' 
@@ -374,18 +410,18 @@ export const Navbar: React.FC = () => {
           }`}
         />
 
-        {/* Dropdown Glass (Fades in) */}
+        {/* Dropdown Glass (Fades in with ultra-smooth progressive feathered mask) */}
         <div 
-          className={`absolute top-0 left-0 w-full h-[360px] ease-in-out pointer-events-none -z-10 transform-gpu backface-hidden transition-opacity duration-300 ${
+          className={`absolute top-0 left-0 w-full h-[380px] pointer-events-none -z-10 transition-opacity duration-300 ${
              activeDropdown !== null && !mobileMenuOpen ? 'opacity-100' : 'opacity-0'
           } ${
              themeMode === 'dark' 
-                ? 'bg-black/20 bg-gradient-to-br from-black/40 via-black/10 to-black/20 backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%] shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_30px_60px_rgba(0,0,0,0.5)]' 
-                : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%] shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),_inset_1px_0_2px_rgba(255,255,255,0.3),_0_30px_60px_rgba(0,0,0,0.15)]'
+                ? 'bg-black/20 bg-gradient-to-b from-black/40 via-black/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[150%] backdrop-contrast-[110%]' 
+                : 'bg-white/10 bg-gradient-to-b from-white/40 via-white/10 to-transparent backdrop-blur-[25px] backdrop-saturate-[200%] backdrop-contrast-[110%] backdrop-brightness-[110%]'
           }`}
           style={{ 
-             WebkitMaskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)',
-             maskImage: 'linear-gradient(to bottom, black 0px, black 320px, transparent 360px)'
+             WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0.85) 72%, rgba(0,0,0,0.5) 84%, rgba(0,0,0,0.15) 94%, rgba(0,0,0,0) 100%)',
+             maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0.85) 72%, rgba(0,0,0,0.5) 84%, rgba(0,0,0,0.15) 94%, rgba(0,0,0,0) 100%)'
           }}
         />
 
@@ -402,9 +438,9 @@ export const Navbar: React.FC = () => {
               <div 
                 key={item.name} 
                 className="h-full flex items-center"
-                onMouseEnter={() => setActiveDropdown(idx)}
+                onMouseEnter={() => handleNavTabEnter(idx)}
               >
-                <button className={`px-5 py-2 text-sm font-semibold transition-all duration-300 rounded-full ${getNavPillStyle(activeDropdown === idx)} ${getTextEffect()}`}>
+                <button className={`px-5 py-2 text-sm font-semibold transition-all duration-200 rounded-full ${getNavPillStyle(activeDropdown === idx)} ${getTextEffect()}`}>
                   {item.name}
                 </button>
               </div>
@@ -418,7 +454,7 @@ export const Navbar: React.FC = () => {
               >
                 <button 
                   onClick={handleLangClick}
-                  className={`px-3 py-2 rounded-full transition-all flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} 
+                  className={`px-3 py-2 rounded-full transition-colors flex items-center space-x-1 ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} 
                   title="切换语言 / Switch Language"
                 >
                   <Globe size={18} />
@@ -427,8 +463,8 @@ export const Navbar: React.FC = () => {
                 
                 {/* Desktop Lang Dropdown */}
                 <div 
-                  className={`absolute top-full right-0 mt-2 w-32 rounded-2xl overflow-hidden transition-all duration-200 origin-top flex flex-col z-[100] ${
-                    langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
+                  className={`absolute top-full right-0 mt-2 w-32 rounded-2xl overflow-hidden transition-[opacity,transform] duration-150 origin-top flex flex-col z-[100] ${
+                    langDropdownOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
                   } ${
                     themeMode === 'dark' 
                        ? 'bg-black/40 backdrop-blur-[25px] backdrop-saturate-[150%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
@@ -454,12 +490,12 @@ export const Navbar: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <button onClick={toggleTheme} className={`p-2 rounded-full transition-all ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换主题 / Switch Theme">
+              <button onClick={toggleTheme} className={`p-2 rounded-full transition-colors ${themeMode === 'dark' ? 'hover:bg-white/10 text-gray-300' : 'hover:bg-black/5 text-gray-600'}`} title="切换主题 / Switch Theme">
                 {themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               <button 
                 onClick={handleSupportClick}
-                className={`ml-2 px-5 py-2 text-sm font-bold transition-all duration-300 rounded-full ${
+                className={`ml-2 px-5 py-2 text-sm font-bold transition-colors duration-200 rounded-full ${
                   themeMode === 'dark'
                     ? 'text-white bg-white/20 border border-white/20 hover:bg-white/30 shadow-[inset_0_0_10px_rgba(255,255,255,0.1)]'
                     : 'text-gray-900 bg-white/30 border border-white/50 hover:bg-white/50 shadow-[inset_0_0_10px_rgba(255,255,255,0.5)]'
@@ -485,8 +521,8 @@ export const Navbar: React.FC = () => {
 
               {/* Mobile Lang Dropdown */}
               <div 
-                className={`absolute top-full right-0 mt-2 w-32 rounded-2xl overflow-hidden transition-all duration-200 origin-top flex flex-col z-[100] ${
-                  langDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'
+                className={`absolute top-full right-0 mt-2 w-32 rounded-2xl overflow-hidden transition-[opacity,transform] duration-150 origin-top flex flex-col z-[100] ${
+                  langDropdownOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
                 } ${
                   themeMode === 'dark' 
                     ? 'bg-black/40 backdrop-blur-[25px] backdrop-saturate-[150%] border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1),_0_10px_40px_rgba(0,0,0,0.5)] text-white' 
@@ -529,22 +565,24 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Dropdown */}
         <div 
-          className={`absolute top-full left-0 w-full transition-all duration-300 z-10 ${
-            activeDropdown !== null ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4 pointer-events-none'
+          className={`absolute top-full left-0 w-full transition-[opacity,transform] duration-200 z-10 ${
+            activeDropdown !== null ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
           }`}
+          onMouseEnter={() => {
+            if (navTimeoutRef.current) {
+              clearTimeout(navTimeoutRef.current);
+              navTimeoutRef.current = null;
+            }
+          }}
         >
           <div className="max-w-7xl mx-auto px-6 py-10 relative h-[280px]">
             {navData.map((data, idx) => (
               <div 
                 key={idx}
-                className={`grid grid-cols-3 gap-12 absolute top-10 left-6 right-6 transition-all duration-300 ease-in-out ${
+                className={`grid grid-cols-3 gap-12 absolute top-10 left-6 right-6 transition-opacity duration-200 ease-out ${
                   activeDropdown === idx 
-                    ? 'opacity-100 visible translate-x-0 pointer-events-auto' 
-                    : 'opacity-0 invisible pointer-events-none'
-                } ${
-                  activeDropdown !== null && activeDropdown > idx ? '-translate-x-4' : ''
-                } ${
-                  activeDropdown !== null && activeDropdown < idx ? 'translate-x-4' : ''
+                    ? 'opacity-100 pointer-events-auto' 
+                    : 'opacity-0 pointer-events-none'
                 }`}
               >
                   <div className={`col-span-1 border-r pr-8 ${themeMode === 'dark' ? 'border-white/10' : 'border-gray-200/20'}`}>
@@ -557,7 +595,7 @@ export const Navbar: React.FC = () => {
                         key={subItem.title} 
                         href={subItem.href}
                         onClick={(e) => handleItemClick(e, subItem.title, subItem.href, subItem)}
-                        className={`group block p-4 rounded-2xl transition-all duration-200 ${
+                        className={`group block p-4 rounded-2xl transition-colors duration-150 ${
                           themeMode === 'dark'
                             ? 'hover:bg-white/10 hover:shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]'
                             : 'hover:bg-white/30 hover:shadow-[inset_0_0_10px_rgba(255,255,255,0.2)]'
@@ -579,53 +617,58 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       <div 
-        className={`fixed inset-0 z-40 pt-20 px-6 transition-all duration-300 overflow-y-auto ${getGlassStyle('mobile')} ${
-          mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        className={`fixed inset-0 z-40 pt-20 px-6 transition-[opacity,transform] duration-300 overflow-y-auto ${getGlassStyle('mobile')} ${
+          mobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
       >
-        <div className={`flex flex-col space-y-1 transition-all duration-300 pb-10 ${mobileMenuOpen ? 'translate-y-0' : '-translate-y-4'}`}>
+        <div className="flex flex-col space-y-1 pb-10">
           {navData.map((link, idx) => (
-            <div key={link.name} className="overflow-hidden">
+            <div key={link.name} className="border-b last:border-b-0 border-inherit">
               <button 
                 onClick={() => toggleMobileItem(idx)}
-                className={`w-full flex items-center justify-between py-4 border-b ${themeMode === 'dark' ? 'border-white/10 text-white' : 'border-gray-500/10 text-gray-900'}`}
+                className={`w-full flex items-center justify-between py-4 transition-colors ${
+                  themeMode === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}
               >
                 <span className="text-lg font-bold">{link.name}</span>
-                <ChevronDown className={`transition-transform duration-300 ${mobileExpandedIndex === idx ? 'rotate-180' : ''}`} size={18} />
+                <ChevronDown className={`transition-transform duration-250 ease-out ${mobileExpandedIndex === idx ? 'rotate-180' : ''}`} size={18} />
               </button>
               
               <div 
-                className={`grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.33,1,0.68,1)] ${
-                   mobileExpandedIndex === idx ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
+                   mobileExpandedIndex === idx ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
                 }`}
               >
-                <div className="overflow-hidden">
-                   <div className={`space-y-3 pt-2 pb-4 pl-2 transition-all duration-500 ${mobileExpandedIndex === idx ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
-                    {link.items.map((sub) => (
-                      <a 
-                        key={sub.title} 
-                        href={sub.href}
-                        onClick={(e) => handleItemClick(e, sub.title, sub.href, sub)}
-                        className={`block p-4 rounded-2xl transition-all duration-300 ${
-                          themeMode === 'dark'
-                            ? 'bg-white/5 border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.05),0_10px_20px_rgba(0,0,0,0.2)] active:bg-white/10'
-                            : 'bg-white/40 border border-white/60 shadow-[inset_0_1px_10px_rgba(255,255,255,0.8),0_10px_20px_rgba(0,0,0,0.1)] active:bg-white/60 active:scale-[0.98]'
-                        }`}
-                      >
-                        <div className={`font-medium text-sm flex items-center justify-between ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {sub.title}
-                          <ChevronRight size={14} className={themeMode === 'dark' ? 'text-gray-500' : 'text-gray-400'} />
-                        </div>
-                      </a>
-                    ))}
-                  </div>
+                <div className="space-y-2.5 pt-1 pb-4">
+                  {link.items.map((sub) => (
+                    <a 
+                      key={sub.title} 
+                      href={sub.href}
+                      onClick={(e) => handleItemClick(e, sub.title, sub.href, sub)}
+                      className={`block p-3.5 rounded-2xl transition-all duration-150 border ${
+                        themeMode === 'dark'
+                          ? 'bg-white/[0.05] border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:bg-white/[0.08] active:bg-white/[0.12]'
+                          : 'bg-white/60 border-white/70 shadow-[0_2px_8px_rgba(0,0,0,0.03),inset_0_1px_0_rgba(255,255,255,0.7)] hover:bg-white/80 active:bg-white'
+                      }`}
+                    >
+                      <div className={`font-semibold text-sm flex items-center justify-between ${themeMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <span>{sub.title}</span>
+                        <ChevronRight size={14} className={themeMode === 'dark' ? 'text-gray-400' : 'text-gray-400'} />
+                      </div>
+                      {sub.desc && (
+                        <p className={`text-xs mt-1 leading-normal ${themeMode === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {sub.desc}
+                        </p>
+                      )}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
           ))}
           <button 
             onClick={handleSupportClick}
-            className={`w-full flex items-center justify-between py-4 border-b text-left ${themeMode === 'dark' ? 'border-white/10 text-white' : 'border-gray-500/10 text-gray-900'}`}
+            className={`w-full flex items-center justify-between py-4 border-b text-left ${themeMode === 'dark' ? 'border-white/10 text-white' : 'border-gray-200/40 text-gray-900'}`}
           >
              <span className="text-lg font-bold">{t.support}</span>
              <ChevronRight className={themeMode === 'dark' ? 'text-gray-500' : 'text-gray-500'} size={18} />
@@ -648,11 +691,19 @@ export const Navbar: React.FC = () => {
            <div className={`bg-white p-2 rounded-xl shadow-inner mb-2 mx-auto w-full ${themeMode === 'dark' ? 'opacity-95' : ''}`}>
               <img 
                 src={qrImage} 
-                loading="lazy" 
+                loading="eager" 
                 decoding="async" 
                 referrerPolicy="no-referrer"
-                className="w-full h-auto rounded-lg shadow-sm" 
-                alt="QR" 
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== SUPPORT_QR_CDN && target.src.indexOf('iili.io') === -1) {
+                    target.src = SUPPORT_QR_CDN;
+                  } else if (target.src !== SUPPORT_QR_BASE64) {
+                    target.src = SUPPORT_QR_BASE64;
+                  }
+                }}
+                className="w-full h-auto rounded-lg shadow-sm object-contain max-h-[70vh]" 
+                alt="Support Payment QR Code" 
               />
            </div>
         </div>

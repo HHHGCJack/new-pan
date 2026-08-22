@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../App';
-import { Copy, Check, Code, Terminal, ArrowLeft, Layers, FileText, AlertCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Copy, Check, Code, Terminal, Layers, FileText, AlertCircle } from 'lucide-react';
+import { BackButton } from './BackButton';
 
 export const Laboratory: React.FC = () => {
   const { themeMode, language, showToast } = useTheme();
@@ -337,17 +337,7 @@ export const Laboratory: React.FC = () => {
     <div className="flex-grow pt-24 md:pt-28 pb-20 px-4 md:px-8 max-w-7xl mx-auto w-full">
       {/* Return home link */}
       <div className="flex items-center mb-6">
-        <Link 
-          to="/" 
-          className={`flex items-center space-x-2 text-sm font-semibold transition-all px-4 py-2 rounded-full border ${
-            isDark 
-              ? 'border-white/10 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10' 
-              : 'border-gray-200 bg-white/50 text-gray-600 hover:text-black hover:bg-white'
-          }`}
-        >
-          <ArrowLeft size={16} />
-          <span>{language === 'zh' ? '返回主页' : 'Return Home'}</span>
-        </Link>
+        <BackButton />
       </div>
 
       {/* Hero Header Area */}

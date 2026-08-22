@@ -53,7 +53,10 @@ async function startServer() {
       }
       fs.writeFileSync(
         path.join(assetsDir, "support_qr_base64.ts"),
-        `export const SUPPORT_QR_IMAGE = "data:image/jpeg;base64,${base64Data}";\n`
+        `export const SUPPORT_QR_BASE64 = "data:image/jpeg;base64,${base64Data}";\n` +
+        `export const SUPPORT_QR_IMAGE = "data:image/jpeg;base64,${base64Data}";\n` +
+        `export const SUPPORT_QR_CDN = "https://iili.io/CZNw8ba.jpg";\n` +
+        `export const SUPPORT_QR_LOCAL = "/support-qr.jpg";\n`
       );
 
       res.json({ success: true, url: "/support-qr.jpg?t=" + Date.now() });

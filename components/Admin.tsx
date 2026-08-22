@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useTheme } from '../App';
-import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal, ArrowLeft, QrCode, RefreshCw } from 'lucide-react';
+import { Upload, FileText, Image as ImageIcon, Loader2, Lock, Edit2, Save, Trash2, Book, Equal, QrCode, RefreshCw } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
 import { DEFAULT_SUPPORT_QR } from './Navbar';
+import { SUPPORT_QR_BASE64, SUPPORT_QR_CDN, SUPPORT_QR_LOCAL } from '../src/assets/support_qr_base64';
+import { BackButton } from './BackButton';
 import {
   DndContext,
   closestCenter,
@@ -173,7 +174,12 @@ export const Admin: React.FC = () => {
 
   // QR Code State
   const [adminQrImage, setAdminQrImage] = useState<string>(() => {
-    return localStorage.getItem('custom_support_qr') || DEFAULT_SUPPORT_QR;
+    const saved = localStorage.getItem('custom_support_qr');
+    if (saved && (saved.includes('nloln.de') || saved.includes('img2.'))) {
+      localStorage.removeItem('custom_support_qr');
+      return SUPPORT_QR_LOCAL;
+    }
+    return saved || SUPPORT_QR_LOCAL;
   });
 
   useEffect(() => {
@@ -509,17 +515,7 @@ export const Admin: React.FC = () => {
   return (
     <main className="flex-grow pt-24 pb-32 px-6 max-w-4xl mx-auto w-full relative z-10">
       <div className="flex items-center mb-6">
-        <Link 
-          to="/" 
-          className={`flex items-center space-x-2 text-sm font-semibold transition-all px-4 py-2 rounded-full border ${
-            isDark 
-              ? 'border-white/10 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10' 
-              : 'border-gray-200 bg-white/50 text-gray-600 hover:text-black hover:bg-white'
-          }`}
-        >
-          <ArrowLeft size={16} />
-          <span>返回主页</span>
-        </Link>
+        <BackButton />
       </div>
 
       <div className={`rounded-[2.5rem] p-8 md:p-12 ${getGlassClasses()}`}>
@@ -839,6 +835,14 @@ export const Admin: React.FC = () => {
                       <img 
                         src={adminQrImage} 
                         alt="Current Support QR Code" 
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (target.src !== SUPPORT_QR_CDN && target.src.indexOf('iili.io') === -1) {
+                            target.src = SUPPORT_QR_CDN;
+                          } else if (target.src !== SUPPORT_QR_BASE64) {
+                            target.src = SUPPORT_QR_BASE64;
+                          }
+                        }}
                         className="w-full h-auto rounded-xl object-contain"
                       />
                     </div>

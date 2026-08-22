@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../App';
-import { BookOpen, X, ArrowLeft, RefreshCw, AlertCircle } from 'lucide-react';
+import { BookOpen, X, RefreshCw, AlertCircle } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
 import { PdfViewer } from './PdfViewer';
+import { BackButton } from './BackButton';
 
 interface Book {
   id: string;
@@ -19,7 +19,6 @@ const CACHE_KEY = 'pan_studio_books_cache';
 export const ReadingPro: React.FC = () => {
   const { themeMode, language } = useTheme();
   const isDark = themeMode === 'dark';
-  const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -215,28 +214,18 @@ export const ReadingPro: React.FC = () => {
   return (
     <>
       <main className="flex-grow pt-24 pb-32 px-6 max-w-7xl mx-auto w-full relative z-10">
-        <div className="mb-12 relative flex items-center justify-center">
-          <button 
-            onClick={() => navigate('/')}
-            className={`absolute left-0 top-0 md:top-2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-300 ${
-              isDark
-                ? 'bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-sm hover:shadow-md hover:bg-black/80 hover:scale-105' 
-                : 'bg-white/80 backdrop-blur-md border border-gray-200 text-gray-600 shadow-sm hover:shadow-md hover:bg-white hover:scale-105'
-            }`}
-            title={t.returnHome}
-          >
-            <ArrowLeft size={24} />
-          </button>
-          
-          <div className="text-center flex flex-col items-center">
-            <div className="flex items-center justify-center space-x-3 mb-4">
-              <h1 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t.title}</h1>
-              {isSyncing && (
-                <RefreshCw size={20} className={`animate-spin ${isDark ? 'text-gray-300' : 'text-gray-400'}`} title={t.syncing} />
-              )}
-            </div>
-            <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t.desc}</p>
+        <div className="flex items-center mb-6">
+          <BackButton />
+        </div>
+
+        <div className="mb-12 text-center flex flex-col items-center">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <h1 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t.title}</h1>
+            {isSyncing && (
+              <RefreshCw size={20} className={`animate-spin ${isDark ? 'text-gray-300' : 'text-gray-400'}`} title={t.syncing} />
+            )}
           </div>
+          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t.desc}</p>
         </div>
 
         {loading ? (
