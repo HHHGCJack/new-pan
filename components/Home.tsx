@@ -101,10 +101,10 @@ export const Home: React.FC = () => {
   const t = (translations as any)[language] || translations.en;
 
   return (
-    <main className="flex-grow pt-16">
+    <main className="flex-grow">
       <Hero />
 
-      <section className="max-w-7xl mx-auto px-6 pb-32 -mt-5 md:-mt-10 relative z-10">
+      <section id="content-section" className="max-w-7xl mx-auto px-6 pt-10 md:pt-16 pb-32 relative z-10">
         
         {/* Bento Grid Layout - Responsive: 1 col mobile, 2 col tablet, 3 col desktop */}
         <motion.div 

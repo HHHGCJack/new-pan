@@ -440,7 +440,7 @@ export const Navbar: React.FC = () => {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-2 h-full">
+          <div className="hidden lg:flex items-center space-x-2 h-full">
             {navData.map((item, idx) => (
               <div 
                 key={item.name} 
@@ -513,7 +513,7 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
 
-          <div className="md:hidden flex items-center justify-center -mr-2 space-x-1">
+          <div className="lg:hidden flex items-center justify-center -mr-2 space-x-1">
             <div className="relative">
               <button 
                 onClick={(e) => {
